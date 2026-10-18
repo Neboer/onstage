@@ -86,7 +86,7 @@ def test_bundled_samples_are_valid_original_images_with_matching_manifest(public
     assert source_record['sha256'] == hashlib.sha256((public_tree / 'SOURCE_REVISION.json').read_bytes()).hexdigest()
 
 
-def test_exported_application_starts_and_serves_catalog_and_every_sample(public_tree, tmp_path):
+def test_exported_application_and_deployment_preparation_are_runnable(public_tree, tmp_path):
     env = {**os.environ, 'ONSTAGE_DATA_DIR': str(tmp_path / 'data'), 'ONSTAGE_PUBLIC_ORIGIN': 'http://testserver', 'ONSTAGE_SECURE_COOKIE': '0'}
     env.pop('DATABASE_URL', None)
     env.pop('ONSTAGE_DATABASE_URL', None)
@@ -95,6 +95,18 @@ import json
 from pathlib import Path
 from fastapi.testclient import TestClient
 from app.main import app
+from tools.prepare_deployment import prepare
+from tempfile import TemporaryDirectory
+with TemporaryDirectory(prefix='onstage-public-proxies-') as directory:
+    root=Path(directory)
+    nginx=prepare('https://sample.example.org', 'nginx', root/'nginx', tls_cert='/etc/sample/fullchain.pem', tls_key='/etc/sample/privkey.pem')
+    caddy=prepare('https://sample.example.org', 'caddy', root/'caddy')
+    assert not nginx['deployment_executed'] and not caddy['deployment_executed']
+    assert 'server_name sample.example.org;' in (root/'nginx/nginx-onstage.conf').read_text()
+    assert 'sample.example.org {' in (root/'caddy/Caddyfile.onstage.snippet').read_text()
+    for proxy in ('nginx','caddy'):
+        assert (root/proxy/'onstage.service').is_file()
+        assert 'ONSTAGE_PUBLIC_ORIGIN=https://sample.example.org' in (root/proxy/'onstage.env').read_text()
 with TestClient(app) as client:
     assert client.get('/readyz').status_code == 200
     assert client.post('/api/session', json={'nickname':'Sample test'}).status_code == 200

@@ -1,0 +1,29 @@
+[Unit]
+Description=Onstage phase one
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=onstage
+Group=onstage
+WorkingDirectory=/opt/onstage/current
+EnvironmentFile=/etc/onstage.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/onstage/current/.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8765 --workers 1 --proxy-headers --forwarded-allow-ips 127.0.0.1 --no-access-log --ws-per-message-deflate false --ws-max-size 65536
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=15
+UMask=0077
+StateDirectory=onstage
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/onstage
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target

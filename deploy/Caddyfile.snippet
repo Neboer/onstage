@@ -1,0 +1,8 @@
+# Alternative only when the existing host ALREADY uses Caddy.
+# Merge this one host block into that configuration; don't start a second proxy.
+demo.example.invalid {
+    request_body {
+        max_size 64KB
+    }
+    reverse_proxy 127.0.0.1:8765
+}

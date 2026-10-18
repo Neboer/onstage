@@ -33,6 +33,7 @@ DOC_FILES = {
     'SELF_HOSTED.md', 'VISUAL_GUIDE.md', 'REQUIREMENTS_V06.md', 'REQUIREMENTS_V05.md',
     'CHANGELOG.md', 'SITES_ITERATION.md', 'acceptance.json',
 }
+DEPLOY_TEMPLATES = {'deploy/onstage.service', 'deploy/Caddyfile.snippet', 'deploy/nginx-site.conf.example'}
 EXCLUDED_PARTS = {'__pycache__', '.pytest_cache', 'node_modules', 'private', 'backups', 'data', '.git', '.openai', 'vendor', 'reports'}
 MARKER = 'onstage-public-source-v1'
 
@@ -104,6 +105,8 @@ def allowed_source(path: Path) -> bool:
         return path.name in ROOT_FILES
     if parts[0] == 'docs':
         return len(parts) == 2 and path.name in DOC_FILES
+    if path.as_posix() in DEPLOY_TEMPLATES:
+        return True
     if parts[0] not in SOURCE_DIRS or (parts[:2] == ('static', 'assets')):
         return False
     if path.as_posix() == 'static/onstage-mark.svg' or path.as_posix() == 'app/catalog.json':
