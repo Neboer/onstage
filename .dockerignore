@@ -1,0 +1,15 @@
+**
+!requirements.txt
+!VERSION
+!SOURCE_REVISION.json
+!app/
+!app/**
+!static/
+!static/**
+!tools/
+!tools/**
+**/__pycache__/
+**/*.pyc
+**/*.sqlite3*
+**/*.log
+**/.env*

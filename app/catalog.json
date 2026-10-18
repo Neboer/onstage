@@ -1,0 +1,2927 @@
+{
+  "bands": [
+    {
+      "id": "mygo",
+      "name": "MyGO!!!!!",
+      "color": "#4DA9DB",
+      "image": "/static/assets/bands/mygo.svg"
+    },
+    {
+      "id": "mujica",
+      "name": "Ave Mujica",
+      "color": "#B67594",
+      "image": "/static/assets/bands/mujica.svg"
+    }
+  ],
+  "characters": [
+    {
+      "id": "mygo.tomori",
+      "band_id": "mygo",
+      "name": "高松灯",
+      "name_ja": "高松 燈",
+      "instrument": "主唱",
+      "description": "MyGO!!!!! 的主唱。",
+      "source_url": "https://bdon.biligames.com/character/mygo/",
+      "image": "/static/assets/characters/official-v05/mygo-tomori-ournotes-f4c0f3d10ba2.png",
+      "avatar_image": "/static/assets/characters/official-v05/mygo-tomori-ournotes-avatar-f176e2236dc2.png",
+      "detail_image": "/static/assets/characters/official-v05/mygo-tomori-ournotes-f4c0f3d10ba2.png",
+      "artwork_type": "official_original",
+      "image_width": 1800,
+      "image_height": 2160,
+      "avatar_width": 165,
+      "avatar_height": 210,
+      "avatar_crop": {
+        "x": 0,
+        "y": 0,
+        "width": 165,
+        "height": 165
+      },
+      "artwork_credit": "©BDP ©FTK ©BUSHI ©BHK"
+    },
+    {
+      "id": "mygo.anon",
+      "band_id": "mygo",
+      "name": "千早爱音",
+      "name_ja": "千早 愛音",
+      "instrument": "吉他",
+      "description": "MyGO!!!!! 的吉他手。",
+      "source_url": "https://bdon.biligames.com/character/mygo/",
+      "image": "/static/assets/characters/official-v05/mygo-anon-ournotes-ed0dd5dde5d8.png",
+      "avatar_image": "/static/assets/characters/official-v05/mygo-anon-ournotes-avatar-359a98c0264d.png",
+      "detail_image": "/static/assets/characters/official-v05/mygo-anon-ournotes-ed0dd5dde5d8.png",
+      "artwork_type": "official_original",
+      "image_width": 1800,
+      "image_height": 2160,
+      "avatar_width": 165,
+      "avatar_height": 210,
+      "avatar_crop": {
+        "x": 0,
+        "y": 0,
+        "width": 165,
+        "height": 165
+      },
+      "artwork_credit": "©BDP ©FTK ©BUSHI ©BHK"
+    },
+    {
+      "id": "mygo.rana",
+      "band_id": "mygo",
+      "name": "要乐奈",
+      "name_ja": "要 楽奈",
+      "instrument": "吉他",
+      "description": "MyGO!!!!! 的吉他手。",
+      "source_url": "https://bdon.biligames.com/character/mygo/",
+      "image": "/static/assets/characters/official-v05/mygo-rana-ournotes-c621ed679922.png",
+      "avatar_image": "/static/assets/characters/official-v05/mygo-rana-ournotes-avatar-286d1d0e143f.png",
+      "detail_image": "/static/assets/characters/official-v05/mygo-rana-ournotes-c621ed679922.png",
+      "artwork_type": "official_original",
+      "image_width": 1800,
+      "image_height": 2160,
+      "avatar_width": 165,
+      "avatar_height": 210,
+      "avatar_crop": {
+        "x": 0,
+        "y": 0,
+        "width": 165,
+        "height": 165
+      },
+      "artwork_credit": "©BDP ©FTK ©BUSHI ©BHK"
+    },
+    {
+      "id": "mygo.soyo",
+      "band_id": "mygo",
+      "name": "长崎素世",
+      "name_ja": "長崎 そよ",
+      "instrument": "贝斯",
+      "description": "MyGO!!!!! 的贝斯手。",
+      "source_url": "https://bdon.biligames.com/character/mygo/",
+      "image": "/static/assets/characters/official-v05/mygo-soyo-ournotes-772ce2b34098.png",
+      "avatar_image": "/static/assets/characters/official-v05/mygo-soyo-ournotes-avatar-1d1b4729f49e.png",
+      "detail_image": "/static/assets/characters/official-v05/mygo-soyo-ournotes-772ce2b34098.png",
+      "artwork_type": "official_original",
+      "image_width": 1800,
+      "image_height": 2160,
+      "avatar_width": 165,
+      "avatar_height": 210,
+      "avatar_crop": {
+        "x": 0,
+        "y": 0,
+        "width": 165,
+        "height": 165
+      },
+      "artwork_credit": "©BDP ©FTK ©BUSHI ©BHK"
+    },
+    {
+      "id": "mygo.taki",
+      "band_id": "mygo",
+      "name": "椎名立希",
+      "name_ja": "椎名 立希",
+      "instrument": "鼓",
+      "description": "MyGO!!!!! 的鼓手。",
+      "source_url": "https://bdon.biligames.com/character/mygo/",
+      "image": "/static/assets/characters/official-v05/mygo-taki-ournotes-a440270213a0.png",
+      "avatar_image": "/static/assets/characters/official-v05/mygo-taki-ournotes-avatar-d58aa1444a33.png",
+      "detail_image": "/static/assets/characters/official-v05/mygo-taki-ournotes-a440270213a0.png",
+      "artwork_type": "official_original",
+      "image_width": 1800,
+      "image_height": 2160,
+      "avatar_width": 165,
+      "avatar_height": 210,
+      "avatar_crop": {
+        "x": 0,
+        "y": 0,
+        "width": 165,
+        "height": 165
+      },
+      "artwork_credit": "©BDP ©FTK ©BUSHI ©BHK"
+    },
+    {
+      "id": "mujica.uika",
+      "band_id": "mujica",
+      "name": "三角初华",
+      "name_ja": "三角 初華",
+      "instrument": "主唱／吉他",
+      "description": "Ave Mujica 的主唱兼吉他手。",
+      "source_url": "https://bdon.biligames.com/character/avemujica/",
+      "image": "/static/assets/characters/official-v05/mujica-uika-ournotes-6ee2ba740f83.png",
+      "avatar_image": "/static/assets/characters/official-v05/mujica-uika-ournotes-avatar-019118aa803a.png",
+      "detail_image": "/static/assets/characters/official-v05/mujica-uika-ournotes-6ee2ba740f83.png",
+      "artwork_type": "official_original",
+      "image_width": 1800,
+      "image_height": 2160,
+      "avatar_width": 165,
+      "avatar_height": 210,
+      "avatar_crop": {
+        "x": 0,
+        "y": 0,
+        "width": 165,
+        "height": 165
+      },
+      "artwork_credit": "©BDP ©FTK ©BUSHI ©BHK"
+    },
+    {
+      "id": "mujica.mutsumi",
+      "band_id": "mujica",
+      "name": "若叶睦",
+      "name_ja": "若葉 睦",
+      "instrument": "吉他",
+      "description": "Ave Mujica 的吉他手。",
+      "source_url": "https://bdon.biligames.com/character/avemujica/",
+      "image": "/static/assets/characters/official-v05/mujica-mutsumi-ournotes-a3f775b6a0d1.png",
+      "avatar_image": "/static/assets/characters/official-v05/mujica-mutsumi-ournotes-avatar-94dafb6193a0.png",
+      "detail_image": "/static/assets/characters/official-v05/mujica-mutsumi-ournotes-a3f775b6a0d1.png",
+      "artwork_type": "official_original",
+      "image_width": 1800,
+      "image_height": 2160,
+      "avatar_width": 165,
+      "avatar_height": 210,
+      "avatar_crop": {
+        "x": 0,
+        "y": 0,
+        "width": 165,
+        "height": 165
+      },
+      "artwork_credit": "©BDP ©FTK ©BUSHI ©BHK"
+    },
+    {
+      "id": "mujica.umiri",
+      "band_id": "mujica",
+      "name": "八幡海铃",
+      "name_ja": "八幡 海鈴",
+      "instrument": "贝斯",
+      "description": "Ave Mujica 的贝斯手。",
+      "source_url": "https://bdon.biligames.com/character/avemujica/",
+      "image": "/static/assets/characters/official-v05/mujica-umiri-ournotes-d76fde7a71b9.png",
+      "avatar_image": "/static/assets/characters/official-v05/mujica-umiri-ournotes-avatar-d17151fc0df0.png",
+      "detail_image": "/static/assets/characters/official-v05/mujica-umiri-ournotes-d76fde7a71b9.png",
+      "artwork_type": "official_original",
+      "image_width": 1800,
+      "image_height": 2160,
+      "avatar_width": 165,
+      "avatar_height": 210,
+      "avatar_crop": {
+        "x": 0,
+        "y": 0,
+        "width": 165,
+        "height": 165
+      },
+      "artwork_credit": "©BDP ©FTK ©BUSHI ©BHK"
+    },
+    {
+      "id": "mujica.nyamu",
+      "band_id": "mujica",
+      "name": "祐天寺若麦",
+      "name_ja": "祐天寺 にゃむ",
+      "instrument": "鼓",
+      "description": "Ave Mujica 的鼓手。",
+      "source_url": "https://bdon.biligames.com/character/avemujica/",
+      "image": "/static/assets/characters/official-v05/mujica-nyamu-ournotes-e2a8d0e7b345.png",
+      "avatar_image": "/static/assets/characters/official-v05/mujica-nyamu-ournotes-avatar-95916660b219.png",
+      "detail_image": "/static/assets/characters/official-v05/mujica-nyamu-ournotes-e2a8d0e7b345.png",
+      "artwork_type": "official_original",
+      "image_width": 1800,
+      "image_height": 2160,
+      "avatar_width": 165,
+      "avatar_height": 210,
+      "avatar_crop": {
+        "x": 0,
+        "y": 0,
+        "width": 165,
+        "height": 165
+      },
+      "artwork_credit": "©BDP ©FTK ©BUSHI ©BHK"
+    },
+    {
+      "id": "mujica.sakiko",
+      "band_id": "mujica",
+      "name": "丰川祥子",
+      "name_ja": "豊川 祥子",
+      "instrument": "键盘",
+      "description": "Ave Mujica 的键盘手。",
+      "source_url": "https://bdon.biligames.com/character/avemujica/",
+      "image": "/static/assets/characters/official-v05/mujica-sakiko-ournotes-bc9d816b1932.png",
+      "avatar_image": "/static/assets/characters/official-v05/mujica-sakiko-ournotes-avatar-29d6a31bb338.png",
+      "detail_image": "/static/assets/characters/official-v05/mujica-sakiko-ournotes-bc9d816b1932.png",
+      "artwork_type": "official_original",
+      "image_width": 1800,
+      "image_height": 2160,
+      "avatar_width": 165,
+      "avatar_height": 210,
+      "avatar_crop": {
+        "x": 0,
+        "y": 0,
+        "width": 165,
+        "height": 165
+      },
+      "artwork_credit": "©BDP ©FTK ©BUSHI ©BHK"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "mygo_rehearsal",
+      "title": "RING 排练室",
+      "location": "RING 排练室",
+      "category": "音乐",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "音箱、鼓组与谱架，留给音乐与聊天的空间。",
+      "opening": "隔音门合上后，走廊的声音轻了下来。音箱、鼓组和几座谱架摆在房间里，线缆沿地面收拢，顶灯照着空出的中央。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/mygo_rehearsal.svg"
+    },
+    {
+      "id": "mujica_changeover",
+      "title": "演出候场室",
+      "location": "演出候场室",
+      "category": "音乐",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "舞台旁的一间休息室，灯光从门缝里透进来。",
+      "opening": "候场室里放着沙发、衣架和几张折叠椅。门外偶尔传来场内的回声，镜前的灯亮着，墙上的时钟缓缓走动。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/mujica_changeover.svg"
+    },
+    {
+      "id": "shared_greenroom",
+      "title": "RING 休息区",
+      "location": "RING 休息区",
+      "category": "音乐",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "落地窗旁的座位与小桌，演出场馆里的日常角落。",
+      "opening": "玻璃门外有人来往，室内的桌椅沿窗排开。柜台透出柔和的灯光，桌上放着杯垫，远处隐约传来练习的声音。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/shared_greenroom.svg"
+    },
+    {
+      "id": "hanasakigawa_school",
+      "title": "花咲川女子学园",
+      "location": "花咲川女子学园",
+      "category": "校园",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "樱树、花坛与奶油色校舍前的庭院。",
+      "opening": "奶油色与红砖相间的校舍立在庭院后方，路边花坛开着浅粉色的花。樱树从右侧伸出枝叶，午后的阳光照着通往入口的石板路。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/hanasakigawa_school.svg"
+    },
+    {
+      "id": "haneoka_school",
+      "title": "羽丘女子学园",
+      "location": "羽丘女子学园",
+      "category": "校园",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "明亮的校舍入口、蓝天与开阔前庭。",
+      "opening": "白色校舍的窗户映着蓝天，入口前的步道通向开阔庭院。阳光落在干净的铺地上，树影沿着建筑边缘延伸，四周留着安静的空地。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/haneoka_school.svg"
+    },
+    {
+      "id": "tsukinomori_school",
+      "title": "月之森女子学园",
+      "location": "月之森女子学园",
+      "category": "校园",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "绿树之间的校园建筑与安静步道。",
+      "opening": "整齐的步道穿过树影，教学楼的窗上映着天空。长椅靠在花坛旁，走廊与庭院之间隔着一扇半开的玻璃门。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/tsukinomori_school.svg"
+    },
+    {
+      "id": "school_rooftop",
+      "title": "学校天台",
+      "location": "学校天台",
+      "category": "校园",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "围栏、远处的楼群与开阔天空。",
+      "opening": "天台的围栏外是层叠的屋顶和缓慢移动的云。楼梯间的门投下一小片阴影，风掠过地面，城市的声音显得很远。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/school_rooftop.svg"
+    },
+    {
+      "id": "shopping_street",
+      "title": "街边商店街",
+      "location": "街边商店街",
+      "category": "城市",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "店铺招牌、橱窗和来来往往的街道。",
+      "opening": "街边店铺依次亮起招牌，橱窗里映着行人的身影。路口传来过街提示音，遮雨棚下留着几处可以停步的位置。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/shopping_street.svg"
+    },
+    {
+      "id": "park_path",
+      "title": "公园小径",
+      "location": "公园小径",
+      "category": "户外",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "树荫、长椅和绕过草地的小路。",
+      "opening": "小径从草地旁弯过去，树叶在脚边留下斑驳的影子。长椅旁摆着饮水台，鸟鸣与远处的街声混在一起。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/park_path.svg"
+    },
+    {
+      "id": "station_square",
+      "title": "车站广场",
+      "location": "车站广场",
+      "category": "城市",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "站前的台阶与路灯，适合相遇和短暂停留。",
+      "opening": "广场上不时响起报站声，出入口的人流一阵阵经过。路灯沿着台阶排列，电子时钟在屋檐下闪着清晰的数字。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/station_square.svg"
+    },
+    {
+      "id": "riverside_walk",
+      "title": "河畔步道",
+      "location": "河畔步道",
+      "category": "户外",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "沿河延伸的栏杆、小路和开阔风景。",
+      "opening": "河面映着天色，步道沿栏杆伸向远处的桥。风从水面吹来，脚边偶尔滚过一片落叶，对岸的窗户慢慢亮起来。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/riverside_walk.svg"
+    },
+    {
+      "id": "mother_child_statue",
+      "title": "母子鬼神像前",
+      "location": "母子鬼神像前",
+      "category": "特别",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "石像前的一小片空地，沿用用户给定的场景名称。",
+      "opening": "石像前留着一片安静的空地，树影沿着铺砖缓缓移动。石阶旁有几片落叶，远处传来城市的脚步声。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "用户场景 IF",
+      "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。 地点沿用用户给定名称，尚未确认与官方场所的对应。",
+      "image": "/static/assets/scenes/mother_child_statue.svg"
+    },
+    {
+      "id": "planetarium",
+      "title": "星象馆星空厅",
+      "location": "星象馆星空厅",
+      "category": "特别",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "星空穹顶、弧形座椅与低低的过道灯。",
+      "opening": "蓝紫色星光铺满穹顶，几排座椅沿着弧线展开。中央的星象仪安静立着，过道边的小灯留下一点暖光，头顶的银河清晰可见。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/planetarium.svg"
+    },
+    {
+      "id": "sunshine_aquarium",
+      "title": "阳光水族馆",
+      "location": "阳光水族馆",
+      "category": "特别",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "屋顶企鹅水槽、澄澈水光与城市天空。",
+      "opening": "企鹅从头顶清澈的水槽中掠过，阳光在步道上留下细碎水纹。栏杆外是城市楼群，绿植围住露台边缘，水面与天空都很明亮。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/sunshine_aquarium.svg"
+    },
+    {
+      "id": "hareza_steps",
+      "title": "Hareza 剧场外台阶",
+      "location": "Hareza 剧场外台阶",
+      "category": "城市",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "玻璃剧场、宽阔台阶与午后树影。",
+      "opening": "剧场的玻璃立面映着浅金色阳光，宽阔台阶沿着建筑一侧向上。几棵树把影子落在广场地砖上，入口的暖光透过整排窗户。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/hareza_steps.svg"
+    },
+    {
+      "id": "ring_live_stage",
+      "title": "RiNG 演出厅",
+      "location": "RiNG 演出厅",
+      "category": "音乐",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "青色鼓组、话筒架与粉蓝色舞台灯。",
+      "opening": "空出的观众区正对着低矮舞台，青色鼓组摆在后方，话筒架和音箱已经就位。粉色与蓝色的灯光落在台面上，地板映着淡淡的光。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/ring_live_stage.svg"
+    },
+    {
+      "id": "space_stage",
+      "title": "SPACE 舞台",
+      "location": "SPACE 舞台",
+      "category": "音乐",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "木质舞台、砖墙与温暖的琥珀色灯光。",
+      "opening": "木质舞台被琥珀色灯光照亮，鼓组与音箱靠着砖墙。几张小圆桌留在观众区，话筒架前空着一片地方，木地板带着温暖的反光。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/space_stage.svg"
+    },
+    {
+      "id": "ikeda_ferry_port",
+      "title": "海岛渡轮码头",
+      "location": "海岛渡轮码头",
+      "category": "户外",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "白蓝渡轮、夏日云层与安静的海港。",
+      "opening": "白蓝色渡轮停在岸边，候船楼的玻璃窗映着海面。码头栏杆向前延伸，远处的小岛层层叠在蓝天底下，水面有细碎的日光。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/ikeda_ferry_port.svg"
+    },
+    {
+      "id": "mikasayama_overlook",
+      "title": "海岛山顶眺望台",
+      "location": "海岛山顶眺望台",
+      "category": "户外",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "海岛远景、木栏杆与柔和的日落。",
+      "opening": "山顶的小平台沿着木栏杆展开，树冠从坡下延伸到海边。夕阳把海面染成浅金色，几座小岛浮在远处，晚风穿过身旁的树叶。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/mikasayama_overlook.svg"
+    },
+    {
+      "id": "recording_studio_if",
+      "title": "录音棚控制室",
+      "location": "录音棚控制室",
+      "category": "音乐",
+      "band_ids": [
+        "mygo",
+        "mujica"
+      ],
+      "character_ids": [
+        "mygo.tomori",
+        "mygo.anon",
+        "mygo.rana",
+        "mygo.soyo",
+        "mygo.taki",
+        "mujica.uika",
+        "mujica.mutsumi",
+        "mujica.umiri",
+        "mujica.nyamu",
+        "mujica.sakiko"
+      ],
+      "summary": "调音台、玻璃录音间与柔和的彩色指示灯。",
+      "opening": "调音台上的指示灯亮着，耳机放在桌角。玻璃窗后是铺着木色吸音板的录音间，话筒与谱架立在中央，墙边透出柔和的薄荷色灯光。",
+      "prompts": [],
+      "ending_hint": "",
+      "canon_mode": "自由 IF",
+      "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
+      "image": "/static/assets/scenes/recording_studio_if.svg"
+    }
+  ],
+  "stickers": [
+    {
+      "id": "user-v04.7487c0a29036e921",
+      "image": "/static/assets/stickers/user-v04-7487c0a29036e921.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "M",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "M",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.06ad308b044d6722",
+      "image": "/static/assets/stickers/user-v04-06ad308b044d6722.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "刚睡醒",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "刚睡醒",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.fc926a736383f1d3",
+      "image": "/static/assets/stickers/user-v04-fc926a736383f1d3.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "发现猎物",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "发现猎物",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.5a6182efec1e7f0f",
+      "image": "/static/assets/stickers/user-v04-5a6182efec1e7f0f.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "吃吃",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "吃吃",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.b0ef07f68ad91e97",
+      "image": "/static/assets/stickers/user-v04-b0ef07f68ad91e97.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "喜欢抹茶",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "喜欢抹茶",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.2c6868c2cca95b5d",
+      "image": "/static/assets/stickers/user-v04-2c6868c2cca95b5d.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "我剪",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "我剪",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.d04c574e1e008d36",
+      "image": "/static/assets/stickers/user-v04-d04c574e1e008d36.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "我吗",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "我吗",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.9ff33f1585af1aa1",
+      "image": "/static/assets/stickers/user-v04-9ff33f1585af1aa1.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "抹茶芭菲",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "抹茶芭菲",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.ea6b7e98c696e79c",
+      "image": "/static/assets/stickers/user-v04-ea6b7e98c696e79c.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "捕猎状态",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "捕猎状态",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.4930fc1f8f85d5d0",
+      "image": "/static/assets/stickers/user-v04-4930fc1f8f85d5d0.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "无聊",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "无聊",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.50ebec981870befd",
+      "image": "/static/assets/stickers/user-v04-50ebec981870befd.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "有动静",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "有动静",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.d4bf36dc17bc5805",
+      "image": "/static/assets/stickers/user-v04-d4bf36dc17bc5805.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "有趣的女人",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "有趣的女人",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.dbf0c6696f4910a7",
+      "image": "/static/assets/stickers/user-v04-dbf0c6696f4910a7.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "来玩乐队",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "来玩乐队",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.ab589f0c769874fe",
+      "image": "/static/assets/stickers/user-v04-ab589f0c769874fe.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "比三",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "比三",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.a18eceac290917e9",
+      "image": "/static/assets/stickers/user-v04-a18eceac290917e9.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "溜了溜了",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "溜了溜了",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.9c9536b62c5c04d9",
+      "image": "/static/assets/stickers/user-v04-9c9536b62c5c04d9.png",
+      "character_id": "mygo.rana",
+      "keywords": [
+        "被猫环绕",
+        "乐奈",
+        "要乐奈"
+      ],
+      "label": "被猫环绕",
+      "source_pack": "user-v04",
+      "source_category": "乐奈",
+      "band_id": "mygo"
+    },
+    {
+      "id": "mujica.wait",
+      "label": "再等一下",
+      "character_id": "mujica.uika",
+      "image": "/static/assets/stickers/mujica-wait-1f5a1b8a.png",
+      "keywords": [
+        "再等一下",
+        "初华",
+        "三角初华"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "初华"
+    },
+    {
+      "id": "user-v04.24a6941206373dff",
+      "image": "/static/assets/stickers/user-v04-24a6941206373dff.png",
+      "character_id": "mujica.uika",
+      "keywords": [
+        "害羞",
+        "初华",
+        "三角初华"
+      ],
+      "label": "害羞",
+      "source_pack": "user-v04",
+      "source_category": "初华",
+      "band_id": "mujica"
+    },
+    {
+      "id": "mujica.nice",
+      "label": "挺好",
+      "character_id": "mujica.uika",
+      "image": "/static/assets/stickers/mujica-nice-b47f6146.png",
+      "keywords": [
+        "挺好",
+        "初华",
+        "三角初华"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "初华"
+    },
+    {
+      "id": "user-v04.0f0c69a81fd7796a",
+      "image": "/static/assets/stickers/user-v04-0f0c69a81fd7796a.png",
+      "character_id": "mujica.uika",
+      "keywords": [
+        "接电话",
+        "初华",
+        "三角初华"
+      ],
+      "label": "接电话",
+      "source_pack": "user-v04",
+      "source_category": "初华",
+      "band_id": "mujica"
+    },
+    {
+      "id": "mujica.cross",
+      "label": "比叉叉",
+      "character_id": "mujica.uika",
+      "image": "/static/assets/stickers/mujica-cross-663ce8a5.png",
+      "keywords": [
+        "比叉叉",
+        "初华",
+        "三角初华"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "初华"
+    },
+    {
+      "id": "user-v04.e49aa1b258947b51",
+      "image": "/static/assets/stickers/user-v04-e49aa1b258947b51.png",
+      "character_id": "mujica.uika",
+      "keywords": [
+        "没收",
+        "初华",
+        "三角初华"
+      ],
+      "label": "没收",
+      "source_pack": "user-v04",
+      "source_category": "初华",
+      "band_id": "mujica"
+    },
+    {
+      "id": "user-v04.1c08a8c9bfb53190",
+      "image": "/static/assets/stickers/user-v04-1c08a8c9bfb53190.png",
+      "character_id": "mujica.uika",
+      "keywords": [
+        "点赞",
+        "初华",
+        "三角初华"
+      ],
+      "label": "点赞",
+      "source_pack": "user-v04",
+      "source_category": "初华",
+      "band_id": "mujica"
+    },
+    {
+      "id": "mujica.shocked",
+      "label": "震惊",
+      "character_id": "mujica.uika",
+      "image": "/static/assets/stickers/mujica-shocked-ae2567d1.png",
+      "keywords": [
+        "震惊",
+        "初华",
+        "三角初华"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "初华"
+    },
+    {
+      "id": "mujica.no",
+      "label": "不行",
+      "character_id": "mujica.nyamu",
+      "image": "/static/assets/stickers/mujica-no-f23f2e36.png",
+      "keywords": [
+        "不行",
+        "喵梦",
+        "祐天寺若麦"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "喵梦"
+    },
+    {
+      "id": "user-v04.7e2cc714cbffdb31",
+      "image": "/static/assets/stickers/user-v04-7e2cc714cbffdb31.png",
+      "character_id": "mujica.nyamu",
+      "keywords": [
+        "加个好友2",
+        "喵梦",
+        "祐天寺若麦"
+      ],
+      "label": "加个好友2",
+      "source_pack": "user-v04",
+      "source_category": "喵梦",
+      "band_id": "mujica"
+    },
+    {
+      "id": "user-v04.de79057c30c03e1d",
+      "image": "/static/assets/stickers/user-v04-de79057c30c03e1d.png",
+      "character_id": "mujica.nyamu",
+      "keywords": [
+        "哦",
+        "喵梦",
+        "祐天寺若麦"
+      ],
+      "label": "哦",
+      "source_pack": "user-v04",
+      "source_category": "喵梦",
+      "band_id": "mujica"
+    },
+    {
+      "id": "user-v04.a83de78d2dc5f114",
+      "image": "/static/assets/stickers/user-v04-a83de78d2dc5f114.png",
+      "character_id": "mujica.nyamu",
+      "keywords": [
+        "坏坏",
+        "喵梦",
+        "祐天寺若麦"
+      ],
+      "label": "坏坏",
+      "source_pack": "user-v04",
+      "source_category": "喵梦",
+      "band_id": "mujica"
+    },
+    {
+      "id": "mujica.wronged",
+      "label": "委屈",
+      "character_id": "mujica.nyamu",
+      "image": "/static/assets/stickers/mujica-wronged-eb973144.png",
+      "keywords": [
+        "委屈",
+        "喵梦",
+        "祐天寺若麦"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "喵梦"
+    },
+    {
+      "id": "mujica.smile",
+      "label": "记得微笑",
+      "character_id": "mujica.nyamu",
+      "image": "/static/assets/stickers/mujica-smile-12f06944.png",
+      "keywords": [
+        "记得微笑",
+        "喵梦",
+        "祐天寺若麦"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "喵梦"
+    },
+    {
+      "id": "mujica.sulking",
+      "label": "赌气",
+      "character_id": "mujica.nyamu",
+      "image": "/static/assets/stickers/mujica-sulking-95f8bbc4.png",
+      "keywords": [
+        "赌气",
+        "喵梦",
+        "祐天寺若麦"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "喵梦"
+    },
+    {
+      "id": "user-v04.3cb0ed7289576452",
+      "image": "/static/assets/stickers/user-v04-3cb0ed7289576452.png",
+      "character_id": "mujica.nyamu",
+      "keywords": [
+        "难道说",
+        "喵梦",
+        "祐天寺若麦"
+      ],
+      "label": "难道说",
+      "source_pack": "user-v04",
+      "source_category": "喵梦",
+      "band_id": "mujica"
+    },
+    {
+      "id": "mujica.buy-all",
+      "label": "一次买够",
+      "character_id": "mujica.umiri",
+      "image": "/static/assets/stickers/mujica-buy-all-5ab7002a.png",
+      "keywords": [
+        "一次买够",
+        "海铃",
+        "八幡海铃"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "海铃"
+    },
+    {
+      "id": "user-v04.d6943f952de83325",
+      "image": "/static/assets/stickers/user-v04-d6943f952de83325.png",
+      "character_id": "mujica.umiri",
+      "keywords": [
+        "哟豁",
+        "海铃",
+        "八幡海铃"
+      ],
+      "label": "哟豁",
+      "source_pack": "user-v04",
+      "source_category": "海铃",
+      "band_id": "mujica"
+    },
+    {
+      "id": "user-v04.78e2b84bb8174559",
+      "image": "/static/assets/stickers/user-v04-78e2b84bb8174559.png",
+      "character_id": "mujica.umiri",
+      "keywords": [
+        "开门",
+        "海铃",
+        "八幡海铃"
+      ],
+      "label": "开门",
+      "source_pack": "user-v04",
+      "source_category": "海铃",
+      "band_id": "mujica"
+    },
+    {
+      "id": "user-v04.c69c9dc40950b5f2",
+      "image": "/static/assets/stickers/user-v04-c69c9dc40950b5f2.png",
+      "character_id": "mujica.umiri",
+      "keywords": [
+        "恭敬",
+        "海铃",
+        "八幡海铃"
+      ],
+      "label": "恭敬",
+      "source_pack": "user-v04",
+      "source_category": "海铃",
+      "band_id": "mujica"
+    },
+    {
+      "id": "mujica.report-you",
+      "label": "我要告你",
+      "character_id": "mujica.umiri",
+      "image": "/static/assets/stickers/mujica-report-you-6b424af0.png",
+      "keywords": [
+        "我要告你",
+        "海铃",
+        "八幡海铃"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "海铃"
+    },
+    {
+      "id": "user-v04.4f34cb266438a1f9",
+      "image": "/static/assets/stickers/user-v04-4f34cb266438a1f9.png",
+      "character_id": "mujica.umiri",
+      "keywords": [
+        "真谄媚啊",
+        "海铃",
+        "八幡海铃"
+      ],
+      "label": "真谄媚啊",
+      "source_pack": "user-v04",
+      "source_category": "海铃",
+      "band_id": "mujica"
+    },
+    {
+      "id": "mujica.sleep",
+      "label": "睡觉",
+      "character_id": "mujica.umiri",
+      "image": "/static/assets/stickers/mujica-sleep-09975fc9.png",
+      "keywords": [
+        "睡觉",
+        "海铃",
+        "八幡海铃"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "海铃"
+    },
+    {
+      "id": "mujica.could-it-be",
+      "label": "难道？",
+      "character_id": "mujica.umiri",
+      "image": "/static/assets/stickers/mujica-could-it-be-86356134.png",
+      "keywords": [
+        "难道？",
+        "海铃",
+        "八幡海铃"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "海铃"
+    },
+    {
+      "id": "user-v04.7f378a9b1bd7c4f6",
+      "image": "/static/assets/stickers/user-v04-7f378a9b1bd7c4f6.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "Y",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "Y",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.bd9f92001c4deb41",
+      "image": "/static/assets/stickers/user-v04-bd9f92001c4deb41.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "不要吵架",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "不要吵架",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.d1306f344d8a581b",
+      "image": "/static/assets/stickers/user-v04-d1306f344d8a581b.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "创作中",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "创作中",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.48cc5f6642bcd7a4",
+      "image": "/static/assets/stickers/user-v04-48cc5f6642bcd7a4.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "哎呀",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "哎呀",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.dd5c3c349e483327",
+      "image": "/static/assets/stickers/user-v04-dd5c3c349e483327.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "哭哭",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "哭哭",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.ca9a694ab90d8822",
+      "image": "/static/assets/stickers/user-v04-ca9a694ab90d8822.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "害羞",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "害羞",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.7f231e552c792641",
+      "image": "/static/assets/stickers/user-v04-7f231e552c792641.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "开唱",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "开唱",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.0699b18ed6e870dd",
+      "image": "/static/assets/stickers/user-v04-0699b18ed6e870dd.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "开心",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "开心",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.0d2d9531986cbf0f",
+      "image": "/static/assets/stickers/user-v04-0d2d9531986cbf0f.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "忧郁",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "忧郁",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.baf2235df46032aa",
+      "image": "/static/assets/stickers/user-v04-baf2235df46032aa.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "我需要你",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "我需要你",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.3a4f5369892a96ba",
+      "image": "/static/assets/stickers/user-v04-3a4f5369892a96ba.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "摸摸",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "摸摸",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.daa64e88e41cf6ab",
+      "image": "/static/assets/stickers/user-v04-daa64e88e41cf6ab.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "泪目",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "泪目",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.32fb2e03b49a26ac",
+      "image": "/static/assets/stickers/user-v04-32fb2e03b49a26ac.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "疑惑",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "疑惑",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.c191e8260a4abfc1",
+      "image": "/static/assets/stickers/user-v04-c191e8260a4abfc1.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "端详",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "端详",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.13cc8967ebd150e4",
+      "image": "/static/assets/stickers/user-v04-13cc8967ebd150e4.png",
+      "character_id": "mygo.tomori",
+      "keywords": [
+        "迷茫",
+        "灯灯",
+        "高松灯"
+      ],
+      "label": "迷茫",
+      "source_pack": "user-v04",
+      "source_category": "灯灯",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.67051a5fc2cd59bd",
+      "image": "/static/assets/stickers/user-v04-67051a5fc2cd59bd.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "!",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "!",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.a525246f01ffa5a3",
+      "image": "/static/assets/stickers/user-v04-a525246f01ffa5a3.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "Love",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "Love",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.c66f4f4fc1937489",
+      "image": "/static/assets/stickers/user-v04-c66f4f4fc1937489.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "SNS见",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "SNS见",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.d2e550064c0a7731",
+      "image": "/static/assets/stickers/user-v04-d2e550064c0a7731.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "不会吧？",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "不会吧？",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.54c6734e6d3259d0",
+      "image": "/static/assets/stickers/user-v04-54c6734e6d3259d0.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "哈？！",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "哈？！",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.54761ad077436801",
+      "image": "/static/assets/stickers/user-v04-54761ad077436801.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "天呐",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "天呐",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.5468f686c9413a21",
+      "image": "/static/assets/stickers/user-v04-5468f686c9413a21.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "快看",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "快看",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.21ea88ad387b7668",
+      "image": "/static/assets/stickers/user-v04-21ea88ad387b7668.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "快说吧",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "快说吧",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.1de14ec8aa842c53",
+      "image": "/static/assets/stickers/user-v04-1de14ec8aa842c53.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "怎么办",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "怎么办",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.43c3ca2c026d77ea",
+      "image": "/static/assets/stickers/user-v04-43c3ca2c026d77ea.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "抢到票啦",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "抢到票啦",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.34868c10919f0811",
+      "image": "/static/assets/stickers/user-v04-34868c10919f0811.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "按我说",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "按我说",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.6dbfb6cc3b6043d7",
+      "image": "/static/assets/stickers/user-v04-6dbfb6cc3b6043d7.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "探头",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "探头",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.a4ad9fb877687305",
+      "image": "/static/assets/stickers/user-v04-a4ad9fb877687305.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "爱音东京",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "爱音东京",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.ccee54528ebef852",
+      "image": "/static/assets/stickers/user-v04-ccee54528ebef852.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "生气",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "生气",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.ddca04cb14a9252c",
+      "image": "/static/assets/stickers/user-v04-ddca04cb14a9252c.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "累瘫",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "累瘫",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.a910878a300192af",
+      "image": "/static/assets/stickers/user-v04-a910878a300192af.png",
+      "character_id": "mygo.anon",
+      "keywords": [
+        "这不好吧",
+        "爱音",
+        "千早爱音"
+      ],
+      "label": "这不好吧",
+      "source_pack": "user-v04",
+      "source_category": "爱音",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.2c673ba770c08ea1",
+      "image": "/static/assets/stickers/user-v04-2c673ba770c08ea1.png",
+      "character_id": null,
+      "keywords": [
+        "wink",
+        "真奈"
+      ],
+      "label": "wink",
+      "source_pack": "user-v04",
+      "source_category": "真奈",
+      "band_id": "supplementary"
+    },
+    {
+      "id": "user-v04.38dd761573f4982e",
+      "image": "/static/assets/stickers/user-v04-38dd761573f4982e.png",
+      "character_id": null,
+      "keywords": [
+        "五冠王3",
+        "真奈"
+      ],
+      "label": "五冠王3",
+      "source_pack": "user-v04",
+      "source_category": "真奈",
+      "band_id": "supplementary"
+    },
+    {
+      "id": "user-v04.11321a7c0fbd6f94",
+      "image": "/static/assets/stickers/user-v04-11321a7c0fbd6f94.png",
+      "character_id": null,
+      "keywords": [
+        "伸懒腰",
+        "真奈"
+      ],
+      "label": "伸懒腰",
+      "source_pack": "user-v04",
+      "source_category": "真奈",
+      "band_id": "supplementary"
+    },
+    {
+      "id": "user-v04.2452326259733412",
+      "image": "/static/assets/stickers/user-v04-2452326259733412.png",
+      "character_id": null,
+      "keywords": [
+        "分你一半",
+        "真奈"
+      ],
+      "label": "分你一半",
+      "source_pack": "user-v04",
+      "source_category": "真奈",
+      "band_id": "supplementary"
+    },
+    {
+      "id": "user-v04.0173681b61b08827",
+      "image": "/static/assets/stickers/user-v04-0173681b61b08827.png",
+      "character_id": null,
+      "keywords": [
+        "哭哭",
+        "真奈"
+      ],
+      "label": "哭哭",
+      "source_pack": "user-v04",
+      "source_category": "真奈",
+      "band_id": "supplementary"
+    },
+    {
+      "id": "mujica.hmph",
+      "label": "哼",
+      "character_id": "mujica.mutsumi",
+      "image": "/static/assets/stickers/mujica-hmph-b1b133a1.png",
+      "keywords": [
+        "哼",
+        "睦头",
+        "若叶睦"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "睦头"
+    },
+    {
+      "id": "user-v04.15b3015a2e005f64",
+      "image": "/static/assets/stickers/user-v04-15b3015a2e005f64.png",
+      "character_id": "mujica.mutsumi",
+      "keywords": [
+        "唱歌",
+        "睦头",
+        "若叶睦"
+      ],
+      "label": "唱歌",
+      "source_pack": "user-v04",
+      "source_category": "睦头",
+      "band_id": "mujica"
+    },
+    {
+      "id": "mujica.happy",
+      "label": "开心",
+      "character_id": "mujica.mutsumi",
+      "image": "/static/assets/stickers/mujica-happy-0321ba81.png",
+      "keywords": [
+        "开心",
+        "睦头",
+        "若叶睦"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "睦头"
+    },
+    {
+      "id": "mujica.suddenly",
+      "label": "怎么突然",
+      "character_id": "mujica.mutsumi",
+      "image": "/static/assets/stickers/mujica-suddenly-efa7f5e8.png",
+      "keywords": [
+        "怎么突然",
+        "睦头",
+        "若叶睦"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "睦头"
+    },
+    {
+      "id": "user-v04.d72e45ee1ff37c80",
+      "image": "/static/assets/stickers/user-v04-d72e45ee1ff37c80.png",
+      "character_id": "mujica.mutsumi",
+      "keywords": [
+        "抱抱",
+        "睦头",
+        "若叶睦"
+      ],
+      "label": "抱抱",
+      "source_pack": "user-v04",
+      "source_category": "睦头",
+      "band_id": "mujica"
+    },
+    {
+      "id": "user-v04.1990cadbe88f6bf7",
+      "image": "/static/assets/stickers/user-v04-1990cadbe88f6bf7.png",
+      "character_id": "mujica.mutsumi",
+      "keywords": [
+        "是秘密哦",
+        "睦头",
+        "若叶睦"
+      ],
+      "label": "是秘密哦",
+      "source_pack": "user-v04",
+      "source_category": "睦头",
+      "band_id": "mujica"
+    },
+    {
+      "id": "mujica.eh",
+      "label": "诶",
+      "character_id": "mujica.mutsumi",
+      "image": "/static/assets/stickers/mujica-eh-e0f2f3df.png",
+      "keywords": [
+        "诶",
+        "睦头",
+        "若叶睦"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "睦头"
+    },
+    {
+      "id": "user-v04.405229d140517bc9",
+      "image": "/static/assets/stickers/user-v04-405229d140517bc9.png",
+      "character_id": "mujica.mutsumi",
+      "keywords": [
+        "雨天",
+        "睦头",
+        "若叶睦"
+      ],
+      "label": "雨天",
+      "source_pack": "user-v04",
+      "source_category": "睦头",
+      "band_id": "mujica"
+    },
+    {
+      "id": "user-v04.f3333ea683c0154e",
+      "image": "/static/assets/stickers/user-v04-f3333ea683c0154e.png",
+      "character_id": "mujica.sakiko",
+      "keywords": [
+        "哈气",
+        "祥子",
+        "丰川祥子"
+      ],
+      "label": "哈气",
+      "source_pack": "user-v04",
+      "source_category": "祥子",
+      "band_id": "mujica"
+    },
+    {
+      "id": "mujica.scared",
+      "label": "害怕",
+      "character_id": "mujica.sakiko",
+      "image": "/static/assets/stickers/mujica-scared-b9e8fb40.png",
+      "keywords": [
+        "害怕",
+        "祥子",
+        "丰川祥子"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "祥子"
+    },
+    {
+      "id": "user-v04.bae3feb0ea23a8d3",
+      "image": "/static/assets/stickers/user-v04-bae3feb0ea23a8d3.png",
+      "character_id": "mujica.sakiko",
+      "keywords": [
+        "小祥",
+        "祥子",
+        "丰川祥子"
+      ],
+      "label": "小祥",
+      "source_pack": "user-v04",
+      "source_category": "祥子",
+      "band_id": "mujica"
+    },
+    {
+      "id": "mujica.delighted",
+      "label": "愉快",
+      "character_id": "mujica.sakiko",
+      "image": "/static/assets/stickers/mujica-delighted-51763744.png",
+      "keywords": [
+        "愉快",
+        "祥子",
+        "丰川祥子"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "祥子"
+    },
+    {
+      "id": "mujica.let-me-speak",
+      "label": "我有话说",
+      "character_id": "mujica.sakiko",
+      "image": "/static/assets/stickers/mujica-let-me-speak-d1187f2d.png",
+      "keywords": [
+        "我有话说",
+        "祥子",
+        "丰川祥子"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "祥子"
+    },
+    {
+      "id": "user-v04.649601fa7e62f65f",
+      "image": "/static/assets/stickers/user-v04-649601fa7e62f65f.png",
+      "character_id": "mujica.sakiko",
+      "keywords": [
+        "撩发",
+        "祥子",
+        "丰川祥子"
+      ],
+      "label": "撩发",
+      "source_pack": "user-v04",
+      "source_category": "祥子",
+      "band_id": "mujica"
+    },
+    {
+      "id": "user-v04.17dcd1026245790d",
+      "image": "/static/assets/stickers/user-v04-17dcd1026245790d.png",
+      "character_id": "mujica.sakiko",
+      "keywords": [
+        "无语",
+        "祥子",
+        "丰川祥子"
+      ],
+      "label": "无语",
+      "source_pack": "user-v04",
+      "source_category": "祥子",
+      "band_id": "mujica"
+    },
+    {
+      "id": "mujica.delicious",
+      "label": "美味",
+      "character_id": "mujica.sakiko",
+      "image": "/static/assets/stickers/mujica-delicious-e884dedc.png",
+      "keywords": [
+        "美味",
+        "祥子",
+        "丰川祥子"
+      ],
+      "band_id": "mujica",
+      "source_pack": "user-v04",
+      "source_category": "祥子"
+    },
+    {
+      "id": "user-v04.ab7a2401084d0587",
+      "image": "/static/assets/stickers/user-v04-ab7a2401084d0587.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "Block!",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "Block!",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.e94edc8ef439dd2e",
+      "image": "/static/assets/stickers/user-v04-e94edc8ef439dd2e.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "G",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "G",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.68907fc9e7e8e081",
+      "image": "/static/assets/stickers/user-v04-68907fc9e7e8e081.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "不是的",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "不是的",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.0fc8409569fa4107",
+      "image": "/static/assets/stickers/user-v04-0fc8409569fa4107.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "哈？",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "哈？",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.c86a576b5784c283",
+      "image": "/static/assets/stickers/user-v04-c86a576b5784c283.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "啧",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "啧",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.857227cafb3f0d24",
+      "image": "/static/assets/stickers/user-v04-857227cafb3f0d24.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "好诶",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "好诶",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.f8e392619cb7fa18",
+      "image": "/static/assets/stickers/user-v04-f8e392619cb7fa18.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "忧郁",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "忧郁",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.bc810dfd297c7895",
+      "image": "/static/assets/stickers/user-v04-bc810dfd297c7895.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "惊讶",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "惊讶",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.0fb5392c5ba127af",
+      "image": "/static/assets/stickers/user-v04-0fb5392c5ba127af.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "我做不到",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "我做不到",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.40b7cb3ff4ccbab1",
+      "image": "/static/assets/stickers/user-v04-40b7cb3ff4ccbab1.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "生气",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "生气",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.97f7c3742e972a25",
+      "image": "/static/assets/stickers/user-v04-97f7c3742e972a25.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "盯",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "盯",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.2d77929b34b2eba9",
+      "image": "/static/assets/stickers/user-v04-2d77929b34b2eba9.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "睡觉",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "睡觉",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.d448d6d551a900e6",
+      "image": "/static/assets/stickers/user-v04-d448d6d551a900e6.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "突然出现",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "突然出现",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.16aa3a60bab7827d",
+      "image": "/static/assets/stickers/user-v04-16aa3a60bab7827d.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "请点单",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "请点单",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.ca050108da3ab29a",
+      "image": "/static/assets/stickers/user-v04-ca050108da3ab29a.png",
+      "character_id": "mygo.taki",
+      "keywords": [
+        "那我呢？",
+        "立希",
+        "椎名立希"
+      ],
+      "label": "那我呢？",
+      "source_pack": "user-v04",
+      "source_category": "立希",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.f5ad7586224101ef",
+      "image": "/static/assets/stickers/user-v04-f5ad7586224101ef.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "O",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "O",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.eb107a621067ad19",
+      "image": "/static/assets/stickers/user-v04-eb107a621067ad19.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "为什么！",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "为什么！",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.17726a56ad51730d",
+      "image": "/static/assets/stickers/user-v04-17726a56ad51730d.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "发送消息",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "发送消息",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.dd001ca5189b522a",
+      "image": "/static/assets/stickers/user-v04-dd001ca5189b522a.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "大哭",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "大哭",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.017ba4471a722a74",
+      "image": "/static/assets/stickers/user-v04-017ba4471a722a74.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "干嘛",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "干嘛",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.03e14527fbd68cdb",
+      "image": "/static/assets/stickers/user-v04-03e14527fbd68cdb.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "微笑",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "微笑",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.b06cbfb2c0ad9d91",
+      "image": "/static/assets/stickers/user-v04-b06cbfb2c0ad9d91.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "想到了",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "想到了",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.79d76782c492f5bc",
+      "image": "/static/assets/stickers/user-v04-79d76782c492f5bc.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "是朋友哦",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "是朋友哦",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.3a04b48abd698104",
+      "image": "/static/assets/stickers/user-v04-3a04b48abd698104.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "有趣",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "有趣",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.cc37dcebaafed938",
+      "image": "/static/assets/stickers/user-v04-cc37dcebaafed938.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "服了",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "服了",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.eeacb8feaa6d1a5d",
+      "image": "/static/assets/stickers/user-v04-eeacb8feaa6d1a5d.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "注视",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "注视",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.efb730729719e576",
+      "image": "/static/assets/stickers/user-v04-efb730729719e576.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "细品",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "细品",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.114a805282c3056b",
+      "image": "/static/assets/stickers/user-v04-114a805282c3056b.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "苦笑",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "苦笑",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.d6080fd1f617afbf",
+      "image": "/static/assets/stickers/user-v04-d6080fd1f617afbf.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "认真",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "认真",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.9cbced9dbe7f0908",
+      "image": "/static/assets/stickers/user-v04-9cbced9dbe7f0908.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "让我看看",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "让我看看",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "user-v04.06f6e069b5fb5a1a",
+      "image": "/static/assets/stickers/user-v04-06f6e069b5fb5a1a.png",
+      "character_id": "mygo.soyo",
+      "keywords": [
+        "黑脸",
+        "素世",
+        "长崎素世"
+      ],
+      "label": "黑脸",
+      "source_pack": "user-v04",
+      "source_category": "素世",
+      "band_id": "mygo"
+    },
+    {
+      "id": "mygo.shy",
+      "label": "害羞",
+      "character_id": "mygo.tomori",
+      "image": "/static/assets/stickers/mygo-shy-720b3012.png",
+      "keywords": [
+        "害羞",
+        "高松灯"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "灯灯"
+    },
+    {
+      "id": "mygo.angry",
+      "label": "生气",
+      "character_id": "mygo.anon",
+      "image": "/static/assets/stickers/mygo-angry-02d3ee6d.png",
+      "keywords": [
+        "生气",
+        "千早爱音"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "爱音"
+    },
+    {
+      "id": "mygo.messaging",
+      "label": "发送消息",
+      "character_id": "mygo.soyo",
+      "image": "/static/assets/stickers/mygo-messaging-baf184f9.png",
+      "keywords": [
+        "发送消息",
+        "长崎素世"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "素世"
+    },
+    {
+      "id": "mygo.matcha-parfait",
+      "label": "抹茶芭菲",
+      "character_id": "mygo.rana",
+      "image": "/static/assets/stickers/mygo-matcha-parfait-70bc87e6.png",
+      "keywords": [
+        "抹茶芭菲",
+        "要乐奈"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "乐奈"
+    },
+    {
+      "id": "mygo.order-please",
+      "label": "请点单",
+      "character_id": "mygo.taki",
+      "image": "/static/assets/stickers/mygo-order-please-03920181.png",
+      "keywords": [
+        "请点单",
+        "椎名立希"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "立希"
+    },
+    {
+      "id": "mygo.no-fighting",
+      "label": "不要吵架",
+      "character_id": "mygo.tomori",
+      "image": "/static/assets/stickers/mygo-no-fighting-08775b9d.png",
+      "keywords": [
+        "不要吵架",
+        "高松灯"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "灯灯"
+    },
+    {
+      "id": "mygo.love",
+      "label": "Love",
+      "character_id": "mygo.anon",
+      "image": "/static/assets/stickers/mygo-love-14676c5e.png",
+      "keywords": [
+        "Love",
+        "千早爱音"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "爱音"
+    },
+    {
+      "id": "mygo.let-me-see",
+      "label": "让我看看",
+      "character_id": "mygo.soyo",
+      "image": "/static/assets/stickers/mygo-let-me-see-f35bf6d0.png",
+      "keywords": [
+        "让我看看",
+        "长崎素世"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "素世"
+    },
+    {
+      "id": "mygo.slipping-away",
+      "label": "溜了溜了",
+      "character_id": "mygo.rana",
+      "image": "/static/assets/stickers/mygo-slipping-away-95faaedb.png",
+      "keywords": [
+        "溜了溜了",
+        "要乐奈"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "乐奈"
+    },
+    {
+      "id": "mygo.what-about-me",
+      "label": "那我呢？",
+      "character_id": "mygo.taki",
+      "image": "/static/assets/stickers/mygo-what-about-me-fd3e02d3.png",
+      "keywords": [
+        "那我呢？",
+        "椎名立希"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "立希"
+    },
+    {
+      "id": "mygo.writing",
+      "label": "创作中",
+      "character_id": "mygo.tomori",
+      "image": "/static/assets/stickers/mygo-writing-6b26450d.png",
+      "keywords": [
+        "创作中",
+        "高松灯"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "灯灯"
+    },
+    {
+      "id": "mygo.peek",
+      "label": "探头",
+      "character_id": "mygo.anon",
+      "image": "/static/assets/stickers/mygo-peek-24366f34.png",
+      "keywords": [
+        "探头",
+        "千早爱音"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "爱音"
+    },
+    {
+      "id": "mygo.why",
+      "label": "为什么！",
+      "character_id": "mygo.soyo",
+      "image": "/static/assets/stickers/mygo-why-5b65a0b5.png",
+      "keywords": [
+        "为什么！",
+        "长崎素世"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "素世"
+    },
+    {
+      "id": "mygo.just-woke-up",
+      "label": "刚睡醒",
+      "character_id": "mygo.rana",
+      "image": "/static/assets/stickers/mygo-just-woke-up-ca3f2b72.png",
+      "keywords": [
+        "刚睡醒",
+        "要乐奈"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "乐奈"
+    },
+    {
+      "id": "mygo.huh",
+      "label": "哈？",
+      "character_id": "mygo.taki",
+      "image": "/static/assets/stickers/mygo-huh-11ba8b92.png",
+      "keywords": [
+        "哈？",
+        "椎名立希"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "立希"
+    },
+    {
+      "id": "mygo.melancholy",
+      "label": "忧郁",
+      "character_id": "mygo.tomori",
+      "image": "/static/assets/stickers/mygo-melancholy-0855e4e0.png",
+      "keywords": [
+        "忧郁",
+        "高松灯"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "灯灯"
+    },
+    {
+      "id": "mygo.no-way",
+      "label": "不会吧？",
+      "character_id": "mygo.anon",
+      "image": "/static/assets/stickers/mygo-no-way-4ff5fe91.png",
+      "keywords": [
+        "不会吧？",
+        "千早爱音"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "爱音"
+    },
+    {
+      "id": "mygo.crying",
+      "label": "大哭",
+      "character_id": "mygo.soyo",
+      "image": "/static/assets/stickers/mygo-crying-e724c1f2.png",
+      "keywords": [
+        "大哭",
+        "长崎素世"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "素世"
+    },
+    {
+      "id": "mygo.interesting",
+      "label": "有趣的女人",
+      "character_id": "mygo.rana",
+      "image": "/static/assets/stickers/mygo-interesting-69bec53e.png",
+      "keywords": [
+        "有趣的女人",
+        "要乐奈"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "乐奈"
+    },
+    {
+      "id": "mygo.block",
+      "label": "Block!",
+      "character_id": "mygo.taki",
+      "image": "/static/assets/stickers/mygo-block-35043b87.png",
+      "keywords": [
+        "Block!",
+        "椎名立希"
+      ],
+      "band_id": "mygo",
+      "source_pack": "starter-v03",
+      "source_category": "立希"
+    }
+  ],
+  "sticker_packs": [
+    {
+      "id": "mygo",
+      "name": "MyGO!!!!! 日常表情",
+      "sticker_count": 98
+    },
+    {
+      "id": "mujica",
+      "name": "Ave Mujica 日常表情",
+      "sticker_count": 40
+    },
+    {
+      "id": "supplementary",
+      "name": "补充素材",
+      "sticker_count": 5
+    }
+  ],
+  "sticker_sources": [
+    {
+      "id": "user-v04",
+      "name": "本次素材",
+      "sticker_count": 123
+    },
+    {
+      "id": "starter-v03",
+      "name": "旧版补充",
+      "sticker_count": 20
+    }
+  ],
+  "sticker_categories": [
+    {
+      "id": "乐奈",
+      "name": "乐奈",
+      "character_id": "mygo.rana",
+      "sticker_count": 20,
+      "user_pack_count": 16
+    },
+    {
+      "id": "灯灯",
+      "name": "灯灯",
+      "character_id": "mygo.tomori",
+      "sticker_count": 19,
+      "user_pack_count": 15
+    },
+    {
+      "id": "爱音",
+      "name": "爱音",
+      "character_id": "mygo.anon",
+      "sticker_count": 20,
+      "user_pack_count": 16
+    },
+    {
+      "id": "立希",
+      "name": "立希",
+      "character_id": "mygo.taki",
+      "sticker_count": 19,
+      "user_pack_count": 15
+    },
+    {
+      "id": "素世",
+      "name": "素世",
+      "character_id": "mygo.soyo",
+      "sticker_count": 20,
+      "user_pack_count": 16
+    },
+    {
+      "id": "初华",
+      "name": "初华",
+      "character_id": "mujica.uika",
+      "sticker_count": 8,
+      "user_pack_count": 8
+    },
+    {
+      "id": "睦头",
+      "name": "睦头",
+      "character_id": "mujica.mutsumi",
+      "sticker_count": 8,
+      "user_pack_count": 8
+    },
+    {
+      "id": "海铃",
+      "name": "海铃",
+      "character_id": "mujica.umiri",
+      "sticker_count": 8,
+      "user_pack_count": 8
+    },
+    {
+      "id": "喵梦",
+      "name": "喵梦",
+      "character_id": "mujica.nyamu",
+      "sticker_count": 8,
+      "user_pack_count": 8
+    },
+    {
+      "id": "祥子",
+      "name": "祥子",
+      "character_id": "mujica.sakiko",
+      "sticker_count": 8,
+      "user_pack_count": 8
+    },
+    {
+      "id": "真奈",
+      "name": "真奈",
+      "character_id": null,
+      "sticker_count": 5,
+      "user_pack_count": 5
+    }
+  ]
+}

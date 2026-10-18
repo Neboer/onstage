@@ -1,0 +1,30 @@
+{
+  "format": "onstage-source-release-v1",
+  "application_version": "0.6.0-phase1",
+  "public_url": "https://onstage-band-review.snowybeech7.chatgpt.site",
+  "status": "succeeded",
+  "site_project_id": "appgprj_6ad442f0aad08191b9a51a6ae4602a51",
+  "site_version": 7,
+  "site_version_id": "appgprj_6ad442f0aad08191b9a51a6ae4602a51~appgver_fae549a91e4481918d61c2b4ddddb4de",
+  "source_commit": "26305f3250c1fc34ab4a190a4ec429ab705a79f8",
+  "deployment_id": "appgdep_6ad48502bed8819196adc78d783176a3",
+  "published_at_utc": "2026-10-18T08:36:25.535618+00:00",
+  "first_shared_runtime_version": 6,
+  "first_shared_runtime_source_commit": "8d3902356977bde7e18abb660fc8ef4c0a34487d",
+  "documentation_only_followup": true,
+  "runtime_archive_identical_to_verified_version": true,
+  "deployment_archive_sha256": "sha256:2d9dfb87df167b2e6fe8d7bc74ee1bc9d15603946bc82fdf76e31fd01e797d27",
+  "application_content_dependency_sha256": "3fbe079381987b91ce907f531dd60ea27261231941e3b773c698749ec32aaef4",
+  "source_manifest_sha256": "1261038b05042659fc2fdc8bb71f1442f797f4ffc27935b36ae9a79f45bd54c5",
+  "evidence_location": "onstage/docs/acceptance.json",
+  "source_export_contains_runtime_data": false,
+  "mainland_direct_verified": false,
+  "physical_devices_verified": false,
+  "notes": [
+    "Source includes full shared frontend, Node Workers/D1 and independent Python/SQLite backends, assets, migrations, tests, tools, docs and SHA256SUMS.",
+    "SOURCE_REVISION.json is generated export provenance, not part of the Git commit or its SHA256SUMS.",
+    "Verified runtime first published as Sites version 6. Version 7 saves final documentation and probe evidence using a byte-identical deployment archive.",
+    "No general data importer or actual target migration was completed; isolated D1-to-SQLite restoration is verified."
+  ],
+  "exported_at_utc": "2026-10-18T08:37:38.255060+00:00"
+}

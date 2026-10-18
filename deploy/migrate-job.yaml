@@ -1,0 +1,30 @@
+# Run once, with the SAME release digest and database Secret as the Deployment.
+# Freeze writes + backup/restore rehearsal first. Delete only a completed old Job
+# with this precise name before a subsequent release's explicitly controlled job.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: onstage-migrate
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 300
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: migrate
+          image: ghcr.io/REPLACE_OWNER/REPLACE_REPO@sha256:REPLACE_DIGEST
+          command: ["python", "tools/database.py", "migrate"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: onstage-database, key: DATABASE_URL}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}

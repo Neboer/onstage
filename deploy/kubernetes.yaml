@@ -1,0 +1,67 @@
+# Replace namespace/image digest/origin. Secret is provisioned out of band.
+# DATABASE_URL is a key in the onstage-database Secret, never a plaintext manifest.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: onstage-config
+data:
+  ONSTAGE_PUBLIC_ORIGIN: https://REPLACE_WITH_APPROVED_HOST
+  ONSTAGE_SECURE_COOKIE: "1"
+  ONSTAGE_VERSION: REPLACE_WITH_RELEASE_COMMIT
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onstage
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: {app: onstage}
+  template:
+    metadata:
+      labels: {app: onstage}
+    spec:
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: onstage
+          image: ghcr.io/REPLACE_OWNER/REPLACE_REPO@sha256:REPLACE_DIGEST
+          imagePullPolicy: IfNotPresent
+          ports: [{containerPort: 8765, name: http}]
+          envFrom:
+            - configMapRef: {name: onstage-config}
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: onstage-database, key: DATABASE_URL}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: "1", memory: 512Mi}
+          startupProbe:
+            httpGet: {path: /readyz, port: http}
+            failureThreshold: 30
+            periodSeconds: 2
+          readinessProbe:
+            httpGet: {path: /readyz, port: http}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: onstage
+spec:
+  selector: {app: onstage}
+  ports: [{name: http, port: 8765, targetPort: http}]

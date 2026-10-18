@@ -1,0 +1,194 @@
+#!/usr/bin/env python3
+"""Controlled PostgreSQL migration and private snapshot recovery.
+
+DATABASE_URL is read from the environment, never a command argument. Snapshots
+contain credentials and private chat/report text: keep them outside the checkout.
+Restore/import requires a migrated but empty destination and never deletes rows.
+Freeze source writes before final export/cutover; keep exactly one writable site.
+"""
+from __future__ import annotations
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import sqlite3
+import sys
+import tempfile
+from contextlib import closing
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from sqlalchemy import inspect, text
+from app.postgres import PostgresStore
+from app.security import Settings, iso_time
+
+TABLES = ('schema_meta', 'sessions', 'characters', 'rooms', 'room_members',
+          'role_requests', 'messages', 'room_bans', 'rate_events', 'reports', 'moderation_actions')
+BUSINESS = tuple(name for name in TABLES if name not in ('schema_meta', 'characters'))
+FORMAT = 'onstage-postgres-private-v1'
+MAX_BYTES = 64 * 1024 * 1024
+
+
+def canonical(rows):
+    return sorted(json.dumps(row, sort_keys=True, ensure_ascii=False, separators=(',', ':')) for row in rows)
+
+
+def snapshot(store):
+    with store.engine.connect().execution_options(isolation_level='REPEATABLE READ') as connection:
+        with connection.begin():
+            connection.execute(text('SET TRANSACTION READ ONLY'))
+            tables = {}
+            for name in TABLES:
+                rows = connection.execute(text(f'SELECT * FROM {name} LIMIT 100001')).mappings().all()
+                if len(rows) > 100000:
+                    raise ValueError('Snapshot row limit exceeded; use pg_dump for larger databases.')
+                tables[name] = [dict(row) for row in rows]
+    return {'format': FORMAT, 'schema_version': 4, 'exported_at': iso_time(),
+            'contains_private_session_credentials': True, 'tables': tables,
+            'row_counts': {name: len(rows) for name, rows in tables.items()}}
+
+
+def read_snapshot(path):
+    if path.stat().st_size > MAX_BYTES:
+        raise ValueError('Snapshot is too large; use native PostgreSQL backup tooling.')
+    payload = json.loads(path.read_text(encoding='utf8'))
+    tables = payload.get('tables', {})
+    if (payload.get('format') not in (FORMAT, 'onstage-confidential-state-v1')
+            or payload.get('schema_version') != 4
+            or payload.get('contains_private_session_credentials') is not True
+            or not isinstance(tables, dict)
+            or set(tables) not in (set(TABLES), set(TABLES) - {'rate_events'})):
+        raise ValueError('Unsupported or incomplete private snapshot.')
+    for name, rows in tables.items():
+        if (not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows)
+                or payload.get('row_counts', {}).get(name) != len(rows)):
+            raise ValueError('Snapshot row count/shape mismatch.')
+    if not any(row == {'key': 'schema_version', 'value': '4'} for row in tables['schema_meta']):
+        raise ValueError('Snapshot does not contain the expected business schema version.')
+    return payload
+
+
+def sqlite_snapshot(path):
+    source = path.resolve(strict=True)
+    with closing(sqlite3.connect(source.as_uri() + '?mode=ro', uri=True)) as connection:
+        connection.row_factory = sqlite3.Row
+        connection.execute('BEGIN')
+        if connection.execute('PRAGMA integrity_check').fetchone()[0] != 'ok' or connection.execute('PRAGMA foreign_key_check').fetchone():
+            raise ValueError('SQLite source failed integrity/foreign-key validation.')
+        version = connection.execute("SELECT value FROM schema_meta WHERE key='schema_version'").fetchone()
+        if not version or version[0] != '4':
+            raise ValueError('SQLite source must already be schema 4; no implicit migration performed.')
+        tables = {name: [dict(row) for row in connection.execute(f'SELECT * FROM {name}')] for name in TABLES}
+    return {'format': FORMAT, 'schema_version': 4, 'contains_private_session_credentials': True,
+            'tables': tables, 'row_counts': {name: len(rows) for name, rows in tables.items()}}
+
+
+def compare(connection, payload):
+    counts = {}
+    for name, expected in payload['tables'].items():
+        actual = [dict(row) for row in connection.execute(text(f'SELECT * FROM {name}')).mappings()]
+        if canonical(expected) != canonical(actual):
+            raise ValueError(f'Recovery verification failed for {name}.')
+        counts[name] = len(actual)
+    # Foreign keys are immediate and validated by PostgreSQL during import.
+    # Check room/channel cursors against all stored messages as a separate invariant.
+    invalid = connection.execute(text("SELECT r.id FROM rooms r WHERE r.stage_seq != COALESCE((SELECT MAX(seq) FROM messages m WHERE m.room_id=r.id AND m.channel='stage'),0) OR r.backstage_seq != COALESCE((SELECT MAX(seq) FROM messages m WHERE m.room_id=r.id AND m.channel='backstage'),0) LIMIT 1")).first()
+    if invalid:
+        raise ValueError('Room cursor invariant failed.')
+    return counts
+
+
+def restore(store, payload):
+    with store.engine.begin() as connection:
+        # Destination must be offline. These locks also stop an accidental live
+        # writer from racing the empty-target check and import transaction.
+        connection.execute(text("SET LOCAL lock_timeout = '5s'"))
+        connection.execute(text('LOCK TABLE ' + ','.join(TABLES) + ' IN ACCESS EXCLUSIVE MODE'))
+        if any(connection.execute(text(f'SELECT 1 FROM {name} LIMIT 1')).first() for name in BUSINESS):
+            raise ValueError('Destination has business data; restore refuses to overwrite it.')
+        inspector = inspect(connection)
+        for name in TABLES:
+            rows = payload['tables'].get(name, [])
+            columns = {column['name'] for column in inspector.get_columns(name)}
+            for row in rows:
+                if set(row) != columns:
+                    raise ValueError(f'Snapshot columns differ from schema: {name}.')
+                if name in ('schema_meta', 'characters'):
+                    key = 'key' if name == 'schema_meta' else 'id'
+                    existing = connection.execute(text(f'SELECT * FROM {name} WHERE {key}=:key'), {'key': row[key]}).mappings().first()
+                    if existing:
+                        if dict(existing) != row:
+                            raise ValueError(f'Destination seed differs: {name}.')
+                        continue
+                names = list(row)
+                connection.execute(text(f'INSERT INTO {name} (' + ','.join('"'+key+'"' for key in names) + ') VALUES (' + ','.join(':'+key for key in names) + ')'), row)
+        for name, column in (('reports', 'seq'), ('rate_events', 'id')):
+            connection.execute(text(f"SELECT setval(pg_get_serial_sequence('{name}','{column}'), COALESCE(MAX({column}),1), MAX({column}) IS NOT NULL) FROM {name}"))
+        counts = compare(connection, payload)
+    return counts
+
+
+def backup(store, path):
+    path = path.resolve()
+    if path.is_relative_to(ROOT):
+        raise ValueError("Private snapshots must be saved outside the source checkout.")
+    payload = snapshot(store)
+    raw = json.dumps(payload, ensure_ascii=False, separators=(',', ':')).encode('utf8')
+    if len(raw) > MAX_BYTES:
+        raise ValueError('Snapshot exceeds size limit; no backup published.')
+    path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    # Publish only a fully written snapshot. A same-directory hard link is
+    # atomic and fails if a previous recovery point already owns the name.
+    descriptor, temporary_name = tempfile.mkstemp(prefix='.onstage-private-', dir=path.parent)
+    temporary = Path(temporary_name)
+    try:
+        with os.fdopen(descriptor, 'wb') as stream:
+            stream.write(raw)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.chmod(temporary, 0o600)
+        os.link(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return {'path': str(path), 'sha256': hashlib.sha256(raw).hexdigest(), 'size_bytes': len(raw), 'row_counts': payload['row_counts']}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    commands = parser.add_subparsers(dest='command', required=True)
+    commands.add_parser('migrate')
+    for command in ('backup', 'restore', 'verify', 'import-sqlite'):
+        commands.add_parser(command).add_argument('path', type=Path)
+    args = parser.parse_args()
+    settings = Settings.from_values(public_origin=os.environ.get('ONSTAGE_PUBLIC_ORIGIN', 'http://localhost'))
+    if not settings.database_url:
+        parser.error('DATABASE_URL or ONSTAGE_DATABASE_URL is required; no SQLite fallback in this tool.')
+    store = PostgresStore(settings)
+    try:
+        if args.command == 'migrate':
+            store.migrate()
+            result = store.ready()
+        else:
+            store.ready()
+            if args.command == 'backup':
+                result = backup(store, args.path)
+            else:
+                payload = sqlite_snapshot(args.path) if args.command == 'import-sqlite' else read_snapshot(args.path)
+                if args.command == 'verify':
+                    with store.engine.connect().execution_options(isolation_level='REPEATABLE READ') as connection:
+                        with connection.begin():
+                            result = {'verified_row_counts': compare(connection, payload)}
+                else:
+                    result = {'restored_row_counts': restore(store, payload)}
+        print(json.dumps(result, ensure_ascii=False))
+        return 0
+    except Exception as error:
+        # DB exception strings may contain DSNs or private bound row values.
+        print(json.dumps({'error': type(error).__name__, 'detail': str(error) if isinstance(error, ValueError) else 'Database operation failed; source preserved.'}), file=sys.stderr)
+        return 1
+    finally:
+        store.close()
+
+if __name__ == '__main__':
+    raise SystemExit(main())

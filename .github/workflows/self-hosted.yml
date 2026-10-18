@@ -1,0 +1,146 @@
+name: Self-hosted validation and controlled image publication
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  release:
+    types: [published]
+permissions:
+  contents: read
+concurrency:
+  group: self-hosted-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16-bookworm@sha256:0ea6700a3b4f0ae6ce746519073558aed4d88a79d8d07622a9a644946c7319c4
+        env:
+          POSTGRES_USER: onstage
+          POSTGRES_PASSWORD: isolated-ci-only
+          POSTGRES_DB: onstage
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U onstage -d onstage"
+          --health-interval 3s --health-timeout 3s --health-retries 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12.12'
+          cache: pip
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Locked dependencies
+        run: |
+          python -m pip install -r requirements-dev.txt
+          npm ci --ignore-scripts
+      - name: Python regressions (legacy SQLite)
+        run: python -m pytest -q --ignore=tests/test_postgres.py
+      - name: PostgreSQL concurrency, permissions, migration and restore
+        env:
+          ONSTAGE_TEST_DATABASE_URL: postgresql+psycopg://onstage:isolated-ci-only@127.0.0.1:5432/onstage
+        run: python -m pytest tests/test_postgres.py -q
+      - name: Shared frontend syntax
+        run: |
+          node --check static/app.js
+          node --check static/theme.js
+          node tests/frontend_delivery_check.cjs
+          node edge/freeze.test.mjs
+      - name: Build linux amd64 runtime image
+        run: >-
+          docker build --platform linux/amd64
+          --build-arg SOURCE_REVISION=${{ github.sha }}
+          --build-arg SOURCE_REPOSITORY=${{ github.server_url }}/${{ github.repository }}
+          -t onstage:ci .
+      - name: Explicit migration (not app startup)
+        run: |
+          docker run --rm --network host -e DATABASE_URL=postgresql+psycopg://onstage:isolated-ci-only@127.0.0.1:5432/onstage onstage:ci python tools/database.py migrate
+          docker run --rm --network host -e DATABASE_URL=postgresql+psycopg://onstage:isolated-ci-only@127.0.0.1:5432/onstage onstage:ci python tools/database.py migrate
+      - name: Runtime image HTTP, WebSocket, frontend and replacement persistence
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          start_app() {
+            docker run -d --name onstage-ci --network host --read-only --tmpfs /tmp:rw,noexec,nosuid,size=16m --cap-drop ALL --security-opt no-new-privileges -e DATABASE_URL=postgresql+psycopg://onstage:isolated-ci-only@127.0.0.1:5432/onstage -e ONSTAGE_PUBLIC_ORIGIN=http://127.0.0.1:8765 -e ONSTAGE_SECURE_COOKIE=0 -e ONSTAGE_VERSION=${{ github.sha }} onstage:ci
+            for attempt in $(seq 1 60); do
+              if curl --fail --silent http://127.0.0.1:8765/readyz >/dev/null; then return; fi
+              sleep 1
+            done
+            docker logs onstage-ci
+            return 1
+          }
+          start_app
+          node tests/frontend_dom_check.cjs http://127.0.0.1:8765 reports/container-frontend.json
+          python tools/shared_service_probe.py --url http://127.0.0.1:8765 --output reports/container-protocol.json --source 'GitHub runner loopback synthetic' --expect-version '${{ github.sha }}'
+          python deploy/ci/container_persistence.py write "$RUNNER_TEMP/onstage-persistence.json"
+          docker restart onstage-ci
+          for attempt in $(seq 1 60); do if curl --fail --silent http://127.0.0.1:8765/readyz >/dev/null; then break; fi; sleep 1; done
+          python deploy/ci/container_persistence.py verify "$RUNNER_TEMP/onstage-persistence.json"
+          python deploy/ci/container_persistence.py write "$RUNNER_TEMP/onstage-persistence.json"
+          docker rm -f onstage-ci
+          start_app
+          python deploy/ci/container_persistence.py verify "$RUNNER_TEMP/onstage-persistence.json"
+          docker image inspect onstage:ci --format '{{json .Config.User}}' | tee reports/image-user.json
+      - name: Upload sanitized synthetic reports
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: self-hosted-validation-${{ github.sha }}
+          path: |
+            reports/container-*.json
+            reports/image-user.json
+          if-no-files-found: ignore
+      - name: Clean isolated runtime
+        if: always()
+        run: docker rm -f onstage-ci || true
+  publish:
+    # Only reviewed main code or a release that points into main may publish.
+    if: (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || github.event_name == 'release'
+    needs: validate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify release source and publish immutable evidence
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+          REPOSITORY: ${{ github.repository }}
+          SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}
+          SOURCE_SHA: ${{ github.sha }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor "$SOURCE_SHA" origin/main
+          image="ghcr.io/${REPOSITORY,,}"
+          printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+          trap 'docker logout ghcr.io' EXIT
+          tags=(--tag "$image:sha-$SOURCE_SHA")
+          if [[ -n "$RELEASE_TAG" ]]; then
+            [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$ ]]
+            tags+=(--tag "$image:$RELEASE_TAG")
+          fi
+          docker buildx create --use
+          docker buildx build --platform linux/amd64 --provenance=mode=min --sbom=true --push "${tags[@]}" --build-arg SOURCE_REVISION="$SOURCE_SHA" --build-arg SOURCE_REPOSITORY="$SOURCE_URL" --metadata-file "$RUNNER_TEMP/image-metadata.json" .
+          digest=$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"]+"/image-metadata.json"))["containerimage.digest"])')
+          printf 'Image: `%s@%s`\n\nCommit: `%s`\n\nPlatform: `linux/amd64`\n' "$image" "$digest" "$SOURCE_SHA" | tee "$RUNNER_TEMP/image-release.txt" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: image-release-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/image-release.txt
+            ${{ runner.temp }}/image-metadata.json

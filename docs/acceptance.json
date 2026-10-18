@@ -1,0 +1,114 @@
+{
+  "project": "Onstage",
+  "version": "0.7.0",
+  "updated_at_utc": "2026-10-18T09:38:28.636088+00:00",
+  "overall_status": "PARTIAL",
+  "delivery_scope": "Development, regression verification and public GitHub push; deployment and collaborator invitations are delegated by the user to later coordination.",
+  "source": {
+    "archive": "onstage-v0.6.0-codex-source.zip",
+    "sha256": "a054b5c4494ffd5bb2a01e0a156f23211b8ec15c4f8a0df44959000089e31d0f",
+    "original_commit": "26305f3250c1fc34ab4a190a4ec429ab705a79f8",
+    "manifest_files_verified": 411,
+    "manifest_mismatches": 0,
+    "original_git_history_in_zip": false,
+    "original_archive_preserved": true
+  },
+  "current_evidence": [
+    {
+      "object": "Python compatibility and notification/public-source tests",
+      "status": "VERIFIED",
+      "command": "python -m pytest -q --ignore=tests/test_postgres.py",
+      "result": "149 passed, 2 skipped",
+      "environment": "Windows / Python 3.12.12; explicit loopback synthetic services",
+      "limitations": [
+        "Two Windows symlink checks skipped because account lacks privilege; POSIX protection assertions remain enabled on Linux CI.",
+        "Starlette httpx TestClient deprecation warning retained."
+      ]
+    },
+    {
+      "object": "PostgreSQL adapter and controlled recovery",
+      "status": "VERIFIED",
+      "result": "14 passed, plus final backup-specific regression",
+      "environment": "isolated real PostgreSQL 17.11 / Python 3.12",
+      "evidence": "reports/postgres-integration-20261018.json"
+    },
+    {
+      "object": "Sending ACK/sync reconciliation",
+      "status": "VERIFIED",
+      "command": "node tests/frontend_delivery_check.cjs",
+      "result": "passed",
+      "scope": "Controlled DOM/fetch ordering; lost ACK, late errors, exact identity keys, retry/refresh, drafts, cursor; no layout/network claim"
+    },
+    {
+      "object": "D1 compatibility and old-entry write freeze",
+      "status": "VERIFIED",
+      "commands": [
+        "node edge/freeze.test.mjs",
+        "node edge/integration.test.mjs reports/edge-integration-selfhost-20261018.json"
+      ],
+      "result": "passed",
+      "environment": "local workerd/Miniflare D1; freeze verified in isolated adapter, not deployed on old Sites"
+    },
+    {
+      "object": "Shared frontend and offline adapter",
+      "status": "VERIFIED",
+      "results": [
+        "21 FastAPI/SQLite DOM steps",
+        "20 explicit offline adapter steps"
+      ],
+      "scope": "Executed before final version-only bump to 0.7.0; exact source JS unchanged by version bump; no browser layout claim"
+    },
+    {
+      "object": "Desktop browser Chinese text/sticker/draft/theme",
+      "status": "VERIFIED",
+      "environment": "actual in-app desktop browser on loopback SQLite; one synthetic identity",
+      "scope": "nickname entry, room creation, backstage text and sticker success, draft retained, dark theme",
+      "limitations": [
+        "Not PG browser/phone/IME/three human/network acceptance",
+        "Screenshot stays local with original artwork, excluded from public source"
+      ]
+    },
+    {
+      "object": "Public sample export",
+      "status": "VERIFIED",
+      "result": "5 tests passed in private source and public export",
+      "scope": "stable business IDs, no original bitmap bytes, source/private exclusion, actual API/catalog/sample assets served"
+    }
+  ],
+  "github": {
+    "repository": "https://github.com/SpringfiledBucks/onstage",
+    "visibility": "public",
+    "push_status": "pending",
+    "actions_status": "pending",
+    "collaborators": "Await user-provided exact GitHub usernames; no invitations sent"
+  },
+  "container": {
+    "configuration": "implemented",
+    "runtime_status": "NOT VERIFIED until Actions succeeds",
+    "platform": "linux/amd64",
+    "replicas": 1,
+    "uvicorn_workers": 1,
+    "update_strategy": "Recreate",
+    "publish": "controlled main workflow_dispatch or release after validation",
+    "registry_digest": null
+  },
+  "deployment": {
+    "status": "not performed; outside latest requested delivery scope",
+    "responsible": "user-designated collaborator",
+    "old_sites_unmodified": true,
+    "production_migration_performed": false,
+    "production_write_freeze_performed": false
+  },
+  "historical_v06": {
+    "source_revision": "SOURCE_REVISION.json",
+    "old_acceptance_preserved_locally": true,
+    "used_as_current_pass": false
+  },
+  "not_verified": [
+    "Actual target URL, production PostgreSQL/cutover, cluster/GitOps updates and rollback",
+    "Three human participants, real phone, Chinese IME/soft keyboard and mainland/venue networks",
+    "Click-to-local-paint and real cross-device end-to-end latency/Sites comparison",
+    "Collaborator invitations before user provides names",
+    "Final code/asset licensing not selected"
+  ]
+}
