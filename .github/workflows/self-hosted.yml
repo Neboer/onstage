@@ -78,7 +78,7 @@ jobs:
             return 1
           }
           start_app
-          node tests/frontend_dom_check.cjs http://127.0.0.1:8765 reports/container-frontend.json
+          ONSTAGE_EXPECT_VERSION=${{ github.sha }} node tests/frontend_dom_check.cjs http://127.0.0.1:8765 reports/container-frontend.json
           python tools/shared_service_probe.py --url http://127.0.0.1:8765 --output reports/container-protocol.json --source 'GitHub runner loopback synthetic' --expect-version '${{ github.sha }}'
           python deploy/ci/container_persistence.py write "$RUNNER_TEMP/onstage-persistence.json"
           docker restart onstage-ci
