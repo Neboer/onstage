@@ -1,8 +1,8 @@
 {
   "project": "Onstage",
   "version": "0.7.0",
-  "updated_at_utc": "2026-10-18T09:38:28.636088+00:00",
-  "overall_status": "PARTIAL",
+  "updated_at_utc": "2026-10-18T09:50:08.749204+00:00",
+  "overall_status": "PARTIAL: development and public push verified; GitHub-hosted CI blocked before execution by account billing lock",
   "delivery_scope": "Development, regression verification and public GitHub push; deployment and collaborator invitations are delegated by the user to later coordination.",
   "source": {
     "archive": "onstage-v0.6.0-codex-source.zip",
@@ -73,24 +73,43 @@
       "status": "VERIFIED",
       "result": "5 tests passed in private source and public export",
       "scope": "stable business IDs, no original bitmap bytes, source/private exclusion, actual API/catalog/sample assets served"
+    },
+    {
+      "object": "Public export integration after missing-template fix",
+      "status": "VERIFIED",
+      "results": [
+        "57 deployment/public-source tests passed, 1 Windows symlink test skipped",
+        "21 actual public-sample FastAPI DOM steps passed",
+        "Original source 149 passed/2 skipped and real PG 14 passed remain separate sets"
+      ],
+      "failures_preserved": "Initial public export had six failures from omitted deployment templates; fixed by explicit allowlist and actual nginx/Caddy preparation regression. Original failing XML retained locally; no threshold reduction."
     }
   ],
   "github": {
     "repository": "https://github.com/SpringfiledBucks/onstage",
     "visibility": "public",
-    "push_status": "pending",
-    "actions_status": "pending",
-    "collaborators": "Await user-provided exact GitHub usernames; no invitations sent"
+    "push_status": "VERIFIED",
+    "actions_status": "BLOCKED before job execution",
+    "collaborators": "Await user-provided exact GitHub usernames; no invitations sent",
+    "implementation_commit": "ea4d9db52f4aa65de30236866ef83ff4cc822fa1",
+    "actions_runs": [
+      "https://github.com/SpringfiledBucks/onstage/actions/runs/39116754546",
+      "https://github.com/SpringfiledBucks/onstage/actions/runs/39116782810"
+    ],
+    "actions_blocker": "The job was not started because your account is locked due to a billing issue.",
+    "billing_settings_changed": false,
+    "authentication": "GitHub CLI and Codex connector both verified as SpringfiledBucks; CLI OAuth workflow scope refreshed successfully by user"
   },
   "container": {
     "configuration": "implemented",
-    "runtime_status": "NOT VERIFIED until Actions succeeds",
+    "runtime_status": "NOT VERIFIED: GitHub runner never started; local computer has no Docker",
     "platform": "linux/amd64",
     "replicas": 1,
     "uvicorn_workers": 1,
     "update_strategy": "Recreate",
     "publish": "controlled main workflow_dispatch or release after validation",
-    "registry_digest": null
+    "registry_digest": null,
+    "image_published": false
   },
   "deployment": {
     "status": "not performed; outside latest requested delivery scope",
@@ -110,5 +129,6 @@
     "Click-to-local-paint and real cross-device end-to-end latency/Sites comparison",
     "Collaborator invitations before user provides names",
     "Final code/asset licensing not selected"
-  ]
+  ],
+  "development_and_public_push_status": "VERIFIED"
 }

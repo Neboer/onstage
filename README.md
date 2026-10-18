@@ -2,7 +2,7 @@
 
 免注册昵称入场的 MyGO!!!!! / Ave Mujica 真人文字对戏空间。十个角色、自由场景、文字和贴纸、舞台/后台、旁观、房主管理、举报与历史恢复；没有 AI 代演或假在线。
 
-当前开发版本 **0.7.0**。自托管使用 FastAPI、独立 PostgreSQL、WebSocket 提醒及 HTTP 游标补齐。SQLite 保留本地开发与旧库兼容，Sites/D1 适配继续维护。首个支持部署为 **1 应用副本、1 Uvicorn worker**；目标集群部署由合作方负责，本仓库不宣称已经上线。
+当前开发版本 **0.7.0**。公开协作仓库：[SpringfiledBucks/onstage](https://github.com/SpringfiledBucks/onstage)。自托管使用 FastAPI、独立 PostgreSQL、WebSocket 提醒及 HTTP 游标补齐。SQLite 保留本地开发与旧库兼容，Sites/D1 适配继续维护。首个支持部署为 **1 应用副本、1 Uvicorn worker**；目标集群部署由合作方负责，本仓库不宣称已经上线。
 
 ## 本轮改动
 
@@ -61,3 +61,7 @@ node edge/freeze.test.mjs
 This public source tree contains original generated geometric sample artwork, not the original character, band, sticker or backdrop images. Business IDs and PNG paths remain stable; WebP paths are remapped to same-name SVGs. `docs/ASSET_MANIFEST.json` describes the bundled sample bytes; `PUBLIC_SOURCE_PROVENANCE.json` records excluded source identities and the original ZIP/source commit. Original `SOURCE_REVISION.json` is historical provenance, not a verification result for this tree. No code license or third-party artwork redistribution permission is implied.
 
 To restore assets **locally only**, obtain the original package independently and unpack it to a separate private directory. Run `python tools/prepare_public_source.py restore-assets --source PATH_TO_PRIVATE_ORIGINAL --target PATH_TO_LOCAL_PUBLIC_CHECKOUT`. The command verifies all original asset hashes before restoring them, and refuses to modify a non-sample target. This changes the local content files and manifest; do not commit, push, package or redistribute the restored images without the appropriate rights. Keep the public sample branch clean, or use a separate ignored local copy for demonstrations.
+
+## 当前交付状态
+
+开发与公开源码推送已完成，本地Python/真实PostgreSQL/发送对账及公开示例集成已验证。GitHub Actions已触发，但账户账单锁导致runner未启动；[实际失败回执](https://github.com/SpringfiledBucks/onstage/actions/runs/39116782810)不是应用测试失败，也不是CI通过。没有实际镜像digest。账户恢复后重跑工作流，main手动发布可在验证通过后推GHCR。未操作账单或目标部署。详情见docs/acceptance.json。
