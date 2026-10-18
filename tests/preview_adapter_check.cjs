@@ -412,6 +412,25 @@ async function main() {
     assert.equal(messages[0].content_type, "text");
   });
 
+  await step("Offline room pages apply filters before slicing, retain tied-time order and reject cross-filter cursors", async () => {
+    const storage = new MemoryStorage();
+    const data = { schema: 1, identity: "local-pagination", nickname: "分页", created_at: "2026-10-18T00:00:00.000Z", rooms: Array.from({length: 1107}, (_, i) => ({ id: i.toString(16).padStart(32, "0"), title: "page", scenario_id: catalog.scenarios[0].id, status: i % 2 ? "ended" : "preparing", created_at: "2026-10-18T00:00:00.000Z", joined: i % 3 === 0, messages: [] })) };
+    storage.setItem("onstage.preview.v04.data", JSON.stringify(data));
+    const paging = loadAdapter(source, catalog, {local:storage}).api;
+    for (const filter of ["all", "active", "ended", "mine"]) {
+      let cursor = null; const seen = [];
+      do {
+        const page = await paging.request("/api/rooms?limit=37&filter=" + filter + (cursor ? "&cursor=" + encodeURIComponent(cursor) : ""));
+        assert(page.rooms.length <= 37); seen.push(...page.rooms.map(item => Number.parseInt(item.id, 16)));
+        assert.equal(page.has_more, Boolean(page.next_cursor)); cursor = page.next_cursor;
+      } while (cursor);
+      assert.deepEqual(seen, Array.from({length:1107}, (_,i)=>i).filter(i=>filter === "active" ? i%2===0 : filter === "ended" ? i%2===1 : filter === "mine" ? i%3===0 : true));
+    }
+    const first = await paging.request("/api/rooms"); assert.equal(first.rooms.length, 50);
+    await rejectsStatus(paging.request("/api/rooms?filter=active&cursor=" + encodeURIComponent(first.next_cursor)), 422);
+    await rejectsStatus(paging.request("/api/rooms?limit=101"), 422);
+  });
+
   await step("Single-person local stage requires an explicitly selected character and creates no peer", async () => {
     await rejectsStatus(post(api, route() + "/control", { action: "start" }), 409);
     room = (await post(api, route() + "/characters/claim", { character_id: characterId })).room;

@@ -17,10 +17,23 @@ export function prepareStatic(root = process.cwd()) {
     filter: (path) => path !== resolve(source, 'index.html'),
   });
   cpSync(resolve(source, 'onstage-mark.svg'), resolve(output, 'favicon.svg'));
+  cpSync(resolve(source, 'sw.js'), resolve(output, 'sw.js'));
   writeFileSync(resolve(output, '_headers'), [
     '/static/*',
     '  X-Content-Type-Options: nosniff',
-    '  Cache-Control: public, max-age=0, must-revalidate',
+    '/static/assets/optimized/*',
+    '  Cache-Control: public, max-age=31536000, immutable',
+    '/sw.js',
+    '  Cache-Control: no-cache',
+    '  Service-Worker-Allowed: /',
+    ...['app.js', 'theme.js', 'styles.css', 'pwa.js', 'sw.js', 'assets-manifest.json', 'manifest.webmanifest', 'onstage-mark.svg'].flatMap(name => [
+      `/static/${name}`, '  Cache-Control: no-cache',
+    ]),
+    ...['bands', 'characters', 'scenes', 'stickers'].flatMap(name => [
+      `/static/assets/${name}/*`, '  Cache-Control: no-cache',
+    ]),
+    '/static/icons/*',
+    '  Cache-Control: no-cache',
     '/favicon.svg',
     '  Cache-Control: public, max-age=0, must-revalidate',
     '',

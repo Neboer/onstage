@@ -14,19 +14,22 @@ from pathlib import Path
 import shutil
 import struct
 import subprocess
+import sys
 import zlib
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 ORIGINAL_ZIP_SHA256 = 'a054b5c4494ffd5bb2a01e0a156f23211b8ec15c4f8a0df44959000089e31d0f'
 ORIGINAL_SOURCE_COMMIT = '26305f3250c1fc34ab4a190a4ec429ab705a79f8'
 ROOT_FILES = {
     'AGENTS.md', 'README.md', 'NOTICE.md', 'VERSION', 'SOURCE_REVISION.json',
-    'requirements.txt', 'requirements-dev.txt', 'pyproject.toml', 'package.json',
+    'requirements.txt', 'requirements-dev.txt', 'requirements-assets.txt', 'pyproject.toml', 'package.json',
     'package-lock.json', 'tsconfig.json', 'vite.config.ts', 'next.config.ts',
     'drizzle.config.ts', 'cloudflare-env.d.ts', 'raw-imports.d.ts', '.gitignore',
-    '.dockerignore', '.env.example', 'Dockerfile', 'compose.dev.yaml',
+    '.dockerignore', '.gitattributes', '.env.example', 'Dockerfile', 'compose.dev.yaml',
 }
-SOURCE_DIRS = {'app', 'edge', 'static', 'db', 'drizzle', 'scripts', 'build', 'lib', 'tools', 'tests', 'deploy', '.github'}
+SOURCE_DIRS = {'app', 'edge', 'static', 'preview', 'db', 'drizzle', 'scripts', 'build', 'lib', 'tools', 'tests', 'deploy', '.github'}
 SOURCE_SUFFIXES = {'.py', '.js', '.cjs', '.mjs', '.ts', '.tsx', '.sql', '.css', '.html', '.sh', '.yaml', '.yml', '.toml', '.md', '.LICENSE'}
 DOC_FILES = {
     'API_CONTRACT.md', 'ARCHITECTURE.md', 'RUNBOOK.md', 'DEMO.md', 'OPEN_SOURCE.md',
@@ -111,6 +114,8 @@ def allowed_source(path: Path) -> bool:
         return False
     if path.as_posix() == 'static/onstage-mark.svg' or path.as_posix() == 'app/catalog.json':
         return True
+    if path.as_posix() == 'static/manifest.webmanifest' or (parts[:2] == ('static', 'icons') and path.suffix == '.png'):
+        return True
     if parts[:2] == ('drizzle', 'meta') and path.suffix == '.json':
         return True
     return path.suffix in SOURCE_SUFFIXES or path.name.endswith('.LICENSE')
@@ -138,7 +143,13 @@ def export_source(source: Path, output: Path) -> dict:
     original_assets = manifest['assets']
     assets = {item['path']: item for item in original_assets}
     runtime_assets = {path.relative_to(source).as_posix() for path in (source / 'static/assets').rglob('*') if path.is_file()}
-    if runtime_assets != set(assets):
+    derived = source / 'static/assets-manifest.json'
+    variants = set()
+    if derived.is_file():
+        from tools.optimize_assets import verify
+        verify(source)
+        variants = {item['url'].lstrip('/') for item in json.loads(derived.read_text(encoding='utf8'))['assets'].values()}
+    if runtime_assets != set(assets) | variants:
         raise ValueError('Every runtime asset must be identified in ASSET_MANIFEST before public export.')
     for raw in assets:
         rel = safe_relative(raw)
@@ -187,6 +198,8 @@ def export_source(source: Path, output: Path) -> dict:
         if path.relative_to(output).as_posix() == 'static/app.js':
             text = text.replace('}.webp`', '}.svg`')
         path.write_text(text, encoding='utf-8', newline='\n')
+    # A sample-only export must never point back at the original derived bitmaps.
+    write_json(output / 'static/assets-manifest.json', {'schema_version': 1, 'assets': {}, 'mode': 'sample-only-original-urls'})
     write_json(output / 'docs/ASSET_MANIFEST.json', {
         'format': 'onstage-public-sample-assets-v1', 'all_runtime_assets_same_origin': True,
         'asset_count': len(generated), 'assets': generated,

@@ -131,7 +131,11 @@ with TestClient(app) as client:
         expected={item['path']:item['sha256'] for item in provenance['original_assets']}
         assert {item['path']:item['sha256'] for item in manifest['assets']} == expected
         assert len(expected) == 185
-        assert set(expected) == {f.as_posix() for f in Path('static/assets').rglob('*') if f.is_file()}
+        from tools.optimize_assets import verify
+        verify(Path.cwd())
+        delivery=json.loads(Path('static/assets-manifest.json').read_text(encoding='utf8'))
+        variants={item['url'].lstrip('/') for item in delivery['assets'].values()}
+        assert set(expected) | variants == {f.as_posix() for f in Path('static/assets').rglob('*') if f.is_file()}
     assert client.get('/').status_code == 200
     print(json.dumps({'images_served':len(checked),'manifest_assets_verified':len(manifest['assets']),'characters':len(catalog['characters'])}))
 '''

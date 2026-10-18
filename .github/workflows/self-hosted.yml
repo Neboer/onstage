@@ -41,6 +41,7 @@ jobs:
       - name: Locked dependencies
         run: |
           python -m pip install -r requirements-dev.txt
+          python -m pip install -r requirements-assets.txt
           npm ci --ignore-scripts
       - name: Python regressions (legacy SQLite)
         run: python -m pytest -q --ignore=tests/test_postgres.py
@@ -52,8 +53,17 @@ jobs:
         run: |
           node --check static/app.js
           node --check static/theme.js
+          node --check static/pwa.js
+          node --check static/sw.js
+          python tools/optimize_assets.py verify --pixels
           node tests/frontend_delivery_check.cjs
+          node tests/frontend_navigation_check.cjs
+          node tests/pwa_cache_check.cjs
           node edge/freeze.test.mjs
+          node edge/room-pagination.test.mjs
+          node edge/integration.test.mjs reports/edge-current.json
+          python tools/build_site_preview.py --output dist-offline-review
+          node tests/preview_adapter_check.cjs
       - name: Build linux amd64 runtime image
         run: >-
           docker build --platform linux/amd64

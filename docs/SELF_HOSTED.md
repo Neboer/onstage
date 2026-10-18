@@ -1,5 +1,9 @@
 # 自托管镜像与合作方部署
 
+0.8新增：镜像直接包含原图与校验后的派生资源，不依赖运行时编码器。代理需放行根`/sw.js`与`/static/manifest.webmanifest`，保持JS/JSON正确MIME及SW根scope；HTTPS下支持安装和公开美术缓存。仅`/static/assets/optimized/<sha256>.webp`长期immutable，HTML/JS/清单重新校验，API保持no-store，勿在全局代理统一覆盖这些头。应用已压缩文本，不重复压缩图片；代理若统一压缩需避免重复处理。PWA不改变Cookie/Origin、HTTP补齐、WS Upgrade、单副本或独立PG要求。
+
+PG部署仍先备份并独立运行`python tools/database.py migrate`，本轮追加分页索引；不需新数据库容器、权限或破坏性schema切换。合作方负责目标更新与设备验收，源码通过不等于CD上线。具体缓存/旧资源回退见RUNBOOK。
+
 本文件是部署操作合同。配置文件存在、静态检查通过或 Actions 成功，均不代表公网、集群 CD、手机和真人验收完成。首个支持目标为 Linux amd64、一个应用副本、一个 Uvicorn worker、独立 PostgreSQL 16；共享前端由同一 FastAPI 镜像提供。SQLite 仅保留旧数据兼容和明确的本地开发路径。
 
 ## 本机隔离演练

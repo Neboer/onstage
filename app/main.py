@@ -4,6 +4,7 @@ import asyncio
 import logging
 import mimetypes
 import os
+import re
 import sqlite3
 import time
 from collections import defaultdict, deque
@@ -20,6 +21,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
+from starlette.middleware.gzip import GZipMiddleware
 from sqlalchemy.exc import IntegrityError as SQLIntegrityError, SQLAlchemyError
 
 from .security import COOKIE_NAME, DomainError, Settings, new_id
@@ -33,6 +35,20 @@ STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 # Some Windows MIME databases omit WebP. Keep original bundled artwork served
 # as images on every supported host instead of application/octet-stream.
 mimetypes.add_type("image/webp", ".webp")
+mimetypes.add_type("application/manifest+json", ".webmanifest")
+
+
+class TextCompression:
+    """Compress text responses, never spend CPU recompressing artwork or WS."""
+    def __init__(self, app):
+        self.app = app
+        self.compressed = GZipMiddleware(app, minimum_size=500, compresslevel=5)
+
+    async def __call__(self, scope, receive, send):
+        path = scope.get("path", "")
+        text = path == "/" or path.startswith("/api/") or path.endswith((".js", ".css", ".json", ".svg", ".webmanifest"))
+        target = self.compressed if scope["type"] == "http" and text else self.app
+        await target(scope, receive, send)
 
 
 class Body(BaseModel):
@@ -297,6 +313,7 @@ def create_app(
         docs_url=None, redoc_url=None, openapi_url=None,
     )
     application.state.settings = settings
+    application.add_middleware(TextCompression)
     application.state.store = store
     application.state.hub = hub
     application.state.db_path = None if settings.database_url else store.db_path
@@ -355,7 +372,13 @@ def create_app(
         logger.info("http_request request_id=%s method=%s route=%s status=%d duration_ms=%.3f database_ms=%.3f",
                     request_id, request.method, getattr(route, "path", "unmatched"),
                     response.status_code, elapsed, sum(timings))
-        response.headers["Cache-Control"] = "no-store"
+        path = request.url.path
+        if response.status_code in {200, 304} and re.fullmatch(r"/static/assets/optimized/[0-9a-f]{64}\.webp", path):
+            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        elif response.status_code in {200, 304} and (path == "/" or path == "/sw.js" or path.startswith("/static/")):
+            response.headers["Cache-Control"] = "no-cache"
+        else:
+            response.headers["Cache-Control"] = "no-store"
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "no-referrer"
         response.headers["X-Frame-Options"] = "DENY"
@@ -382,6 +405,11 @@ def create_app(
         return FileResponse(path)
 
     application.mount("/static", StaticFiles(directory=STATIC_DIR, check_dir=False), name="static")
+
+    @application.get("/sw.js", include_in_schema=False)
+    async def service_worker():
+        return FileResponse(STATIC_DIR / "sw.js", media_type="application/javascript",
+                            headers={"Service-Worker-Allowed": "/"})
 
     @application.get("/healthz")
     async def health():
@@ -432,9 +460,9 @@ def create_app(
         return await run_db(store.get_catalog, token)
 
     @application.get("/api/rooms")
-    async def rooms(request: Request):
+    async def rooms(request: Request, limit: int = Query(50, ge=1, le=100), cursor: str | None = Query(None, max_length=200), filter: Literal["all", "active", "ended", "mine"] = "all"):
         token, _ = credentials(request)
-        return await run_db(store.list_rooms, token, hub.online_all())
+        return await run_db(store.list_rooms, token, hub.online_all(), limit, cursor, filter)
 
     @application.post("/api/rooms")
     async def create_room(body: RoomBody, request: Request):

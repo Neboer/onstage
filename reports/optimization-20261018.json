@@ -1,0 +1,112 @@
+{
+  "version": "0.8.0",
+  "recorded_at_utc": "2026-10-18T13:39:12.504865+00:00",
+  "base_commit": "ea47d9dd9a3630062f7fdfc02dad5c835d8414e9",
+  "source_sha256": {
+    "static/app.js": "2df487ffe9944311fea64478f7fdd068ecf3dd8f10896ea269ff265429bad41e",
+    "static/index.html": "70390f253e700d9ca5b0c8b09819051f0648e6dd4a9514c59a6673b28332b69e",
+    "static/styles.css": "bbef813328ac4b52a01e6b0e0a309ae36f50e7d918267c567d1a82a65e83a37a",
+    "static/pwa.js": "38512726eaf17592147fad8fdd8d0f494d3fee3847d684f5f66c9b7292749448",
+    "static/sw.js": "d7ce3a926459889f4b2aadc4294a7d810343d756632405cd3104e3a74d238095",
+    "static/assets-manifest.json": "e8298ec75dbbf98330cf0af121dd05d3565620e0bd93ed3883608d105732973d",
+    "app/main.py": "68d4b7130aa77bca7e473c1ab112b010c47bff9692787cd854da1fd5638ac3be",
+    "app/store.py": "563500d83fc58462d597d059565c5092dfc5c97981e6b6671b988dd7dc3c8b8c",
+    "edge/store.ts": "9656fb297e4bfc1aeaa88a4450bec51fe433e130031bb24f34871082b51d2519"
+  },
+  "http_measurement": {
+    "version": "0.8.0",
+    "environment": "loopback HTTP synthetic; not mainland or venue network",
+    "recorded_at_utc": "2026-10-18T13:42:23.157826+00:00",
+    "responses": [
+      {
+        "path": "/static/app.js",
+        "encoding": "gzip",
+        "body_bytes_on_http": 40553,
+        "decoded_bytes": 152499,
+        "cache_control": "no-cache"
+      },
+      {
+        "path": "/static/styles.css",
+        "encoding": "gzip",
+        "body_bytes_on_http": 17668,
+        "decoded_bytes": 82270,
+        "cache_control": "no-cache"
+      },
+      {
+        "path": "/static/assets-manifest.json",
+        "encoding": "gzip",
+        "body_bytes_on_http": 20489,
+        "decoded_bytes": 118500,
+        "cache_control": "no-cache"
+      },
+      {
+        "path": "/api/catalog",
+        "encoding": "gzip",
+        "body_bytes_on_http": 10125,
+        "decoded_bytes": 61033,
+        "cache_control": "no-store"
+      },
+      {
+        "path": "/api/rooms?filter=ended&limit=24",
+        "encoding": "gzip",
+        "body_bytes_on_http": 2122,
+        "decoded_bytes": 13252,
+        "cache_control": "no-store"
+      },
+      {
+        "path": "/api/rooms?filter=ended&limit=100",
+        "encoding": "gzip",
+        "body_bytes_on_http": 6016,
+        "decoded_bytes": 50786,
+        "cache_control": "no-store"
+      }
+    ],
+    "immutable_conditional": {
+      "first_status": 200,
+      "warm_status": 304,
+      "warm_body_bytes": 0
+    },
+    "artwork_totals": {
+      "asset_count": 185,
+      "optimized_count": 163,
+      "original_bytes": 21727033,
+      "transfer_bytes": 16314410
+    }
+  },
+  "validation": {
+    "python_sqlite_compatibility": "158 passed, 2 Windows symlink skips",
+    "real_postgresql_17_11": "15 passed; isolated schema per test; explicit migration twice preserved 1107 rooms",
+    "d1": "18 actual Miniflare D1 integration groups, 1107-room pagination and write-freeze passed at 0.8.0",
+    "frontend": "21 real HTTP/WS jsdom steps; ACK/sync reconciliation and navigation suites passed",
+    "preview": "21 isolated adapter/DOM steps, including 1107 room pagination",
+    "pwa": "executed worker cache handlers and UI download scheduling: public-only, digest/MIME, warm zero-fetch, bounded concurrency 3, cancel/clear",
+    "artwork": "185 originals and derivatives SHA; full RGBA incl hidden RGB and ICC compare passed; original files unchanged",
+    "browser": "Actual IAB narrow viewport, loopback synthetic: 185 cached / 16.31 MB persisted after reload; shortcut preference persisted; real Enter send, Shift+Enter, sticker and draft, dark theme, history jumps, 24-row first/second page among 1000+ ended rooms"
+  },
+  "limitations": [
+    "Not three humans, physical phone, OS-installed PWA or browser-process restart",
+    "No target/container/registry digest or mainland/venue bandwidth/latency result",
+    "Full browser color management across devices not verified",
+    "1000+ historical room pagination does not prove 1000 active rooms capacity"
+  ],
+  "resolved_initial_failures": [
+    "Initial DOM assertions expected original PNG URL, extended to assert verified content-hash mapping and retained historical identity",
+    "Original-artwork source test assumed only 185 runtime files, extended to require exact union of original and verified delivery variants",
+    "Local D1 freeze dependency resolution absent in this checkout; reused explicit ONSTAGE_NODE_MODULES test setting, then passed",
+    "Review found serial manifest wait; session/catalog now overlap manifest with 1.2s original-URL fallback"
+  ],
+  "commands": [
+    "python -m pytest -q --ignore=tests/test_postgres.py",
+    "ONSTAGE_TEST_DATABASE_URL=<isolated PostgreSQL> python -m pytest tests/test_postgres.py -q",
+    "python tools/optimize_assets.py verify --pixels",
+    "node tests/frontend_delivery_check.cjs",
+    "node tests/frontend_navigation_check.cjs",
+    "node tests/pwa_cache_check.cjs",
+    "node tests/frontend_dom_check.cjs <isolated-loopback> <local-report>",
+    "node edge/room-pagination.test.mjs",
+    "node edge/integration.test.mjs <local-report>",
+    "node edge/freeze.test.mjs",
+    "python tools/build_site_preview.py --output dist-offline-review",
+    "node tests/preview_adapter_check.cjs <local-report>"
+  ]
+}

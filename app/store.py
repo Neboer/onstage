@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import secrets
 import sqlite3
 import unicodedata
@@ -410,9 +411,9 @@ class Store:
 
     def _snapshot(
         self, connection: sqlite3.Connection, room: sqlite3.Row,
-        session_id: str, online: set[str],
+        session_id: str, online: set[str], *, member_rows=None, host_row=None,
     ) -> dict:
-        rows = connection.execute(
+        rows = member_rows if member_rows is not None else connection.execute(
             "SELECT m.*, s.expires_at, s.revoked_at, s.nickname FROM room_members m JOIN sessions s ON s.id=m.session_id WHERE m.room_id=:p0 AND m.status='active' ORDER BY m.joined_at,m.id",
             {'p0': room["id"]},
         ).fetchall()
@@ -436,7 +437,7 @@ class Store:
             })
             if row["session_id"] == session_id:
                 own_member = row
-        host = connection.execute(
+        host = host_row if member_rows is not None else connection.execute(
             'SELECT id FROM room_members WHERE room_id=:p0 AND session_id=:p1',
             {'p0': room["id"], 'p1': room["host_session_id"]},
         ).fetchone()
@@ -473,17 +474,48 @@ class Store:
             self._not_banned(connection, room_id, session["id"])
             return {"room": self._snapshot(connection, room, session["id"], online)}
 
-    def list_rooms(self, token: str | None, online: dict[str, set[str]]) -> dict:
+    def list_rooms(self, token: str | None, online: dict[str, set[str]],
+                   limit: int = 50, cursor: str | None = None, filter: str = "all") -> dict:
+        if type(limit) is not int or not 1 <= limit <= 100 or filter not in {"all", "active", "ended", "mine"}:
+            raise DomainError(422, "房间分页参数不合法。")
         with self._transaction() as connection:
             session = self._session(connection, token)
+            scope = token_hash(session["id"])[:16]
+            conditions = ["NOT EXISTS(SELECT 1 FROM room_bans b WHERE b.room_id=r.id AND b.session_id=:sid)"]
+            params = {"sid": session["id"], "limit": limit + 1}
+            if filter == "active":
+                conditions.append("r.status<>'ended'")
+            elif filter == "ended":
+                conditions.append("r.status='ended'")
+            elif filter == "mine":
+                conditions.append("EXISTS(SELECT 1 FROM room_members own WHERE own.room_id=r.id AND own.session_id=:sid AND own.status='active')")
+            if cursor is not None:
+                parts = cursor.split("|") if isinstance(cursor, str) and len(cursor) <= 200 else []
+                if len(parts) != 4 or parts[:2] != [filter, scope] or not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?Z", parts[2]) or not re.fullmatch(r"[A-Za-z0-9_-]{1,80}", parts[3]):
+                    raise DomainError(422, "房间游标不合法或不属于当前筛选和身份。")
+                try:
+                    parse_time(parts[2])
+                except ValueError:
+                    raise DomainError(422, "房间游标时间不合法。") from None
+                params.update(at=parts[2], rid=parts[3])
+                conditions.append("(r.created_at<:at OR (r.created_at=:at AND r.id>:rid))")
             rooms = connection.execute(
-                'SELECT * FROM rooms WHERE NOT EXISTS(SELECT 1 FROM room_bans b WHERE b.room_id=rooms.id AND b.session_id=:p0) ORDER BY created_at DESC,id LIMIT 100',
-                {'p0': session["id"]},
+                "SELECT r.*,(SELECT id FROM room_members h WHERE h.room_id=r.id AND h.session_id=r.host_session_id) AS host_member_id FROM rooms r WHERE " + " AND ".join(conditions) + " ORDER BY r.created_at DESC,r.id ASC LIMIT :limit", params,
             ).fetchall()
+            has_more = len(rooms) > limit
+            rooms = rooms[:limit]
+            by_room = {room["id"]: [] for room in rooms}
+            if rooms:
+                ids = {f"r{i}": room["id"] for i, room in enumerate(rooms)}
+                members = connection.execute(
+                    "SELECT m.*,s.expires_at,s.revoked_at,s.nickname FROM room_members m JOIN sessions s ON s.id=m.session_id WHERE m.status='active' AND m.room_id IN (" + ",".join(":" + key for key in ids) + ") AND NOT EXISTS(SELECT 1 FROM room_bans b WHERE b.room_id=m.room_id AND b.session_id=m.session_id) ORDER BY m.joined_at,m.id", ids,
+                ).fetchall()
+                for member in members:
+                    by_room[member["room_id"]].append(member)
             return {"rooms": [
-                self._snapshot(connection, room, session["id"], online.get(room["id"], set()))
+                self._snapshot(connection, room, session["id"], online.get(room["id"], set()), member_rows=by_room[room["id"]], host_row={"id": room["host_member_id"]} if room["host_member_id"] else None)
                 for room in rooms
-            ]}
+            ], "has_more": has_more, "next_cursor": "|".join((filter, scope, rooms[-1]["created_at"], rooms[-1]["id"])) if has_more else None}
 
     @staticmethod
     def _new_member(connection: sqlite3.Connection, room_id: str, session_id: str) -> str:

@@ -20,6 +20,13 @@
     transport: { type: "websocket", intervalMs: 8000, presenceIntervalMs: 15000, presenceTtlMs: 45000 },
     catalog: { bands: [], characters: [], scenarios: [], stickers: [] },
     rooms: [],
+    roomPage: 0,
+    roomCursors: [""],
+    roomHasMore: false,
+    assetMap: {},
+    artworkReady: null,
+    sendShortcut: "enter",
+    followHistoryStart: false,
     filter: "active",
     room: null,
     generation: 0,
@@ -140,6 +147,7 @@
     refresh: ["M20 7a9 9 0 0 0-15-2L2 8M2 2v6h6M4 17a9 9 0 0 0 15 2l3-3M22 22v-6h-6"],
     "arrow-right": ["M4 12h16M14 6l6 6-6 6"],
     "arrow-left": ["M20 12H4M10 6l-6 6 6 6"],
+    settings: ["M4 6h16M4 12h16M4 18h16M8 3v6M16 9v6M10 15v6"],
     "arrow-up-right": ["M6 18 18 6M6 6h12v12"],
     "arrow-down": ["M12 4v16M6 14l6 6 6-6"],
     "chevron-down": ["m6 9 6 6 6-6"],
@@ -188,7 +196,7 @@
       if (typeof candidate !== "string" || !candidate) continue;
       try {
         const url = new URL(candidate, location.origin);
-        if (url.origin === location.origin && url.pathname.startsWith("/static/assets/")) return url.pathname + url.search;
+        if (url.origin === location.origin && url.pathname.startsWith("/static/assets/")) return state.assetMap[url.pathname]?.url || url.pathname + url.search;
       } catch { /* A missing asset uses a text fallback, never an arbitrary URL. */ }
     }
     return "";
@@ -598,7 +606,7 @@
   }
 
   function closeAllDialogs() {
-    for (const id of ["create-dialog", "settings-dialog", "report-dialog", "reports-dialog", "resolve-dialog", "confirm-dialog", "sticker-dialog"]) {
+    for (const id of ["create-dialog", "settings-dialog", "preferences-dialog", "report-dialog", "reports-dialog", "resolve-dialog", "confirm-dialog", "sticker-dialog"]) {
       if ($(id).open) $(id).close("cancel");
     }
   }
@@ -650,7 +658,8 @@
     renderLoading($("scenario-list"), "正在准备场景…");
     renderLoading($("room-list"), "正在寻找亮着灯的房间…");
     try {
-      const catalog = await api("/api/catalog");
+      const catalogRequest = api("/api/catalog");
+      const [catalog] = await Promise.all([catalogRequest, state.artworkReady]);
       if (!state.authenticated || state.scope !== acceptedScope) return;
       if (!Array.isArray(catalog.scenarios) || !Array.isArray(catalog.characters) || !Array.isArray(catalog.bands)) throw new ApiError("场景暂未准备好，请稍后刷新。");
       state.catalog = { ...catalog, stickers: Array.isArray(catalog.stickers) ? catalog.stickers : [] };
@@ -851,22 +860,33 @@
     $("scenario-list").setAttribute("aria-busy", "false");
   }
 
-  async function fetchRooms() {
-    if (!state.authenticated || state.roomListRequest?.scope === state.scope) return;
+  async function fetchRooms({ page = 0, cursor = "" } = {}) {
+    if (!state.authenticated) return;
+    state.roomListRequest?.controller.abort();
     const scope = state.scope;
-    const request = { scope };
+    const filter = state.filter;
+    const request = { scope, controller: new AbortController() };
     state.roomListRequest = request;
     $("refresh-rooms").disabled = true;
     $("refresh-rooms").textContent = "读取中…";
     try {
-      const result = await api("/api/rooms");
-      if (!state.authenticated || state.scope !== scope) return;
+      updateRoomPagination(true);
+      const params = new URLSearchParams({ limit: "24", filter });
+      if (cursor) params.set("cursor", cursor);
+      const result = await api(`/api/rooms?${params}`, { signal: request.controller.signal });
+      if (!state.authenticated || state.scope !== scope || state.roomListRequest !== request || state.filter !== filter) return;
       state.rooms = Array.isArray(result.rooms) ? result.rooms : [];
+      state.roomPage = page;
+      if (!page) state.roomCursors = [""];
+      state.roomCursors[page] = cursor;
+      state.roomCursors.length = page + 1;
+      state.roomHasMore = Boolean(result.has_more && result.next_cursor);
+      if (state.roomHasMore) state.roomCursors.push(result.next_cursor);
       $("lobby-error").hidden = true;
       $("rooms-updated").textContent = `更新于 ${timeLabel(new Date())}`;
       renderRooms();
     } catch (error) {
-      if (state.authenticated && state.scope === scope) {
+      if (state.authenticated && state.scope === scope && state.roomListRequest === request && !request.controller.signal.aborted) {
         $("lobby-error").textContent = readableError(error);
         $("lobby-error").hidden = false;
         if (!state.rooms.length) $("room-list").replaceChildren(node("p", "loading-state", "场次暂未读取成功，点击刷新重新尝试。"));
@@ -877,13 +897,21 @@
         $("refresh-rooms").disabled = false;
         $("refresh-rooms").textContent = "刷新场次";
         $("room-list").setAttribute("aria-busy", "false");
+        updateRoomPagination();
       }
     }
   }
 
+  function updateRoomPagination(busy = false) {
+    $("rooms-previous").disabled = busy || state.roomPage === 0;
+    $("rooms-next").disabled = busy || !state.roomHasMore;
+    $("rooms-page").textContent = `第 ${state.roomPage + 1} 页 · 本页 ${state.rooms.length} 间`;
+    $("room-pagination").setAttribute("aria-busy", String(busy));
+  }
+
   function renderRooms() {
     const filtered = state.rooms.filter((room) => state.filter === "ended" ? room.status === "ended" : state.filter === "mine" ? Boolean(room.me) : room.status !== "ended");
-    $("room-count").textContent = String(state.rooms.filter((room) => room.status !== "ended").length);
+    $("room-count").textContent = `${filtered.length} / 本页`;
     const fragment = document.createDocumentFragment();
     if (!filtered.length) {
       const empty = node("div", "empty-state");
@@ -1016,6 +1044,7 @@
     state.messages = { stage: new Map(), backstage: new Map() };
     state.unread = { stage: 0, backstage: 0 };
     state.initialSynced = false;
+    state.followHistoryStart = room.status === "ended";
     state.messageSignature = "";
     state.lastSync = 0;
     state.syncError = "";
@@ -1869,29 +1898,42 @@
     const pending = pendingMessage();
     const visiblePending = pending && pending.scope === state.scope && pending.channel === channel && sameId(pending.member_id, state.room.me?.member_id) ? pending : null;
     if (visiblePending) list.push({ ...visiblePending, id: `pending-${visiblePending.client_message_id}`, kind: "speech", local_pending: true });
-    const signature = `${visiblePending ? `${visiblePending.client_message_id}:${visiblePending.status}` : ""}:${channel}:${list.length}:${list.map((message) => message.id ?? message.seq).join(",")}:${list.length ? "" : `${state.initialSynced}:${state.room.status}`}`;
+    const signature = `${visiblePending ? `${visiblePending.client_message_id}:${visiblePending.status}:${visiblePending.detail || ""}` : ""}:${channel}:${list.length}:${list.map((message) => message.id ?? message.seq).join(",")}:${state.initialSynced}:${state.room.status}`;
     if (signature === state.messageSignature && !forceBottom) return;
     const feed = $("message-feed");
     const wasBottom = feed.scrollHeight - feed.clientHeight - feed.scrollTop < 85;
     const oldHeight = feed.scrollHeight;
     const oldTop = feed.scrollTop;
-    const changedChannel = !state.messageSignature || !state.messageSignature.includes(`:${channel}:`);
+    const context = `${state.scope}:${state.room.id}:${channel}`;
+    const changedChannel = feed.dataset.context !== context;
+    if (changedChannel) { feed.replaceChildren(); feed.dataset.context = context; }
+    const existing = new Map(Array.from(feed.children).map((item) => [item.dataset.messageId, item]));
     const alreadyVisible = new Set(Array.from(feed.children).map((item) => item.dataset.messageId));
     const feedTop = feed.getBoundingClientRect().top;
     const firstVisible = Array.from(feed.children).find((item) => item.dataset.messageId && item.getBoundingClientRect().bottom > feedTop);
     const firstVisibleId = firstVisible?.dataset.messageId;
     const anchorOffset = firstVisible ? firstVisible.getBoundingClientRect().top - feedTop : 0;
     const focusedId = document.activeElement?.dataset.messageAction;
-    const fragment = document.createDocumentFragment();
+    const rendered = [];
     if (!list.length) {
       const empty = node("div", "feed-empty");
       const symbol = node("span", "empty-symbol"); symbol.append(icon(channel === "backstage" ? "headphones" : "chat"));
       const title = !state.initialSynced ? "正在接上这一段对话…" : channel === "backstage" ? state.room.status === "ended" ? "后台静悄悄的" : "先在这里，碰一碰想法" : state.room.status === "preparing" ? PREVIEW ? "选好角色，预览这一场" : "等同伴就位，一起开场" : state.room.status === "ended" ? "这一场没有留下发言" : "把第一句，交给你";
       const detail = !state.initialSynced ? "稍等一下，正在读取记录。" : channel === "backstage" ? state.room.status === "ended" ? "新的一段相遇，可以从另一间房开始。" : "节奏、想法、小约定，都可以先在这里说。" : state.room.status === "preparing" ? PREVIEW ? "在角色面板选择一位，再到房间面板点击“预览演出”。" : "点选空角色直接入场。两位角色就位后，由房主开启舞台。" : state.room.status === "ended" ? "那些还没说出口的话，下次再遇见。" : PREVIEW ? "写一句话，或贴一张心情。这里只会出现你自己的记录。" : "一句话，一个动作。让同伴看见你的回应。";
-      empty.append(symbol, node("h3", "", title), node("p", "", detail)); fragment.append(empty);
+      empty.append(symbol, node("h3", "", title), node("p", "", detail)); rendered.push(empty);
     }
     for (const message of list) {
+      const key = String(message.id ?? message.seq);
+      // Committed map entries are immutable. Do not stringify the entire history
+      // on every notification; only the one mutable pending snapshot needs it.
+      const renderKey = message.local_pending ? JSON.stringify(message) : message;
+      const author = messageAuthor(message);
+      const previous = existing.get(key);
+      if (previous?.onstageRenderKey === renderKey && previous.onstageAuthor === author && previous.onstageOwner === state.room.me?.member_id) { rendered.push(previous); continue; }
       const item = node("article", message.kind === "system" ? "system-message" : "message");
+      item.onstageRenderKey = renderKey;
+      item.onstageAuthor = author;
+      item.onstageOwner = state.room.me?.member_id;
       item.dataset.messageId = String(message.id ?? message.seq);
       if (state.initialSynced && !changedChannel && !alreadyVisible.has(item.dataset.messageId)) item.dataset.enter = "true";
       if (message.kind === "system") {
@@ -1931,12 +1973,20 @@
         if (!message.local_pending) meta.append(report);
         item.append(avatar(message.character_id), meta, message.content_type === "sticker" ? stickerArt(stickerSnapshot(message), "message-sticker", false) : node("p", "message-body", message.text));
       }
-      fragment.append(item);
+      rendered.push(item);
     }
     feed.setAttribute("aria-busy", String(!state.initialSynced));
-    feed.replaceChildren(fragment);
+    const retained = new Set(rendered);
+    for (const item of Array.from(feed.children)) if (!retained.has(item)) item.remove();
+    let position = feed.firstChild;
+    for (const item of rendered) {
+      if (item === position) position = position.nextSibling;
+      else feed.insertBefore(item, position);
+    }
     state.messageSignature = signature;
-    if (forceBottom || wasBottom || changedChannel) { feed.scrollTop = feed.scrollHeight; $("scroll-bottom").hidden = true; }
+    $("jump-start").hidden = state.room.status !== "ended";
+    if (state.followHistoryStart && state.room.status === "ended") { feed.scrollTop = 0; $("scroll-bottom").hidden = false; }
+    else if (forceBottom || wasBottom || changedChannel) { feed.scrollTop = feed.scrollHeight; $("scroll-bottom").hidden = true; }
     else {
       const anchor = firstVisibleId ? Array.from(feed.children).find((item) => item.dataset.messageId === firstVisibleId) : null;
       if (anchor) feed.scrollTop += anchor.getBoundingClientRect().top - feed.getBoundingClientRect().top - anchorOffset;
@@ -1972,7 +2022,7 @@
     $("send-message").disabled = Boolean(reason) || Boolean(pending) || !$("message-input").value.trim() || length > 2000;
     setButtonText($("send-message"), "发送", "send");
     $("send-message").setAttribute("aria-label", pending?.status === "sending" ? "正在确认内容" : `发送${CHANNELS[state.channel]}发言`);
-    $("composer-hint").textContent = reason || (pending ? "上方还有待确认的内容。草稿可以继续写。" : "Enter 换行 · Ctrl / ⌘ + Enter 发送");
+    $("composer-hint").textContent = reason || (pending ? "上方还有待确认的内容。草稿可以继续写。" : state.sendShortcut === "enter" ? "Enter 发送 · Shift + Enter 换行 · 可在使用设置中调整" : "Enter 换行 · Ctrl / ⌘ + Enter 发送 · 可在使用设置中调整");
     $("open-stickers").disabled = Boolean(reason) || !state.catalog.stickers?.length;
     $("open-stickers").title = reason || (!state.catalog.stickers?.length ? "贴纸还没准备好" : selectedStickerId() ? "继续查看已选贴纸" : "选择贴纸");
     $("sticker-selection-dot").hidden = !selectedStickerId();
@@ -2536,14 +2586,28 @@
     $("hero-create").addEventListener("click", () => showLobbySection("scene-section"));
     $("hero-join").addEventListener("click", () => showLobbySection("room-directory"));
     $("theme-toggle").addEventListener("click", toggleTheme);
+    $("preferences-button").addEventListener("click", () => $("preferences-dialog").showModal());
+    $("close-preferences").addEventListener("click", () => $("preferences-dialog").close());
+    $("send-shortcut").addEventListener("change", () => {
+      state.sendShortcut = $("send-shortcut").value === "ctrl-enter" ? "ctrl-enter" : "enter";
+      try { localStorage.setItem("onstage.send-shortcut", state.sendShortcut); } catch { /* This visit still works without storage. */ }
+      if (state.room) renderComposer();
+    });
+    $("download-artwork").addEventListener("click", () => window.OnstagePWA?.downloadArtwork().catch(() => {}));
+    $("cancel-artwork").addEventListener("click", () => window.OnstagePWA?.cancelDownload());
+    $("clear-artwork").addEventListener("click", () => window.OnstagePWA?.clearArtwork().catch(() => {}));
     $("room-backdrop-image").addEventListener("load", () => { $("room-backdrop").dataset.ready = "true"; });
     $("room-backdrop-image").addEventListener("error", () => { $("room-backdrop").dataset.ready = "false"; });
     $("feedback-button").addEventListener("click", () => openReports(null));
     $("refresh-rooms").addEventListener("click", refreshLobby);
+    $("rooms-previous").addEventListener("click", () => fetchRooms({ page: state.roomPage - 1, cursor: state.roomCursors[state.roomPage - 1] || "" }));
+    $("rooms-next").addEventListener("click", () => fetchRooms({ page: state.roomPage + 1, cursor: state.roomCursors[state.roomPage + 1] || "" }));
     for (const button of document.querySelectorAll("[data-room-filter]")) button.addEventListener("click", () => {
       state.filter = button.dataset.roomFilter;
       for (const other of document.querySelectorAll("[data-room-filter]")) { const selected = other === button; other.classList.toggle("selected", selected); other.setAttribute("aria-pressed", String(selected)); }
-      renderRooms();
+      state.rooms = []; state.roomPage = 0; state.roomHasMore = false;
+      renderLoading($("room-list"), "正在读取这一类场次…");
+      fetchRooms();
     });
     $("create-form").addEventListener("submit", createRoom);
     $("settings-form").addEventListener("submit", saveSettings);
@@ -2601,15 +2665,22 @@
     $("message-input").addEventListener("compositionstart", () => { state.composing = true; });
     $("message-input").addEventListener("compositionend", () => { state.composing = false; saveDraft(); renderComposer(); });
     $("message-input").addEventListener("keydown", (event) => {
-      if (event.key === "Enter" && (event.ctrlKey || event.metaKey) && !event.isComposing && !state.composing && event.keyCode !== 229) { event.preventDefault(); if (!$("send-message").disabled) $("message-form").requestSubmit(); }
+      if (event.key !== "Enter" || event.isComposing || state.composing || event.keyCode === 229 || event.shiftKey || event.altKey) return;
+      if (state.sendShortcut === "enter" || event.ctrlKey || event.metaKey) {
+        event.preventDefault();
+        if (!event.repeat && !$("send-message").disabled) $("message-form").requestSubmit();
+      }
     });
     $("message-input").addEventListener("focus", () => { updateViewport(); resizeComposer(); });
     document.addEventListener("focusin", updateViewport);
     document.addEventListener("focusout", () => window.setTimeout(updateViewport, 120));
     $("retry-message").addEventListener("click", () => { const pending = pendingMessage(); if (pending) postPending(pending); });
     $("restore-draft").addEventListener("click", restorePendingDraft);
-    $("scroll-bottom").addEventListener("click", () => { $("message-feed").scrollTop = $("message-feed").scrollHeight; $("scroll-bottom").hidden = true; });
-    $("message-feed").addEventListener("scroll", () => { const feed = $("message-feed"); if (feed.scrollHeight - feed.clientHeight - feed.scrollTop < 65) $("scroll-bottom").hidden = true; }, { passive: true });
+    const jumpLatest = () => { state.followHistoryStart = false; $("message-feed").scrollTop = $("message-feed").scrollHeight; $("scroll-bottom").hidden = true; };
+    $("scroll-bottom").addEventListener("click", jumpLatest);
+    $("jump-latest").addEventListener("click", jumpLatest);
+    $("jump-start").addEventListener("click", () => { state.followHistoryStart = true; $("message-feed").scrollTop = 0; $("message-feed").focus({ preventScroll: true }); });
+    $("message-feed").addEventListener("scroll", () => { const feed = $("message-feed"); $("scroll-bottom").hidden = feed.scrollHeight - feed.clientHeight - feed.scrollTop < 65; if (feed.scrollTop > 65) state.followHistoryStart = false; }, { passive: true });
     window.addEventListener("hashchange", queueRoute);
     window.addEventListener("popstate", queueRoute);
     window.addEventListener("resize", () => { updateViewport(); resizeComposer(); });
@@ -2650,9 +2721,38 @@
     updateTheme();
     updateViewport();
     updateConnection();
-    $("hero-mygo").src = "/static/assets/bands/mygo.webp";
-    $("hero-mujica").src = "/static/assets/bands/mujica.webp";
+    try { state.sendShortcut = localStorage.getItem("onstage.send-shortcut") === "ctrl-enter" ? "ctrl-enter" : "enter"; } catch { /* Default remains usable. */ }
+    $("send-shortcut").value = state.sendShortcut;
+    state.artworkReady = (async () => {
+      if (PREVIEW) return;
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), 1200);
+      try {
+        const response = await fetch("/static/assets-manifest.json", { cache: "no-cache", credentials: "omit", signal: controller.signal });
+        if (response.ok) {
+          const manifest = await response.json();
+          if (manifest.schema_version === 1 && manifest.assets) for (const [original, asset] of Object.entries(manifest.assets)) {
+            if (original.startsWith("/static/assets/") && /^\/static\/assets\/optimized\/[0-9a-f]{64}\.webp$/.test(asset?.url)) state.assetMap[original] = asset;
+          }
+        }
+      } catch { /* Original URLs remain a complete compatible fallback. */ }
+      finally { window.clearTimeout(timer); }
+    })();
+    void state.artworkReady.then(() => {
+      $("hero-mygo").src = localAssetPath("/static/assets/bands/mygo.webp");
+      $("hero-mujica").src = localAssetPath("/static/assets/bands/mujica.webp");
+    });
+    if (!PREVIEW) window.OnstagePWA?.init({ onStatus: renderArtworkStatus });
+    else { $("download-artwork").disabled = $("clear-artwork").disabled = true; $("artwork-status").textContent = "本机评审不启用多人站点的素材缓存。"; }
     await connectAnonymous();
+  }
+
+  function renderArtworkStatus(status) {
+    const progress = status.busy ? `已处理 ${status.completed || 0} / ${status.total || 0} 张${status.failed ? `，${status.failed} 张未完成` : ""}。` : status.cached ? `已保存 ${status.cached} 张，${((status.cachedBytes || 0) / 1000000).toFixed(2)} MB。` : "";
+    $("artwork-status").textContent = `${progress}${status.error || status.message || "素材按需保存，聊天仍需联网。"}`;
+    $("download-artwork").disabled = !status.supported || status.busy;
+    $("cancel-artwork").hidden = !status.busy;
+    $("clear-artwork").disabled = !status.supported || status.busy;
   }
 
   boot();

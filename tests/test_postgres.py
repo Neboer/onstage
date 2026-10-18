@@ -382,3 +382,15 @@ def test_pg_host_and_operator_report_resolution_share_lock_order(pg_factory):
             assert right.result(timeout=5)['report']['status'] == 'resolved'
         reports = store.operator_list_reports('resolved', 0, 50)['reports']
         assert len([report for report in reports if report['id'] == report_id]) == 1
+
+
+def test_postgres_thousand_rooms_keyset(pg_factory):
+    from test_room_pagination import verify_pages
+    store = pg_factory()
+    verify_pages(store)
+    # Re-running controlled migration preserves all rows and makes indexes idempotent.
+    store.migrate()
+    with store.engine.connect() as connection:
+        indexes = connection.execute(text("SELECT indexname FROM pg_indexes WHERE schemaname=current_schema()" )).scalars().all()
+        assert 'rooms_created_page' in indexes
+        assert connection.execute(text('SELECT COUNT(*) FROM rooms')).scalar() == 1107

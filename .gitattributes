@@ -1,0 +1,7 @@
+# Keep text identity manifests stable when cloning on Windows or Linux.
+* text=auto eol=lf
+*.png binary
+*.webp binary
+*.jpg binary
+*.jpeg binary
+*.gif binary

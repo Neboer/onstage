@@ -1,4 +1,25 @@
-# Onstage 0.7 运行与恢复
+# Onstage 0.8 运行与恢复
+
+## 美术、PWA与分页更新
+
+直接部署Git中的原图、哈希派生和资源清单，不需线上安装图像处理工具。原`docs/ASSET_MANIFEST.json`标识原始185文件，`static/assets-manifest.json`标识传输派生；目录和历史快照继续保存原路径。验证命令：
+
+```sh
+python tools/optimize_assets.py verify
+# 作者/CI需要逐像素验证时，使用独立依赖，不进入运行镜像
+python -m pip install -r requirements-assets.txt
+python tools/optimize_assets.py verify --pixels
+# 更新素材时：使用官方libwebp 1.6.0 cwebp，受控重新生成后审查差异
+python tools/optimize_assets.py build --cwebp /path/to/cwebp
+```
+
+禁止覆盖已发布内容hash文件，禁止清掉仍可能被旧页面引用的原图/旧hash文件。素材或颜色配置不满足严格比较时构建报错；未变资源复用URL。清单/HTML/脚本重新校验，不可被代理改成长期immutable。不要对`/api/`启用共享缓存。
+
+PWA需公共HTTPS；localhost仅作隔离验证。根`/sw.js`必须到达应用并返回JS和`Service-Worker-Allowed: /`，不得被代理改为HTML或要求登录。使用设置可主动保存约16.31 MB完整美术、取消或清除本应用缓存；存储不足/被清理会回源，身份与草稿不随清除操作删除。当前未提供离线聊天/历史读取、跨域身份迁移或强制更新。旧页面会在关闭后按浏览器生命周期启用新SW；发布不应强迫所有页面刷新。
+
+PG升级前仍按本文备份、隔离恢复并显式执行`python tools/database.py migrate`；本轮仅追加三个分页索引，schema 4与旧应用兼容，不执行删列或删数据。D1维护者执行受控`0001_room_pagination`迁移；SQLite沿用既有初始化/旧库迁移路径。应用Pod不并发执行迁移。大量房间的索引建立仍需维护窗口监测，千房测试不是百万级建索引时长承诺。
+
+前端每页24间，刷新/筛选重回第一页。游标绑定身份与筛选，过期身份应重新入场，不尝试改游标恢复权限。总房间数可超过1000，不提高默认10间活跃房准入。回滚0.7代码可保留新增索引，但需连同静态资源、清单和SW一起回退；浏览器内原美术缓存不包含业务数据，也不代替数据库备份。
 
 本轮交付开发与公开 GitHub。目标部署由合作方负责；没有执行旧站冻结、生产导出或目标集群切换。镜像/端口/探针/Secret/单副本和 CI 契约见 [SELF_HOSTED](SELF_HOSTED.md)。所有动作只针对已核对的本项目资源，不修改全局代理、路由或其他采集器。
 

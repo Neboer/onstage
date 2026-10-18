@@ -18,7 +18,7 @@ from pathlib import Path
 
 
 PROJECT = Path(__file__).resolve().parents[1]
-RUNTIME_FILES = ("app.js", "styles.css", "theme.js", "onstage-mark.svg")
+RUNTIME_FILES = ("app.js", "styles.css", "theme.js", "onstage-mark.svg", "pwa.js", "manifest.webmanifest", "assets-manifest.json")
 MARKER = "onstage-browser-local-preview"
 
 
@@ -71,6 +71,8 @@ def build(output: Path) -> dict:
     try:
         for name in RUNTIME_FILES:
             checked_copy(PROJECT / "static" / name, staging / "static" / name)
+        for source in sorted((PROJECT / "static" / "icons").glob("*.png")):
+            checked_copy(source, staging / "static" / "icons" / source.name)
         asset_count = 0
         # Keep every runtime asset, including older immutable sticker image paths.
         for source in sorted((PROJECT / "static" / "assets").rglob("*")):

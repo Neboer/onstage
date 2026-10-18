@@ -2,9 +2,15 @@
 
 免注册昵称入场的 MyGO!!!!! / Ave Mujica 真人文字对戏空间。十个角色、自由场景、文字和贴纸、舞台/后台、旁观、房主管理、举报与历史恢复；没有 AI 代演或假在线。
 
-当前开发版本 **0.7.1**。公开协作仓库：[SpringfiledBucks/onstage](https://github.com/SpringfiledBucks/onstage)。自托管使用 FastAPI、独立 PostgreSQL、WebSocket 提醒及 HTTP 游标补齐。SQLite 保留本地开发与旧库兼容，Sites/D1 适配继续维护。首个支持部署为 **1 应用副本、1 Uvicorn worker**；目标集群部署由合作方负责，本仓库不宣称已经上线。
+当前开发版本 **0.8.0**。公开协作仓库：[SpringfiledBucks/onstage](https://github.com/SpringfiledBucks/onstage)。自托管使用 FastAPI、独立 PostgreSQL、WebSocket 提醒及 HTTP 游标补齐。SQLite 保留本地开发与旧库兼容，Sites/D1 适配继续维护。首个支持部署为 **1 应用副本、1 Uvicorn worker**；目标集群部署由合作方负责，本仓库不宣称已经上线。
 
 ## 本轮改动
+
+- 完整保留185张原始美术及历史路径，新增经过RGBA/ICC验证的无损派生与哈希清单，整套传输21.73→16.31 MB（减少24.91%）。哈希图片长期缓存，HTML/脚本/清单重新校验，API保持no-store，文本启用gzip。新增消息保留已有图片节点。
+- PWA安装清单与同源美术持久缓存；使用设置可主动保存完整素材、查看进度、取消或清除本应用缓存。首次打开不预载全图，聊天/身份/举报不进入此缓存，离线不能多人对戏。需HTTPS或localhost，浏览器可能清理缓存。
+- 房间列表每页24间，后端默认50/最多100，服务端筛选与稳定游标支持大量历史房间；以1107间隔离房间验证，未提高活跃房/连接容量上限。
+- 结束房默认从开头回看并提供“跳到开头”；聊天提供常驻“跳到最新消息”。默认Enter发送、Shift+Enter换行，使用设置可改回Ctrl/⌘+Enter发送，保留IME保护。
+- 重构评估见[ARCHITECTURE](docs/ARCHITECTURE.md)：推荐保持协议的模块化，估算12–21人日；原生客户端、语言重写与拆服务暂缓。此为后续规划估算。
 
 - 点击发送立即在聊天流显示本人消息及小型状态圈；可靠确认后成为一条正常消息，无发送条幅或成功 toast。超时显示该条未确认状态，可使用同一 ID、原始内容重试。
 - ACK 与同步使用身份范围、房间、实际成员、频道及 `client_message_id` 对账；同步先确认后，晚到错误不能倒退。POST 不推进同步游标；新文字草稿与贴纸发送互不覆盖。
@@ -43,8 +49,11 @@ python -m pytest -q --ignore=tests/test_postgres.py
 ONSTAGE_TEST_DATABASE_URL=... python -m pytest tests/test_postgres.py -q
 npm ci --ignore-scripts
 node tests/frontend_delivery_check.cjs
+node tests/frontend_navigation_check.cjs
+node tests/pwa_cache_check.cjs
 node tests/preview_adapter_check.cjs
 node edge/freeze.test.mjs
+node edge/room-pagination.test.mjs
 ```
 
 本次准确结果、失败和未验证项见 [acceptance](docs/acceptance.json)。旧 Sites 0.6 检查是历史证据，不能代替当前 PG/浏览器/镜像验收。真人三人、真实手机、大陆普通网络和现场延迟由实际部署参与者补验；localhost、DOM 和 CI 均不代签。

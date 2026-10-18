@@ -143,16 +143,29 @@ export class Store {
   async getRoom(roomId: string): Promise<Row> {
     return this.atomic.run(false, async (tx) => { const session = await this.session(tx); const room = await this.room(tx, roomId); await this.notBanned(tx, roomId, session.id); return { room: await this.snapshot(tx, room, session.id) }; });
   }
-  async listRooms(): Promise<Row> {
+  async listRooms(limit = 50, cursor: string | null = null, filter = "all"): Promise<Row> {
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100 || !["all", "active", "ended", "mine"].includes(filter)) throw new DomainError(422, "房间分页参数不合法。");
     return this.atomic.run(false, async (tx) => {
       const session = await this.session(tx);
-      const [rooms, members] = await tx.readBatch([
-        { sql: "SELECT r.*,(SELECT id FROM room_members WHERE room_id=r.id AND session_id=r.host_session_id) AS host_member_id FROM rooms r WHERE NOT EXISTS(SELECT 1 FROM room_bans b WHERE b.room_id=r.id AND b.session_id=?) ORDER BY created_at DESC,id LIMIT 100", values: [session.id] },
-        { sql: "SELECT m.*,s.expires_at,s.revoked_at,s.nickname,EXISTS(SELECT 1 FROM presence p WHERE p.member_id=m.id AND p.room_id=m.room_id AND p.last_seen>=?) AS recently_seen FROM room_members m JOIN sessions s ON s.id=m.session_id WHERE m.status='active' AND NOT EXISTS(SELECT 1 FROM room_bans b WHERE b.room_id=m.room_id AND b.session_id=m.session_id) AND m.room_id IN(SELECT r.id FROM rooms r WHERE NOT EXISTS(SELECT 1 FROM room_bans b WHERE b.room_id=r.id AND b.session_id=?) ORDER BY r.created_at DESC,r.id LIMIT 100) ORDER BY m.joined_at,m.id", values: [cutoff(45), session.id] },
-      ]);
+      const scope = (await digest(session.id)).slice(0, 16);
+      const where = ["NOT EXISTS(SELECT 1 FROM room_bans b WHERE b.room_id=r.id AND b.session_id=?)"];
+      const values: unknown[] = [session.id];
+      if (filter === "active") where.push("r.status<>'ended'");
+      if (filter === "ended") where.push("r.status='ended'");
+      if (filter === "mine") { where.push("EXISTS(SELECT 1 FROM room_members own WHERE own.room_id=r.id AND own.session_id=? AND own.status='active')"); values.push(session.id); }
+      if (cursor !== null) {
+        const parts = cursor.length <= 200 ? cursor.split("|") : [];
+        if (parts.length !== 4 || parts[0] !== filter || parts[1] !== scope || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?Z$/.test(parts[2]) || !Number.isFinite(Date.parse(parts[2])) || !/^[A-Za-z0-9_-]{1,80}$/.test(parts[3])) throw new DomainError(422, "房间游标不合法或不属于当前筛选和身份。");
+        where.push("(r.created_at<? OR (r.created_at=? AND r.id>?))"); values.push(parts[2], parts[2], parts[3]);
+      }
+      const result = await tx.all("SELECT r.*,(SELECT id FROM room_members h WHERE h.room_id=r.id AND h.session_id=r.host_session_id) AS host_member_id FROM rooms r WHERE " + where.join(" AND ") + " ORDER BY r.created_at DESC,r.id ASC LIMIT ?", ...values, limit + 1);
+      const hasMore = result.length > limit;
+      const rooms = result.slice(0, limit);
+      const members = rooms.length ? await tx.all("SELECT m.*,s.expires_at,s.revoked_at,s.nickname,EXISTS(SELECT 1 FROM presence p WHERE p.member_id=m.id AND p.room_id=m.room_id AND p.last_seen>=?) AS recently_seen FROM room_members m JOIN sessions s ON s.id=m.session_id WHERE m.status='active' AND NOT EXISTS(SELECT 1 FROM room_bans b WHERE b.room_id=m.room_id AND b.session_id=m.session_id) AND m.room_id IN(" + rooms.map(() => "?").join(",") + ") ORDER BY m.joined_at,m.id", cutoff(45), ...rooms.map((room) => room.id)) : [];
       const byRoom = new Map<string, Row[]>();
       for (const member of members) { const list = byRoom.get(member.room_id) ?? []; list.push(member); byRoom.set(member.room_id, list); }
-      return { rooms: rooms.map((room) => this.snapshotRows(room, session.id, byRoom.get(room.id) ?? [])) };
+      const last = rooms[rooms.length - 1];
+      return { rooms: rooms.map((room) => this.snapshotRows(room, session.id, byRoom.get(room.id) ?? [])), has_more: hasMore, next_cursor: hasMore ? [filter, scope, last.created_at, last.id].join("|") : null };
     });
   }
   private async newMember(tx: Transaction, roomId: string, session: Row): Promise<Row> {

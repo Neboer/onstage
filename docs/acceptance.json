@@ -1,8 +1,8 @@
 {
   "project": "Onstage",
-  "version": "0.7.1",
-  "updated_at_utc": "2026-10-18T10:02:35.302924+00:00",
-  "overall_status": "PARTIAL: development and public push verified; GitHub-hosted CI blocked before execution by account billing lock",
+  "version": "0.8.0",
+  "updated_at_utc": "2026-10-18T13:39:12.504865+00:00",
+  "overall_status": "PARTIAL: current feature development and local regression verified; public push pending; hosted CI/container/device/network acceptance separate",
   "delivery_scope": "Development, regression verification and public GitHub push; deployment and collaborator invitations are delegated by the user to later coordination.",
   "source": {
     "archive": "onstage-v0.6.0-codex-source.zip",
@@ -15,89 +15,25 @@
   },
   "current_evidence": [
     {
-      "object": "Python compatibility and notification/public-source tests",
-      "status": "VERIFIED",
-      "command": "python -m pytest -q --ignore=tests/test_postgres.py",
-      "result": "149 passed, 2 skipped",
-      "environment": "Windows / Python 3.12.12; explicit loopback synthetic services",
+      "object": "0.8 lossless artwork, cache/PWA, incremental feed, room pagination and navigation/settings",
+      "status": "VERIFIED within stated local automated and desktop-browser scope",
+      "report": "reports/optimization-20261018.json",
+      "results": {
+        "python_sqlite_compatibility": "158 passed, 2 Windows symlink skips",
+        "real_postgresql_17_11": "15 passed; isolated schema per test; explicit migration twice preserved 1107 rooms",
+        "d1": "18 actual Miniflare D1 integration groups, 1107-room pagination and write-freeze passed at 0.8.0",
+        "frontend": "21 real HTTP/WS jsdom steps; ACK/sync reconciliation and navigation suites passed",
+        "preview": "21 isolated adapter/DOM steps, including 1107 room pagination",
+        "pwa": "executed worker cache handlers and UI download scheduling: public-only, digest/MIME, warm zero-fetch, bounded concurrency 3, cancel/clear",
+        "artwork": "185 originals and derivatives SHA; full RGBA incl hidden RGB and ICC compare passed; original files unchanged",
+        "browser": "Actual IAB narrow viewport, loopback synthetic: 185 cached / 16.31 MB persisted after reload; shortcut preference persisted; real Enter send, Shift+Enter, sticker and draft, dark theme, history jumps, 24-row first/second page among 1000+ ended rooms"
+      },
       "limitations": [
-        "Two Windows symlink checks skipped because account lacks privilege; POSIX protection assertions remain enabled on Linux CI.",
-        "Starlette httpx TestClient deprecation warning retained."
+        "Not three humans, physical phone, OS-installed PWA or browser-process restart",
+        "No target/container/registry digest or mainland/venue bandwidth/latency result",
+        "Full browser color management across devices not verified",
+        "1000+ historical room pagination does not prove 1000 active rooms capacity"
       ]
-    },
-    {
-      "object": "PostgreSQL adapter and controlled recovery",
-      "status": "VERIFIED",
-      "result": "14 passed, plus final backup-specific regression",
-      "environment": "isolated real PostgreSQL 17.11 / Python 3.12",
-      "evidence": "reports/postgres-integration-20261018.json"
-    },
-    {
-      "object": "Sending ACK/sync reconciliation",
-      "status": "VERIFIED",
-      "command": "node tests/frontend_delivery_check.cjs",
-      "result": "passed",
-      "scope": "Controlled DOM/fetch ordering; lost ACK, late errors, exact identity keys, retry/refresh, drafts, cursor; no layout/network claim"
-    },
-    {
-      "object": "D1 compatibility and old-entry write freeze",
-      "status": "VERIFIED",
-      "commands": [
-        "node edge/freeze.test.mjs",
-        "node edge/integration.test.mjs reports/edge-integration-selfhost-20261018.json"
-      ],
-      "result": "passed",
-      "environment": "local workerd/Miniflare D1; freeze verified in isolated adapter, not deployed on old Sites"
-    },
-    {
-      "object": "Shared frontend and offline adapter",
-      "status": "VERIFIED",
-      "results": [
-        "21 FastAPI/SQLite DOM steps",
-        "20 explicit offline adapter steps"
-      ],
-      "scope": "Executed before final version-only bump to 0.7.0; exact source JS unchanged by version bump; no browser layout claim"
-    },
-    {
-      "object": "Desktop browser Chinese text/sticker/draft/theme",
-      "status": "VERIFIED",
-      "environment": "actual in-app desktop browser on loopback SQLite; one synthetic identity",
-      "scope": "nickname entry, room creation, backstage text and sticker success, draft retained, dark theme",
-      "limitations": [
-        "Not PG browser/phone/IME/three human/network acceptance",
-        "Screenshot stays local with original artwork, excluded from public source"
-      ]
-    },
-    {
-      "object": "Public sample export",
-      "status": "VERIFIED",
-      "result": "5 tests passed in private source and public export",
-      "scope": "stable business IDs, no original bitmap bytes, source/private exclusion, actual API/catalog/sample assets served"
-    },
-    {
-      "object": "Public export integration after missing-template fix",
-      "status": "VERIFIED",
-      "results": [
-        "57 deployment/public-source tests passed, 1 Windows symlink test skipped",
-        "21 actual public-sample FastAPI DOM steps passed",
-        "Original source 149 passed/2 skipped and real PG 14 passed remain separate sets"
-      ],
-      "failures_preserved": "Initial public export had six failures from omitted deployment templates; fixed by explicit allowlist and actual nginx/Caddy preparation regression. Original failing XML retained locally; no threshold reduction."
-    },
-    {
-      "object": "Complete original-artwork repository delivery",
-      "status": "VERIFIED",
-      "version": "0.7.1",
-      "assets": 185,
-      "bytes": 21727033,
-      "scope": "All original artwork byte-identical to original package; original paths restored; all 185 resources served by actual app with matching hash and image MIME. No external asset download required. Dockerfile copies static content.",
-      "checks": [
-        "34 content/catalog/notification tests passed",
-        "21 actual HTTP/WS frontend DOM steps passed on original artwork at version 0.7.1",
-        "Windows WebP MIME omission corrected without changing image bytes"
-      ],
-      "test_environment": "Windows / Python 3.12.12 / loopback FastAPI SQLite; not target/container/physical phone acceptance",
-      "initial_failure": "HTTP check found WebP served as application/octet-stream on Windows; explicit MIME registration fixed it; no assertion lowered."
     }
   ],
   "github": {
@@ -125,8 +61,8 @@
     "actions_blocker": "The job was not started because your account is locked due to a billing issue.",
     "billing_settings_changed": false,
     "authentication": "GitHub CLI and Codex connector both verified as SpringfiledBucks; CLI OAuth workflow scope refreshed successfully by user",
-    "previous_implementation_commit": "ea4d9db52f4aa65de30236866ef83ff4cc822fa1",
-    "current_version": "0.7.1; use the Git commit containing this ledger"
+    "previous_implementation_commit": "ea47d9dd9a3630062f7fdfc02dad5c835d8414e9",
+    "current_version": "0.8.0; see commit containing this ledger"
   },
   "container": {
     "configuration": "implemented",
@@ -156,7 +92,101 @@
     "Three human participants, real phone, Chinese IME/soft keyboard and mainland/venue networks",
     "Click-to-local-paint and real cross-device end-to-end latency/Sites comparison",
     "Final code/asset licensing not selected",
-    "Neboer has not yet accepted invitation; administrator/second owner role is unavailable for collaborators on this personal-account repository."
+    "Neboer has not yet accepted invitation; administrator/second owner role is unavailable for collaborators on this personal-account repository.",
+    "Physical phone PWA installation/OS restart/cache eviction and real IME/soft keyboard for 0.8",
+    "Browser color management comparison across all artwork/devices",
+    "Current 0.8 GitHub Actions and actual runtime image; account billing blocker last observed on prior run"
   ],
-  "development_and_public_push_status": "VERIFIED"
+  "development_and_public_push_status": "PARTIAL: current development verified, push pending",
+  "historical_v071_evidence": {
+    "version": "0.7.1",
+    "current_at_that_time_only": true,
+    "evidence": [
+      {
+        "object": "Python compatibility and notification/public-source tests",
+        "status": "VERIFIED",
+        "command": "python -m pytest -q --ignore=tests/test_postgres.py",
+        "result": "149 passed, 2 skipped",
+        "environment": "Windows / Python 3.12.12; explicit loopback synthetic services",
+        "limitations": [
+          "Two Windows symlink checks skipped because account lacks privilege; POSIX protection assertions remain enabled on Linux CI.",
+          "Starlette httpx TestClient deprecation warning retained."
+        ]
+      },
+      {
+        "object": "PostgreSQL adapter and controlled recovery",
+        "status": "VERIFIED",
+        "result": "14 passed, plus final backup-specific regression",
+        "environment": "isolated real PostgreSQL 17.11 / Python 3.12",
+        "evidence": "reports/postgres-integration-20261018.json"
+      },
+      {
+        "object": "Sending ACK/sync reconciliation",
+        "status": "VERIFIED",
+        "command": "node tests/frontend_delivery_check.cjs",
+        "result": "passed",
+        "scope": "Controlled DOM/fetch ordering; lost ACK, late errors, exact identity keys, retry/refresh, drafts, cursor; no layout/network claim"
+      },
+      {
+        "object": "D1 compatibility and old-entry write freeze",
+        "status": "VERIFIED",
+        "commands": [
+          "node edge/freeze.test.mjs",
+          "node edge/integration.test.mjs reports/edge-integration-selfhost-20261018.json"
+        ],
+        "result": "passed",
+        "environment": "local workerd/Miniflare D1; freeze verified in isolated adapter, not deployed on old Sites"
+      },
+      {
+        "object": "Shared frontend and offline adapter",
+        "status": "VERIFIED",
+        "results": [
+          "21 FastAPI/SQLite DOM steps",
+          "20 explicit offline adapter steps"
+        ],
+        "scope": "Executed before final version-only bump to 0.7.0; exact source JS unchanged by version bump; no browser layout claim"
+      },
+      {
+        "object": "Desktop browser Chinese text/sticker/draft/theme",
+        "status": "VERIFIED",
+        "environment": "actual in-app desktop browser on loopback SQLite; one synthetic identity",
+        "scope": "nickname entry, room creation, backstage text and sticker success, draft retained, dark theme",
+        "limitations": [
+          "Not PG browser/phone/IME/three human/network acceptance",
+          "Screenshot stays local with original artwork, excluded from public source"
+        ]
+      },
+      {
+        "object": "Public sample export",
+        "status": "VERIFIED",
+        "result": "5 tests passed in private source and public export",
+        "scope": "stable business IDs, no original bitmap bytes, source/private exclusion, actual API/catalog/sample assets served"
+      },
+      {
+        "object": "Public export integration after missing-template fix",
+        "status": "VERIFIED",
+        "results": [
+          "57 deployment/public-source tests passed, 1 Windows symlink test skipped",
+          "21 actual public-sample FastAPI DOM steps passed",
+          "Original source 149 passed/2 skipped and real PG 14 passed remain separate sets"
+        ],
+        "failures_preserved": "Initial public export had six failures from omitted deployment templates; fixed by explicit allowlist and actual nginx/Caddy preparation regression. Original failing XML retained locally; no threshold reduction."
+      },
+      {
+        "object": "Complete original-artwork repository delivery",
+        "status": "VERIFIED",
+        "version": "0.7.1",
+        "assets": 185,
+        "bytes": 21727033,
+        "scope": "All original artwork byte-identical to original package; original paths restored; all 185 resources served by actual app with matching hash and image MIME. No external asset download required. Dockerfile copies static content.",
+        "checks": [
+          "34 content/catalog/notification tests passed",
+          "21 actual HTTP/WS frontend DOM steps passed on original artwork at version 0.7.1",
+          "Windows WebP MIME omission corrected without changing image bytes"
+        ],
+        "test_environment": "Windows / Python 3.12.12 / loopback FastAPI SQLite; not target/container/physical phone acceptance",
+        "initial_failure": "HTTP check found WebP served as application/octet-stream on Windows; explicit MIME registration fixed it; no assertion lowered."
+      }
+    ]
+  }
 }

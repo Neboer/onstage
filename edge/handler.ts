@@ -114,7 +114,11 @@ export async function handleApi(request: Request, env: Env): Promise<Response> {
     if (path === "/api/logout" && method === "POST") { fields(body, []); return json(await store.logout(), 200, { "Set-Cookie": cookieHeader("", origin.startsWith("https://"), true) }); }
     if (path === "/api/catalog" && method === "GET") return json(await store.getCatalog());
     if (path === "/api/rooms") {
-      if (method === "GET") return json(await store.listRooms());
+      if (method === "GET") {
+        const rawLimit = url.searchParams.get("limit") ?? "50";
+        if (!/^[0-9]+$/.test(rawLimit)) throw new DomainError(422, "房间分页参数不合法。");
+        return json(await store.listRooms(Number(rawLimit), url.searchParams.get("cursor"), url.searchParams.get("filter") ?? "all"));
+      }
       if (method === "POST") {
         fields(body, ["scenario_id", "title", "background", "announcement"]);
         text(body, "scenario_id", 80, { min: 1 }); text(body, "title", 80, { optional: true, nullable: true }); text(body, "background", 2000, { optional: true, nullable: true }); text(body, "announcement", 500, { optional: true });

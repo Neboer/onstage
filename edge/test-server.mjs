@@ -1,14 +1,16 @@
-import { Miniflare } from "miniflare";
-import { build } from "esbuild";
+import { createRequire } from "node:module";
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { randomBytes } from "node:crypto";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const require = createRequire(process.env.ONSTAGE_NODE_MODULES ? path.join(process.env.ONSTAGE_NODE_MODULES, "package.json") : import.meta.url);
+const { Miniflare } = require("miniflare");
+const { build } = require("esbuild");
 export async function startTestServer({ port = 0, operatorToken = randomBytes(32).toString("hex"), origin = null, writeFrozen = false } = {}) {
   const bundled = await build({ entryPoints: [path.join(root, "edge/testing-worker.ts")], bundle: true, write: false, format: "esm", platform: "browser", target: "es2022" });
-  const mf = new Miniflare({ modules: true, script: bundled.outputFiles[0].text, compatibilityDate: "2026-05-15", port, host: "127.0.0.1", inspectorPort: 0, d1Databases: { DB: "onstage-isolated-tests" }, bindings: { ONSTAGE_VERSION: "0.7.0", ...(origin ? { ONSTAGE_PUBLIC_ORIGIN: origin } : {}), ONSTAGE_OPERATOR_TOKEN: operatorToken, ONSTAGE_WRITE_FROZEN: writeFrozen ? "1" : "0" }, log: undefined });
+  const mf = new Miniflare({ modules: true, script: bundled.outputFiles[0].text, compatibilityDate: "2026-05-15", port, host: "127.0.0.1", inspectorPort: 0, d1Databases: { DB: "onstage-isolated-tests" }, bindings: { ONSTAGE_VERSION: (await readFile(path.join(root, "VERSION"), "utf8")).trim(), ...(origin ? { ONSTAGE_PUBLIC_ORIGIN: origin } : {}), ONSTAGE_OPERATOR_TOKEN: operatorToken, ONSTAGE_WRITE_FROZEN: writeFrozen ? "1" : "0" }, log: undefined });
   await mf.ready;
   const db = await mf.getD1Database("DB");
   const migrations = (await readdir(path.join(root, "drizzle"))).filter((file) => file.endsWith(".sql")).sort();

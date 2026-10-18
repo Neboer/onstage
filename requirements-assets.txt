@@ -1,0 +1,2 @@
+# Optional authoring/decoded-pixel verification only; not needed to run the app.
+Pillow==12.1.1

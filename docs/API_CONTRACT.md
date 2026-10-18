@@ -57,7 +57,9 @@
 
 ## 房间与席位
 
-- `GET /api/rooms` → `{rooms:[room]}`，最新最多 100 个房间。
+- `GET /api/rooms?limit=50&filter=all&cursor=...` → `{rooms:[room],next_cursor:string|null,has_more:boolean}`。无参数默认首屏 50，limit 为 1–100；filter 为 `all|active|ended|mine`，分别为所有可见房间、未结束、已结束和本人当前仍是有效成员的房间。筛选在服务端分页之前执行，被本房移出者始终看不到该房。
+- 房间列表按 `created_at DESC,id ASC` 稳定键集分页，服务端最多取 limit+1 个房间判定下一页，仅批量读取本页成员；不一次读取或向前端发送全部房间，不提供昂贵全站计数。游标是不透明字符串，调用方仅 URL 编码后原样续传，不自行构造；游标绑定当前身份和 filter，切换身份或筛选必须回到首屏，不合法/跨范围游标返回 422。`next_cursor=null` 表示当前没有下一页，越过最早房间的合法游标返回空页。翻页不是冻结快照，新建房间回到首屏查看，成员/阶段变更会在后续读取体现。创建房间的人数、房间总量及速率限制保持原样，分页不等于放宽准入。
+- 分页索引为兼容的附加结构：SQLite 由现有初始化 schema 步骤幂等建立；PostgreSQL 必须在更新前执行现有受控 `python -m tools.database migrate`，应用启动不执行 DDL；D1 执行新增 `0001_room_pagination` migration。业务 schema_version 仍为 4，旧源码仍可读取，索引可保留供回退。
 - `POST /api/rooms` `{scenario_id,title?,background?,announcement?}` → `{room}`，同一事务建立未选角的房主成员并记录本人以观众身份加入的系统消息。房主仍有管理和后台资格，不会自动占角。title<=80，background<=2000，announcement<=500；省略 background 用目录 opening，显式空串表示空背景。
 - `GET /api/rooms/{id}` → `{room}`。未入房可读基本信息；被本房移出者 403。
 - `POST /api/rooms/{id}/join` `{}` → `{room}`。首次加入或正式离房后恢复为未选角观众，未结束房间追加一次加入事件；已在房间的重复请求不变更席位、不重复记事。被移出的匿名会话不能重入。

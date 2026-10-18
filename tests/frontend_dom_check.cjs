@@ -20,6 +20,9 @@ const report = { version: process.env.ONSTAGE_EXPECT_VERSION || fs.readFileSync(
 const html = fs.readFileSync(path.join(root, "static/index.html"), "utf8");
 const app = fs.readFileSync(path.join(root, "static/app.js"), "utf8");
 const theme = fs.readFileSync(path.join(root, "static/theme.js"), "utf8");
+// Catalog/snapshots keep original URLs; the shared UI resolves their verified variants.
+const deliveryAssets = JSON.parse(fs.readFileSync(path.join(root, "static/assets-manifest.json"), "utf8")).assets;
+const deliveryURL = original => deliveryAssets[original]?.url || original;
 report.app_js_sha256 = crypto.createHash("sha256").update(app).digest("hex");
 report.frontend_sha256 = Object.fromEntries(["static/index.html", "static/app.js", "static/styles.css", "static/theme.js", "tests/frontend_dom_check.cjs"].map(file => [file, crypto.createHash("sha256").update(fs.readFileSync(path.join(root, file))).digest("hex")]));
 const clients = [];
@@ -228,10 +231,10 @@ async function send(c, text) {
           assert(crop.y + crop.height <= (character.avatar_height ?? character.image_height));
         }
         const rendered = [...host.$("lobby-characters").querySelectorAll(".character-avatar")].find(item => item.dataset.character === character.id);
-        assert.equal(rendered.querySelector("img").getAttribute("src"), character.avatar_image || character.image);
+        assert.equal(rendered.querySelector("img").getAttribute("src"), deliveryURL(character.avatar_image || character.image));
         if (character.avatar_crop) assert.equal(rendered.dataset.crop, "true", "Avatar crop is applied only from this character's explicit small-image coordinates");
         rendered.closest(".lobby-character").click(); assert(host.$("confirm-dialog").open);
-        assert.equal(host.$("confirm-extra").querySelector(".character-full-art img").getAttribute("src"), character.detail_image);
+        assert.equal(host.$("confirm-extra").querySelector(".character-full-art img").getAttribute("src"), deliveryURL(character.detail_image));
         host.click("confirm-cancel"); await until(() => !host.$("confirm-dialog").open, "full portrait detail closed");
       }
       assert.equal(host.$("login-form"), null);
@@ -277,7 +280,7 @@ async function send(c, text) {
       host.submit("create-form"); await booted(host, true);
       roomId = new URLSearchParams(host.w.location.hash.slice(1)).get("room"); assert(roomId);
       const backdrop = host.catalog.scenarios.find(item => item.id === host.$("room-backdrop").dataset.sceneId);
-      assert.equal(host.$("room-backdrop-image").getAttribute("src"), backdrop.image);
+      assert.equal(host.$("room-backdrop-image").getAttribute("src"), deliveryURL(backdrop.image));
       assert.equal(host.$("room-backdrop").parentElement, host.d.body, "Backdrop is a global room layer, outside individual cards");
       assert(host.$("room-background").textContent.includes("<img")); assert.equal(host.$("room-background").querySelector("img"), null);
       assert(host.$("composer-identity").textContent.includes("旁观中"));
@@ -389,7 +392,7 @@ async function send(c, text) {
       host.fill("sticker-search", selected.label);
       const choice = [...host.$("sticker-list").querySelectorAll(".sticker-choice")].find(item => item.dataset.stickerId === selected.id);
       assert(choice); choice.click();
-      assert.equal(host.$("sticker-preview").querySelector("img").getAttribute("src"), selected.image);
+      assert.equal(host.$("sticker-preview").querySelector("img").getAttribute("src"), deliveryURL(selected.image));
       assert.equal(host.$("sticker-preview").querySelector("img").width, 162);
       assert.equal(host.requests.filter(item => item.method === "POST" && item.path.endsWith("/messages")).length, postsBefore, "Selection/search never submits a message");
       host.click("send-sticker");
@@ -402,7 +405,7 @@ async function send(c, text) {
       assert(host.$("sticker-selection-dot").hidden);
       await until(() => !!messageElement(observer, message.id)?.querySelector(".message-sticker img"), "observer receives committed stage sticker");
       assert.equal(messageElement(observer, message.id).querySelector(".message-author").textContent, "高松灯");
-      assert.equal(messageElement(observer, message.id).querySelector(".message-sticker img").getAttribute("src"), selected.image);
+      assert.equal(messageElement(observer, message.id).querySelector(".message-sticker img").getAttribute("src"), deliveryURL(selected.image));
       assert.equal(messageElement(observer, message.id).querySelector(".message-sticker figcaption"), null);
       assert.equal(messageElement(observer, message.id).querySelector(".message-sticker").textContent, "");
       assert.equal(messageElement(observer, message.id).querySelector(".message-sticker img").alt, selected.label);
@@ -465,10 +468,10 @@ async function send(c, text) {
       const saved = host.capture(), csrf = host.csrf; await host.close(); host = client(saved); await booted(host, true);
       assert.equal(host.csrf, csrf); assert.equal(host.$("message-input").value, "舞台文字与贴纸的刷新草稿");
       host.click("open-stickers");
-      assert.equal(host.$("sticker-preview").querySelector("img").getAttribute("src"), stageChoice.image); host.click("close-stickers");
+      assert.equal(host.$("sticker-preview").querySelector("img").getAttribute("src"), deliveryURL(stageChoice.image)); host.click("close-stickers");
       host.click("backstage-channel"); assert.equal(host.$("message-input").value, "后台文字与贴纸的刷新草稿");
       host.click("open-stickers");
-      assert.equal(host.$("sticker-preview").querySelector("img").getAttribute("src"), backstageChoice.image); host.click("close-stickers");
+      assert.equal(host.$("sticker-preview").querySelector("img").getAttribute("src"), deliveryURL(backstageChoice.image)); host.click("close-stickers");
       assert.equal(host.requests.filter(item => item.method === "POST" && item.path.endsWith("/messages")).length, 0, "Reload does not send either saved choice");
       const isolated = client({ ...saved, jar: new CookieJar() }); await booted(isolated, true);
       assert.notEqual(isolated.csrf, csrf); assert.equal(isolated.$("message-input").value, "");
@@ -486,7 +489,7 @@ async function send(c, text) {
       host.fill("message-input", "确认贴纸期间继续编辑的文字");
       const saved = host.capture(); await host.close(); host = client(saved); await booted(host, true);
       await until(() => !host.$("message-feed").querySelector("[data-pending-id]") && messageElement(host, committed.id), "restored pending confirmed by sync");
-      assert.equal(messageElement(host, committed.id).querySelector(".message-sticker img").getAttribute("src"), selected.image);
+      assert.equal(messageElement(host, committed.id).querySelector(".message-sticker img").getAttribute("src"), deliveryURL(selected.image));
       assert.equal(host.$("message-input").value, "确认贴纸期间继续编辑的文字");
       assert.equal(host.requests.filter(item => item.method === "POST" && item.path.endsWith("/messages")).length, 0);
       assert.equal(committed.client_message_id, first.client_message_id, "sync confirmation uses the original persisted key");
@@ -529,12 +532,12 @@ async function send(c, text) {
       stageStickerMessage = await sendSticker(peer, selected.id);
       await until(() => !!messageElement(observer, stageStickerMessage.id), "reported stage sticker arrives");
       messageElement(observer, stageStickerMessage.id).querySelector(".message-report").click();
-      assert.equal(observer.$("report-target").querySelector("img").getAttribute("src"), stageStickerMessage.sticker.image);
+      assert.equal(observer.$("report-target").querySelector("img").getAttribute("src"), deliveryURL(stageStickerMessage.sticker.image));
       observer.fill("report-details", "自动化贴纸反馈：验证图片快照与处理回执。"); observer.submit("report-form");
       await until(() => !!reportCard(observer, "自动化贴纸反馈"), "sticker reporter receipt");
-      assert.equal(reportCard(observer, "自动化贴纸反馈").querySelector(".report-sticker img").getAttribute("src"), selected.image);
+      assert.equal(reportCard(observer, "自动化贴纸反馈").querySelector(".report-sticker img").getAttribute("src"), deliveryURL(selected.image));
       host.click("room-reports-button"); await until(() => !!reportCard(host, "自动化贴纸反馈"), "host sees permitted sticker snapshot");
-      assert.equal(reportCard(host, "自动化贴纸反馈").querySelector(".report-sticker img").getAttribute("src"), selected.image);
+      assert.equal(reportCard(host, "自动化贴纸反馈").querySelector(".report-sticker img").getAttribute("src"), deliveryURL(selected.image));
       button(host, "处理反馈", reportCard(host, "自动化贴纸反馈")).click();
       host.fill("resolve-note", "自动化贴纸验收：该反馈已处理。"); host.submit("resolve-form");
       await until(() => !host.$("resolve-dialog").open && reportCard(host, "自动化贴纸反馈")?.textContent.includes("该反馈已处理"), "sticker resolution saved");
@@ -546,7 +549,7 @@ async function send(c, text) {
       const selected = host.catalog.stickers.find(item => item.band_id === "mujica");
       backstageStickerMessage = await sendSticker(host, selected.id);
       await until(() => !!messageElement(peer, backstageStickerMessage.id), "backstage actor receives sticker");
-      assert.equal(messageElement(peer, backstageStickerMessage.id).querySelector(".message-sticker img").getAttribute("src"), selected.image);
+      assert.equal(messageElement(peer, backstageStickerMessage.id).querySelector(".message-sticker img").getAttribute("src"), deliveryURL(selected.image));
       const visible = await observer.request(`/api/rooms/${roomId}/sync?after_stage=0&after_backstage=0`);
       assert.equal(visible.messages.backstage.length, 0); assert(!messageElement(observer, backstageStickerMessage.id));
       messageElement(peer, backstageStickerMessage.id).querySelector(".message-report").click();
