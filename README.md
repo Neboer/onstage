@@ -81,4 +81,6 @@ docker compose -f compose.dev.yaml up --build -d app
 
 ## 当前交付状态
 
-开发与公开源码推送已完成，本地Python/真实PostgreSQL/发送对账及公开示例集成已验证。GitHub Actions已触发，但账户账单锁导致runner未启动；[实际失败回执](https://github.com/SpringfiledBucks/onstage/actions/runs/39116782810)不是应用测试失败，也不是CI通过。没有实际镜像digest。账户恢复后重跑工作流，main手动发布可在验证通过后推GHCR。未操作账单或目标部署。详情见docs/acceptance.json。
+0.8.0开发、验证和公开推送完成，功能提交[0f6ac0e](https://github.com/SpringfiledBucks/onstage/commit/0f6ac0e75445fcd5baf14d06952244738374e509)。本轮Python 158通过/2项Windows权限跳过，真实PG17测试15通过；千房D1、21步真实HTTP/WS DOM、PWA/发送/导航回归及实际窄视口浏览器缓存/刷新检查通过。范围、带宽正文实测和限制见[本轮证据](reports/optimization-20261018.json)。Neboer已接受write协作权限。
+
+[本提交实际Actions回执](https://github.com/SpringfiledBucks/onstage/actions/runs/39133008366)显示账户账单锁，validate没有任何执行步骤、runner未启动，不能记为CI通过；未生成实际镜像或digest。本机未装Docker，未操作账单或生产部署。账户恢复后可重跑本次run；main手动发布仍需全部验证通过。物理手机安装/软键盘/OS重启、大陆与现场网络、集群部署另行验收。原生客户端暂缓。详见docs/acceptance.json。

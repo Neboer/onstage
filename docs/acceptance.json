@@ -1,9 +1,9 @@
 {
   "project": "Onstage",
   "version": "0.8.0",
-  "updated_at_utc": "2026-10-18T13:39:12.504865+00:00",
-  "overall_status": "PARTIAL: current feature development and local regression verified; public push pending; hosted CI/container/device/network acceptance separate",
-  "delivery_scope": "Development, regression verification and public GitHub push; deployment and collaborator invitations are delegated by the user to later coordination.",
+  "updated_at_utc": "2026-10-18T13:49:31.100431+00:00",
+  "overall_status": "PARTIAL: 0.8 development, local verification and public push VERIFIED; hosted CI BLOCKED before execution by GitHub account billing lock; target deployment/device/network acceptance separate",
+  "delivery_scope": "Development, regression verification and public GitHub push. Deployment by collaborator; native client deferred.",
   "source": {
     "archive": "onstage-v0.6.0-codex-source.zip",
     "sha256": "a054b5c4494ffd5bb2a01e0a156f23211b8ec15c4f8a0df44959000089e31d0f",
@@ -16,7 +16,7 @@
   "current_evidence": [
     {
       "object": "0.8 lossless artwork, cache/PWA, incremental feed, room pagination and navigation/settings",
-      "status": "VERIFIED within stated local automated and desktop-browser scope",
+      "status": "VERIFIED",
       "report": "reports/optimization-20261018.json",
       "results": {
         "python_sqlite_compatibility": "158 passed, 2 Windows symlink skips",
@@ -33,7 +33,18 @@
         "No target/container/registry digest or mainland/venue bandwidth/latency result",
         "Full browser color management across devices not verified",
         "1000+ historical room pagination does not prove 1000 active rooms capacity"
-      ]
+      ],
+      "scope": "Local automated tests and actual loopback IAB narrow viewport; limitations in report"
+    },
+    {
+      "object": "0.8 GitHub implementation push",
+      "status": "VERIFIED",
+      "implementation_commit": "0f6ac0e75445fcd5baf14d06952244738374e509",
+      "remote_ref": "refs/heads/main",
+      "confirmed_at_utc": "2026-10-18T13:49:31.100431+00:00",
+      "actions_run": "https://github.com/SpringfiledBucks/onstage/actions/runs/39133008366",
+      "actions_status": "BLOCKED before execution",
+      "reason": "The job was not started because your account is locked due to a billing issue."
     }
   ],
   "github": {
@@ -44,25 +55,29 @@
     "collaborators": {
       "Neboer": {
         "profile": "https://github.com/Neboer",
-        "invitation_status": "pending",
+        "invitation_status": "accepted",
         "invitation_id": 338329375,
         "invitation_created_at": "2026-10-18T09:56:56Z",
         "permission": "write",
         "requested": "highest collaborator permission",
         "repository_owner_type": "User",
         "maximum_available_non_owner_role": true,
-        "ownership_transferred": false
+        "ownership_transferred": false,
+        "confirmed_at_utc": "2026-10-18T13:49:31.100431+00:00",
+        "confirmation": "No pending invitation; GitHub permission endpoint returns write"
       }
     },
     "actions_runs": [
       "https://github.com/SpringfiledBucks/onstage/actions/runs/39116754546",
-      "https://github.com/SpringfiledBucks/onstage/actions/runs/39116782810"
+      "https://github.com/SpringfiledBucks/onstage/actions/runs/39116782810",
+      "https://github.com/SpringfiledBucks/onstage/actions/runs/39133008366"
     ],
     "actions_blocker": "The job was not started because your account is locked due to a billing issue.",
     "billing_settings_changed": false,
     "authentication": "GitHub CLI and Codex connector both verified as SpringfiledBucks; CLI OAuth workflow scope refreshed successfully by user",
     "previous_implementation_commit": "ea47d9dd9a3630062f7fdfc02dad5c835d8414e9",
-    "current_version": "0.8.0; see commit containing this ledger"
+    "current_version": "0.8.0; see commit containing this ledger",
+    "current_implementation_commit": "0f6ac0e75445fcd5baf14d06952244738374e509"
   },
   "container": {
     "configuration": "implemented",
@@ -92,12 +107,11 @@
     "Three human participants, real phone, Chinese IME/soft keyboard and mainland/venue networks",
     "Click-to-local-paint and real cross-device end-to-end latency/Sites comparison",
     "Final code/asset licensing not selected",
-    "Neboer has not yet accepted invitation; administrator/second owner role is unavailable for collaborators on this personal-account repository.",
     "Physical phone PWA installation/OS restart/cache eviction and real IME/soft keyboard for 0.8",
     "Browser color management comparison across all artwork/devices",
-    "Current 0.8 GitHub Actions and actual runtime image; account billing blocker last observed on prior run"
+    "0.8 hosted CI/container/digest: runner never started because of account billing lock"
   ],
-  "development_and_public_push_status": "PARTIAL: current development verified, push pending",
+  "development_and_public_push_status": "VERIFIED",
   "historical_v071_evidence": {
     "version": "0.7.1",
     "current_at_that_time_only": true,

@@ -108,5 +108,12 @@
     "node edge/freeze.test.mjs",
     "python tools/build_site_preview.py --output dist-offline-review",
     "node tests/preview_adapter_check.cjs <local-report>"
-  ]
+  ],
+  "implementation_commit": "0f6ac0e75445fcd5baf14d06952244738374e509",
+  "github": {
+    "push_verified": true,
+    "actions_run": "https://github.com/SpringfiledBucks/onstage/actions/runs/39133008366",
+    "job_started": false,
+    "blocker": "The job was not started because your account is locked due to a billing issue."
+  }
 }
