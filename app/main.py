@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import mimetypes
 import os
 import sqlite3
 import time
@@ -29,6 +30,9 @@ logger = logging.getLogger("uvicorn.error.onstage")
 _db_timings: ContextVar[list[float] | None] = ContextVar("db_timings", default=None)
 _request_id: ContextVar[str] = ContextVar("request_id", default="background")
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+# Some Windows MIME databases omit WebP. Keep original bundled artwork served
+# as images on every supported host instead of application/octet-stream.
+mimetypes.add_type("image/webp", ".webp")
 
 
 class Body(BaseModel):

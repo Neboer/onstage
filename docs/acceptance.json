@@ -1,7 +1,7 @@
 {
   "project": "Onstage",
-  "version": "0.7.0",
-  "updated_at_utc": "2026-10-18T09:50:08.749204+00:00",
+  "version": "0.7.1",
+  "updated_at_utc": "2026-10-18T10:02:35.302924+00:00",
   "overall_status": "PARTIAL: development and public push verified; GitHub-hosted CI blocked before execution by account billing lock",
   "delivery_scope": "Development, regression verification and public GitHub push; deployment and collaborator invitations are delegated by the user to later coordination.",
   "source": {
@@ -83,6 +83,21 @@
         "Original source 149 passed/2 skipped and real PG 14 passed remain separate sets"
       ],
       "failures_preserved": "Initial public export had six failures from omitted deployment templates; fixed by explicit allowlist and actual nginx/Caddy preparation regression. Original failing XML retained locally; no threshold reduction."
+    },
+    {
+      "object": "Complete original-artwork repository delivery",
+      "status": "VERIFIED",
+      "version": "0.7.1",
+      "assets": 185,
+      "bytes": 21727033,
+      "scope": "All original artwork byte-identical to original package; original paths restored; all 185 resources served by actual app with matching hash and image MIME. No external asset download required. Dockerfile copies static content.",
+      "checks": [
+        "34 content/catalog/notification tests passed",
+        "21 actual HTTP/WS frontend DOM steps passed on original artwork at version 0.7.1",
+        "Windows WebP MIME omission corrected without changing image bytes"
+      ],
+      "test_environment": "Windows / Python 3.12.12 / loopback FastAPI SQLite; not target/container/physical phone acceptance",
+      "initial_failure": "HTTP check found WebP served as application/octet-stream on Windows; explicit MIME registration fixed it; no assertion lowered."
     }
   ],
   "github": {
@@ -90,15 +105,28 @@
     "visibility": "public",
     "push_status": "VERIFIED",
     "actions_status": "BLOCKED before job execution",
-    "collaborators": "Await user-provided exact GitHub usernames; no invitations sent",
-    "implementation_commit": "ea4d9db52f4aa65de30236866ef83ff4cc822fa1",
+    "collaborators": {
+      "Neboer": {
+        "profile": "https://github.com/Neboer",
+        "invitation_status": "pending",
+        "invitation_id": 338329375,
+        "invitation_created_at": "2026-10-18T09:56:56Z",
+        "permission": "write",
+        "requested": "highest collaborator permission",
+        "repository_owner_type": "User",
+        "maximum_available_non_owner_role": true,
+        "ownership_transferred": false
+      }
+    },
     "actions_runs": [
       "https://github.com/SpringfiledBucks/onstage/actions/runs/39116754546",
       "https://github.com/SpringfiledBucks/onstage/actions/runs/39116782810"
     ],
     "actions_blocker": "The job was not started because your account is locked due to a billing issue.",
     "billing_settings_changed": false,
-    "authentication": "GitHub CLI and Codex connector both verified as SpringfiledBucks; CLI OAuth workflow scope refreshed successfully by user"
+    "authentication": "GitHub CLI and Codex connector both verified as SpringfiledBucks; CLI OAuth workflow scope refreshed successfully by user",
+    "previous_implementation_commit": "ea4d9db52f4aa65de30236866ef83ff4cc822fa1",
+    "current_version": "0.7.1; use the Git commit containing this ledger"
   },
   "container": {
     "configuration": "implemented",
@@ -127,8 +155,8 @@
     "Actual target URL, production PostgreSQL/cutover, cluster/GitOps updates and rollback",
     "Three human participants, real phone, Chinese IME/soft keyboard and mainland/venue networks",
     "Click-to-local-paint and real cross-device end-to-end latency/Sites comparison",
-    "Collaborator invitations before user provides names",
-    "Final code/asset licensing not selected"
+    "Final code/asset licensing not selected",
+    "Neboer has not yet accepted invitation; administrator/second owner role is unavailable for collaborators on this personal-account repository."
   ],
   "development_and_public_push_status": "VERIFIED"
 }

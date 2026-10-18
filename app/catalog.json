@@ -4,13 +4,13 @@
       "id": "mygo",
       "name": "MyGO!!!!!",
       "color": "#4DA9DB",
-      "image": "/static/assets/bands/mygo.svg"
+      "image": "/static/assets/bands/mygo.webp"
     },
     {
       "id": "mujica",
       "name": "Ave Mujica",
       "color": "#B67594",
-      "image": "/static/assets/bands/mujica.svg"
+      "image": "/static/assets/bands/mujica.webp"
     }
   ],
   "characters": [
@@ -283,7 +283,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/mygo_rehearsal.svg"
+      "image": "/static/assets/scenes/mygo_rehearsal.webp"
     },
     {
       "id": "mujica_changeover",
@@ -312,7 +312,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/mujica_changeover.svg"
+      "image": "/static/assets/scenes/mujica_changeover.webp"
     },
     {
       "id": "shared_greenroom",
@@ -341,7 +341,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/shared_greenroom.svg"
+      "image": "/static/assets/scenes/shared_greenroom.webp"
     },
     {
       "id": "hanasakigawa_school",
@@ -370,7 +370,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/hanasakigawa_school.svg"
+      "image": "/static/assets/scenes/hanasakigawa_school.webp"
     },
     {
       "id": "haneoka_school",
@@ -399,7 +399,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/haneoka_school.svg"
+      "image": "/static/assets/scenes/haneoka_school.webp"
     },
     {
       "id": "tsukinomori_school",
@@ -428,7 +428,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/tsukinomori_school.svg"
+      "image": "/static/assets/scenes/tsukinomori_school.webp"
     },
     {
       "id": "school_rooftop",
@@ -457,7 +457,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/school_rooftop.svg"
+      "image": "/static/assets/scenes/school_rooftop.webp"
     },
     {
       "id": "shopping_street",
@@ -486,7 +486,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/shopping_street.svg"
+      "image": "/static/assets/scenes/shopping_street.webp"
     },
     {
       "id": "park_path",
@@ -515,7 +515,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/park_path.svg"
+      "image": "/static/assets/scenes/park_path.webp"
     },
     {
       "id": "station_square",
@@ -544,7 +544,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/station_square.svg"
+      "image": "/static/assets/scenes/station_square.webp"
     },
     {
       "id": "riverside_walk",
@@ -573,7 +573,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/riverside_walk.svg"
+      "image": "/static/assets/scenes/riverside_walk.webp"
     },
     {
       "id": "mother_child_statue",
@@ -602,7 +602,7 @@
       "ending_hint": "",
       "canon_mode": "用户场景 IF",
       "spoiler_notice": "含两团成员归属与声部等基础信息，可能有轻微剧透；故事时间线和人物关系由房主设定。 地点沿用用户给定名称，尚未确认与官方场所的对应。",
-      "image": "/static/assets/scenes/mother_child_statue.svg"
+      "image": "/static/assets/scenes/mother_child_statue.webp"
     },
     {
       "id": "planetarium",
@@ -631,7 +631,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/planetarium.svg"
+      "image": "/static/assets/scenes/planetarium.webp"
     },
     {
       "id": "sunshine_aquarium",
@@ -660,7 +660,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/sunshine_aquarium.svg"
+      "image": "/static/assets/scenes/sunshine_aquarium.webp"
     },
     {
       "id": "hareza_steps",
@@ -689,7 +689,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/hareza_steps.svg"
+      "image": "/static/assets/scenes/hareza_steps.webp"
     },
     {
       "id": "ring_live_stage",
@@ -718,7 +718,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/ring_live_stage.svg"
+      "image": "/static/assets/scenes/ring_live_stage.webp"
     },
     {
       "id": "space_stage",
@@ -747,7 +747,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/space_stage.svg"
+      "image": "/static/assets/scenes/space_stage.webp"
     },
     {
       "id": "ikeda_ferry_port",
@@ -776,7 +776,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/ikeda_ferry_port.svg"
+      "image": "/static/assets/scenes/ikeda_ferry_port.webp"
     },
     {
       "id": "mikasayama_overlook",
@@ -805,7 +805,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/mikasayama_overlook.svg"
+      "image": "/static/assets/scenes/mikasayama_overlook.webp"
     },
     {
       "id": "recording_studio_if",
@@ -834,7 +834,7 @@
       "ending_hint": "",
       "canon_mode": "自由 IF",
       "spoiler_notice": "含两团成员归属与部分作品场所等信息，可能有轻微剧透；故事时间线和人物关系由房主设定。",
-      "image": "/static/assets/scenes/recording_studio_if.svg"
+      "image": "/static/assets/scenes/recording_studio_if.webp"
     }
   ],
   "stickers": [

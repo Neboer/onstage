@@ -8,7 +8,7 @@
 
 ```sh
 docker compose -f compose.dev.yaml up -d db
-docker compose -f compose.dev.yaml run --rm migrate
+docker compose -f compose.dev.yaml run --build --rm migrate
 docker compose -f compose.dev.yaml up --build -d app
 curl --fail http://localhost:8765/readyz
 ```
@@ -56,3 +56,7 @@ python tools/database.py migrate
 回退：先停止新版本写入，评估 schema 是否兼容；兼容时维护者将 GitOps digest 改回已验证旧镜像并以 Recreate 更新；不兼容时恢复隔离验证过的备份再切换唯一写入口。回退造成备份之后记录丢失的风险必须在执行前说明并保存现场。
 
 设计参考：[Docker GitHub Actions 与 provenance](https://docs.docker.com/build/ci/github-actions/attestations/)、[Kubernetes Deployment 策略](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)。具体现场验证结果以本次 acceptance 和交接记录为准。
+
+## 完整内容与协作者
+
+仓库包含原始185个美术文件，Dockerfile的static目录复制和.dockerignore白名单将其一起放入镜像；不依赖额外素材下载或本机原包。测试逐文件核对来源清单，并从实际应用HTTP入口检查185个资源响应的内容哈希与图片MIME。Neboer已受邀为个人仓库协作者（write为该仓库可授予协作者的最高权限）；所有者仍为SpringfiledBucks，未转移仓库。邀请状态见acceptance。

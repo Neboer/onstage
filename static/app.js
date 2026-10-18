@@ -197,12 +197,12 @@
   function characterAsset(id, full = false) {
     const char = character(id);
     const source = full ? char?.detail_image || char?.avatar_image || char?.image : char?.avatar_image || char?.image;
-    return localAssetPath(source, `/static/assets/characters/${encodeURIComponent(String(id).replace(".", "-"))}.svg`);
+    return localAssetPath(source, `/static/assets/characters/${encodeURIComponent(String(id).replace(".", "-"))}.webp`);
   }
 
   function sceneAsset(item) {
     if (!item) return "";
-    return localAssetPath(item.image_url || item.image, `/static/assets/scenes/${encodeURIComponent(item.id)}.svg`);
+    return localAssetPath(item.image_url || item.image, `/static/assets/scenes/${encodeURIComponent(item.id)}.webp`);
   }
 
   function stickerSnapshot(message) {
@@ -2650,8 +2650,8 @@
     updateTheme();
     updateViewport();
     updateConnection();
-    $("hero-mygo").src = "/static/assets/bands/mygo.svg";
-    $("hero-mujica").src = "/static/assets/bands/mujica.svg";
+    $("hero-mygo").src = "/static/assets/bands/mygo.webp";
+    $("hero-mujica").src = "/static/assets/bands/mujica.webp";
     await connectAnonymous();
   }
 

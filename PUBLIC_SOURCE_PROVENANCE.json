@@ -5910,5 +5910,16 @@
       "sha256": "fc926a736383f1d3523af73c6f5ea6285ebf7a8062b81609515c106ce9519bd5",
       "source_type": "user_supplied_public_sticker"
     }
-  ]
+  ],
+  "content_mode": "original-artwork",
+  "original_artwork_publication": {
+    "requested_by": "repository owner in current task",
+    "requested_on": "2026-10-18",
+    "prepared_at_utc": "2026-10-18T09:58:22.930112+00:00",
+    "asset_count": 185,
+    "identity_manifest": "docs/ASSET_MANIFEST.json",
+    "original_paths_restored": true,
+    "rights": "Original source credits retained; this records the owner publication instruction, not a new third-party license."
+  },
+  "path_remap_scope": "Historical initial sample export only. Current content uses the original paths in docs/ASSET_MANIFEST.json."
 }

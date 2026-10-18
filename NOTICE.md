@@ -16,9 +16,6 @@
 
 部署密钥、匿名凭据、真实聊天、后台记录、举报证据及私有数据库导出不属于源码发布内容。它们按维护流程受限保存，不进入公开仓库、静态目录或发布附件。
 
+## 当前素材交付
 
-## Public sample content
-
-This public source tree contains original generated geometric sample artwork, not the original character, band, sticker or backdrop images. Business IDs and PNG paths remain stable; WebP paths are remapped to same-name SVGs. `docs/ASSET_MANIFEST.json` describes the bundled sample bytes; `PUBLIC_SOURCE_PROVENANCE.json` records excluded source identities and the original ZIP/source commit. Original `SOURCE_REVISION.json` is historical provenance, not a verification result for this tree. No code license or third-party artwork redistribution permission is implied.
-
-To restore assets **locally only**, obtain the original package independently and unpack it to a separate private directory. Run `python tools/prepare_public_source.py restore-assets --source PATH_TO_PRIVATE_ORIGINAL --target PATH_TO_LOCAL_PUBLIC_CHECKOUT`. The command verifies all original asset hashes before restoring them, and refuses to modify a non-sample target. This changes the local content files and manifest; do not commit, push, package or redistribute the restored images without the appropriate rights. Keep the public sample branch clean, or use a separate ignored local copy for demonstrations.
+仓库所有者于2026-10-18明确要求将原始美术随公开仓库交付完整部署。本仓库现包含原始185个素材文件，保留原路径、逐文件来源、权利信用和校验值，详见docs/CONTENT_SOURCES.md及docs/ASSET_MANIFEST.json。原始SOURCE_REVISION是历史来源；PUBLIC_SOURCE_PROVENANCE中的sample记录仅描述首次导出，当前content_mode为original-artwork。仓库所有者的发布指令不等于为第三方作品新增许可证，项目代码许可也不自动覆盖这些素材。

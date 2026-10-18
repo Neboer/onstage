@@ -2,7 +2,7 @@
 
 免注册昵称入场的 MyGO!!!!! / Ave Mujica 真人文字对戏空间。十个角色、自由场景、文字和贴纸、舞台/后台、旁观、房主管理、举报与历史恢复；没有 AI 代演或假在线。
 
-当前开发版本 **0.7.0**。公开协作仓库：[SpringfiledBucks/onstage](https://github.com/SpringfiledBucks/onstage)。自托管使用 FastAPI、独立 PostgreSQL、WebSocket 提醒及 HTTP 游标补齐。SQLite 保留本地开发与旧库兼容，Sites/D1 适配继续维护。首个支持部署为 **1 应用副本、1 Uvicorn worker**；目标集群部署由合作方负责，本仓库不宣称已经上线。
+当前开发版本 **0.7.1**。公开协作仓库：[SpringfiledBucks/onstage](https://github.com/SpringfiledBucks/onstage)。自托管使用 FastAPI、独立 PostgreSQL、WebSocket 提醒及 HTTP 游标补齐。SQLite 保留本地开发与旧库兼容，Sites/D1 适配继续维护。首个支持部署为 **1 应用副本、1 Uvicorn worker**；目标集群部署由合作方负责，本仓库不宣称已经上线。
 
 ## 本轮改动
 
@@ -12,7 +12,7 @@
 - 写入确认不等待慢 WebSocket 接收者；提示按连接/房间有界合并、超时清理，断线仍从数据库补齐。日志不记录正文和凭据。
 - 非 root Docker 镜像、隔离开发 Compose、真实 PostgreSQL CI、容器重启/替换持久化检查及受控 GHCR 发布。
 
-源码来自 `onstage-v0.6.0-codex-source.zip`，原提交 `26305f3250c1fc34ab4a190a4ec429ab705a79f8`。ZIP 无 Git 历史；本仓库提交为真实接手历史，未伪造原提交。来源见 SOURCE_REVISION.json。代码许可尚未选择，第三方素材不因此取得再分发许可；公开示例内容边界见 [OPEN_SOURCE](docs/OPEN_SOURCE.md)。
+源码来自 `onstage-v0.6.0-codex-source.zip`，原提交 `26305f3250c1fc34ab4a190a4ec429ab705a79f8`。ZIP 无 Git 历史；本仓库提交为真实接手历史，未伪造原提交。来源见 SOURCE_REVISION.json。代码许可尚未选择，第三方素材不因此取得再分发许可；素材来源与许可边界见 [OPEN_SOURCE](docs/OPEN_SOURCE.md)。
 
 ## 本地开发
 
@@ -56,11 +56,19 @@ node edge/freeze.test.mjs
 - [SELF_HOSTED](docs/SELF_HOSTED.md)：容器、CI、Kubernetes 交付合同。
 
 
-## Public sample content
+## 完整美术与部署
 
-This public source tree contains original generated geometric sample artwork, not the original character, band, sticker or backdrop images. Business IDs and PNG paths remain stable; WebP paths are remapped to same-name SVGs. `docs/ASSET_MANIFEST.json` describes the bundled sample bytes; `PUBLIC_SOURCE_PROVENANCE.json` records excluded source identities and the original ZIP/source commit. Original `SOURCE_REVISION.json` is historical provenance, not a verification result for this tree. No code license or third-party artwork redistribution permission is implied.
+按仓库所有者于2026-10-18的明确要求，仓库已包含原包全部 **185 个原始美术文件**，包括角色图、乐队图、场景图和143张贴纸；恢复原始资源路径，逐文件身份见 `docs/ASSET_MANIFEST.json`。克隆即可使用完整内容，不需要再下载素材包或运行恢复工具。
 
-To restore assets **locally only**, obtain the original package independently and unpack it to a separate private directory. Run `python tools/prepare_public_source.py restore-assets --source PATH_TO_PRIVATE_ORIGINAL --target PATH_TO_LOCAL_PUBLIC_CHECKOUT`. The command verifies all original asset hashes before restoring them, and refuses to modify a non-sample target. This changes the local content files and manifest; do not commit, push, package or redistribute the restored images without the appropriate rights. Keep the public sample branch clean, or use a separate ignored local copy for demonstrations.
+```sh
+git clone https://github.com/SpringfiledBucks/onstage.git
+cd onstage
+docker compose -f compose.dev.yaml up -d db
+docker compose -f compose.dev.yaml run --build --rm migrate
+docker compose -f compose.dev.yaml up --build -d app
+```
+
+此命令是隔离开发演练，打开 `http://localhost:8765`；真实多人对外部署按 [SELF_HOSTED](docs/SELF_HOSTED.md) 配置公共 Origin、独立 PostgreSQL、TLS/WS代理和单副本。素材已随Git和Docker构建上下文交付，来源信用与代码许可分别记录；没有替第三方新增许可声明。
 
 ## 当前交付状态
 

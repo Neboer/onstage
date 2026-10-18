@@ -1,4 +1,4 @@
-"""Public export acceptance: no original bitmap bytes, no instance/data files, runnable API."""
+"""Sample export isolation and complete original-artwork deployment acceptance."""
 import hashlib
 import json
 import os
@@ -16,7 +16,8 @@ from tools.prepare_public_source import ROOT, export_source, restore_assets
 
 @pytest.fixture(scope='module')
 def public_tree(tmp_path_factory):
-    if (ROOT / 'PUBLIC_SOURCE_PROVENANCE.json').is_file():
+    provenance = ROOT / 'PUBLIC_SOURCE_PROVENANCE.json'
+    if provenance.is_file() and json.loads(provenance.read_text(encoding='utf8')).get('content_mode') != 'original-artwork':
         return ROOT
     destination = tmp_path_factory.mktemp('public-export') / 'source'
     result = export_source(ROOT, destination)
@@ -87,11 +88,12 @@ def test_bundled_samples_are_valid_original_images_with_matching_manifest(public
 
 
 def test_exported_application_and_deployment_preparation_are_runnable(public_tree, tmp_path):
+    runtime_tree = ROOT if (ROOT / 'PUBLIC_SOURCE_PROVENANCE.json').is_file() else public_tree
     env = {**os.environ, 'ONSTAGE_DATA_DIR': str(tmp_path / 'data'), 'ONSTAGE_PUBLIC_ORIGIN': 'http://testserver', 'ONSTAGE_SECURE_COOKIE': '0'}
     env.pop('DATABASE_URL', None)
     env.pop('ONSTAGE_DATABASE_URL', None)
     script = '''
-import json
+import json, hashlib
 from pathlib import Path
 from fastapi.testclient import TestClient
 from app.main import app
@@ -119,10 +121,21 @@ with TestClient(app) as client:
     for url in checked:
         image=client.get(url); assert image.status_code == 200, url
         assert image.headers['content-type'].startswith('image/'), url
+    manifest=json.loads(Path('docs/ASSET_MANIFEST.json').read_text(encoding='utf8'))
+    for item in manifest['assets']:
+        image=client.get('/'+item['path']); assert image.status_code == 200, item['path']
+        assert image.headers['content-type'].startswith('image/'), item['path']
+        assert hashlib.sha256(image.content).hexdigest() == item['sha256'], item['path']
+    provenance=json.loads(Path('PUBLIC_SOURCE_PROVENANCE.json').read_text(encoding='utf8'))
+    if provenance.get('content_mode') == 'original-artwork':
+        expected={item['path']:item['sha256'] for item in provenance['original_assets']}
+        assert {item['path']:item['sha256'] for item in manifest['assets']} == expected
+        assert len(expected) == 185
+        assert set(expected) == {f.as_posix() for f in Path('static/assets').rglob('*') if f.is_file()}
     assert client.get('/').status_code == 200
-    print(json.dumps({'images_served':len(checked),'characters':len(catalog['characters'])}))
+    print(json.dumps({'images_served':len(checked),'manifest_assets_verified':len(manifest['assets']),'characters':len(catalog['characters'])}))
 '''
-    result = subprocess.run([sys.executable, '-c', script], cwd=public_tree, env=env, capture_output=True, text=True, timeout=30)
+    result = subprocess.run([sys.executable, '-c', script], cwd=runtime_tree, env=env, capture_output=True, text=True, timeout=30)
     assert result.returncode == 0, result.stderr[-4000:]
     assert json.loads(result.stdout.strip().splitlines()[-1])['characters'] == 10
 
@@ -156,7 +169,8 @@ def test_local_restore_verifies_before_writing(public_tree, tmp_path):
     with pytest.raises(OSError):
         restore_assets(wrong, target)
     assert (target / 'app/catalog.json').read_bytes() == before
-    if (ROOT / 'PUBLIC_SOURCE_PROVENANCE.json').is_file():
+    provenance = ROOT / 'PUBLIC_SOURCE_PROVENANCE.json'
+    if provenance.is_file() and json.loads(provenance.read_text(encoding='utf8')).get('content_mode') != 'original-artwork':
         return  # Public CI proves failure is non-mutating; the private checkout also proves full restoration.
     result = restore_assets(ROOT, target)
     assert result['public_commit_allowed'] is False
