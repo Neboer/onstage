@@ -1,10 +1,12 @@
+> 本轮补充：PostgreSQL-only；PWA增加按浏览器/房间主动开启的后台消息通知，维护者需配置VAPID Secret并验证真实设备通道。赞踩同局唯一、跨局防刷限额不向普通用户显示。详见docs/SELF_HOSTED.md及docs/API_CONTRACT.md。
+
 # Onstage · 少女乐队对戏
 
 ## 0.9 账户与社区候选
 
 本分支实现用户名/密码账户、可信前端与独立管理前端、千级房间分页/排序、私密邀请或密码入场、角色偏好和招募、场景切换、全演员离线10分钟自动结束、匿名账户唯一评分、私密成员赞踩/举报、作者授权的记录分享、开发反馈与监控。**访客仅保留公开目录、场景、关于和主动分享的低风险读取；入房及写操作需要登录。** 登录名仅本人和管理员可见，房间内使用独立化名。下文0.8数据是历史验收，不代表这些新功能已上线。
 
-用户端与管理端为独立 React/TypeScript/Vite 静态构建；实时聊天暂复用成熟聊天渲染器，保持发送对账、草稿、贴纸和历史兼容。后端继续 FastAPI 模块化单体与独立 PostgreSQL，不同时进行语言重写。SQLAlchemy短事务保留，新增功能使用 Alembic 显式追加迁移；生产启动不改库。SQLite保留兼容开发，Sites/D1/离线适配维持0.8合同，不冒充支持新账户功能。
+用户端与管理端为独立 React/TypeScript/Vite 静态构建；实时聊天暂复用成熟聊天渲染器，保持发送对账、草稿、贴纸和历史兼容。后端继续 FastAPI 模块化单体与独立 PostgreSQL，不同时进行语言重写。SQLAlchemy短事务保留，新增功能使用 Alembic 显式追加迁移；生产启动不改库。当前服务与运维入口仅支持 PostgreSQL，缺少 DATABASE_URL 会明确失败，不再创建、打开、迁移或导入旧 SQLite 数据库。旧文件保留原处，不导入旧历史；历史 Store 算法及 Sites/D1/离线适配仅保留回归用途，不作为新账户服务部署路径。
 
 ```sh
 npm ci --ignore-scripts
@@ -25,7 +27,7 @@ python tools/database.py migrate
 
 免注册昵称入场的 MyGO!!!!! / Ave Mujica 真人文字对戏空间。十个角色、自由场景、文字和贴纸、舞台/后台、旁观、房主管理、举报与历史恢复；没有 AI 代演或假在线。
 
-当前开发版本 **0.8.0**。公开协作仓库：[SpringfiledBucks/onstage](https://github.com/SpringfiledBucks/onstage)。自托管使用 FastAPI、独立 PostgreSQL、WebSocket 提醒及 HTTP 游标补齐。SQLite 保留本地开发与旧库兼容，Sites/D1 适配继续维护。首个支持部署为 **1 应用副本、1 Uvicorn worker**；目标集群部署由合作方负责，本仓库不宣称已经上线。
+历史开发版本 **0.8.0**（以下功能记录保留，当前启动方式见本地开发节）。公开协作仓库：[SpringfiledBucks/onstage](https://github.com/SpringfiledBucks/onstage)。自托管使用 FastAPI、独立 PostgreSQL、WebSocket 提醒及 HTTP 游标补齐。该历史版本曾保留 SQLite 开发路径；当前入口已废弃，Sites/D1仅作历史兼容。首个支持部署为 **1 应用副本、1 Uvicorn worker**；目标集群部署由合作方负责，本仓库不宣称已经上线。
 
 ## 本轮改动
 
@@ -51,10 +53,12 @@ python tools/database.py migrate
 python -m venv .venv
 # Windows 使用 .venv\Scripts\python.exe，Linux/macOS 使用 .venv/bin/python
 .venv/bin/python -m pip install -r requirements-dev.txt
+# 先通过本机受控环境设置指向隔离 PostgreSQL 的 DATABASE_URL
+.venv/bin/python tools/database.py migrate
 .venv/bin/python tools/run_local.py
 ```
 
-该命令仅启动 loopback SQLite 开发实例，不等于手机联机或目标部署。PostgreSQL 与镜像运行见 [SELF_HOSTED](docs/SELF_HOSTED.md)，生产凭据通过环境/Secret 注入，不写命令参数或源码。迁移须单独执行，应用启动只检查 PG schema。
+该命令仅启动 loopback PostgreSQL 开发实例，必须先配置DATABASE_URL并受控迁移；不等于手机联机或目标部署。PostgreSQL 与镜像运行见 [SELF_HOSTED](docs/SELF_HOSTED.md)，生产凭据通过环境/Secret 注入，不写命令参数或源码。迁移须单独执行，应用启动只检查 PG schema。
 
 ```sh
 # DATABASE_URL 已由受控环境设置，指向获准的隔离 PostgreSQL
@@ -62,14 +66,14 @@ python tools/database.py migrate
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8765 --workers 1 --no-proxy-headers
 ```
 
-必须设置精确 `ONSTAGE_PUBLIC_ORIGIN`；公网 `ONSTAGE_SECURE_COOKIE=1`。旧数据先受控备份，在隔离 PG 恢复逐字段核验，再冻结旧入口、最终导出并切换唯一主站。跨域 Cookie 不自动迁移，演示默认新访客新房，不能凭同名昵称接管历史身份。
+必须设置精确 `ONSTAGE_PUBLIC_ORIGIN`；公网 `ONSTAGE_SECURE_COOKIE=1`。当前不迁入旧SQLite历史：保留旧文件并停用旧写入口，新站从迁移后的空PostgreSQL开始。PostgreSQL版本升级仍需备份和隔离恢复验证。跨域Cookie不自动迁移，不能凭同名昵称接管历史身份。
 
 ## 验证与交付
 
 ```sh
-python -m pytest -q --ignore=tests/test_postgres.py
-# 只允许显式指定隔离测试库；每个 PG 测试创建自己的随机 schema
-ONSTAGE_TEST_DATABASE_URL=... python -m pytest tests/test_postgres.py -q
+# 在受控环境设置 ONSTAGE_TEST_DATABASE_URL，指向授权的隔离 PostgreSQL。
+# 全套 HTTP/数据库测试仅创建/删除随机 schema，不以生产 DATABASE_URL 作为测试授权。
+python -m pytest -q
 npm ci --ignore-scripts
 node tests/frontend_delivery_check.cjs
 node tests/frontend_navigation_check.cjs

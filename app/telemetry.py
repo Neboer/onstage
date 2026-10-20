@@ -44,7 +44,9 @@ KNOWN_ROUTE_TEMPLATES = frozenset({
     "/api/admin/reports", "/api/admin/feedback", "/api/admin/member-feedback",
     "/api/admin/shares/{slug}/revoke", "/api/admin/reports/{report_id}/resolve",
     "/api/admin/feedback/{feedback_id}/resolve", "/static/{path}",
-    "/api/admin/audit",
+    "/api/admin/audit", "/api/notifications/config", "/api/notifications/rooms",
+    "/api/notifications/subscriptions", "/api/notifications/subscriptions/{subscription_id}",
+    "/api/rooms/{room_id}/notifications",
 })
 
 _METHODS = frozenset({"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD", "WS", "WEBSOCKET"})

@@ -1,3 +1,14 @@
+## 2026-10-20 PostgreSQL-only、消息通知与评价防刷
+
+运行入口缺少DATABASE_URL或传SQLite URL时明确失败，不生成/导入旧SQLite；旧快照/代码说明保留历史属性。
+
+- 登录GET `/api/notifications/config` 返回 `{enabled,public_key}`，仅公开VAPID公钥；未配置时enabled=false。GET `/api/notifications/rooms` 返回当前可接收提醒的 `{room_ids}`。
+- POST `/api/notifications/subscriptions` 接受 `{endpoint,keys:{p256dh,auth}}`，返回 `{id}`；只允许HTTPS可信推送provider，绑定当前账户和登录设备，不可接管他人endpoint。DELETE `/api/notifications/subscriptions/{id}` 仅删除当前设备自己的绑定。所有写入需Cookie、CSRF与准确可信Origin；DELETE预检受同一白名单约束。
+- POST `/api/rooms/{id}/notifications {enabled}` 仅活动成员可开启；关闭清待发提醒。消息持久化与有界合并提醒同事务，重试已确认消息不重复入队。投递前重检权限，通知无正文/用户名/标题；浏览器显示与平台网络另行验收，不提供送达/已读承诺。
+- 赞踩按room/voter/target唯一。跨局同一双方的防刷占用由私有永久账本记录，撤回不清占用、改票不增量；相同请求重试幂等。API仅返回value，拒绝时通用429，不输出阈值/剩余额度，普通用户不见他人赞踩。
+
+---
+
 # 0.9 账户模式补充（优先于下方0.8访客写入合同）
 
 实际请求结构可由 `python tools/export_openapi.py` 导出至 `docs/openapi.json`，不开放生产文档端点。新功能属于Python服务，D1/离线适配保持旧合同；不将同一旧版本号当作新功能跨后端等价。

@@ -6,6 +6,11 @@ import secrets
 from .security import DomainError, iso_time, new_id
 
 
+# Internal anti-abuse policy: never serialized into ordinary user responses.
+# A pair may contribute in at most this many distinct games, including withdrawals.
+MEMBER_FEEDBACK_PAIR_GAME_LIMIT = 5
+
+
 class CommunityMixin:
     def _community_identity(self, conn, token, csrf=None, *, write=False, admin=False):
         session = self._session(conn, token, csrf, require_csrf=write)
@@ -62,13 +67,28 @@ class CommunityMixin:
                 raise DomainError(404, '本局成员不存在。')
             if target['id'] == own['id']:
                 raise DomainError(403, '不能评价自己。')
+            # Stable account principal, rather than per-room member ID, ties the
+            # same recipient across games without exposing their login username.
+            if hasattr(self, '_lock') and hasattr(conn, 'connection'):
+                self._lock(conn.connection, 'community-rate:' + account['id'])
+            params = {'room': room_id, 'user': account['id'], 'target': target_member_id,
+                      'principal': target['session_id']}
+            current = conn.execute('SELECT value FROM member_feedback WHERE room_id=:room AND voter_user_id=:user AND target_member_id=:target', params).fetchone()
+            if (current['value'] if current else 0) == value:
+                return {'value': value}
             self._community_limit(conn, account, 'member_vote', 120)
             if value == 0:
-                conn.execute('DELETE FROM member_feedback WHERE room_id=:room AND voter_user_id=:user AND target_member_id=:target', {'room': room_id, 'user': account['id'], 'target': target_member_id})
+                conn.execute('DELETE FROM member_feedback WHERE room_id=:room AND voter_user_id=:user AND target_member_id=:target', params)
             else:
+                used = conn.execute('SELECT 1 FROM member_feedback_ledger WHERE room_id=:room AND voter_user_id=:user AND target_principal_session_id=:principal', params).fetchone()
+                if used is None:
+                    count = conn.execute('SELECT COUNT(*) AS count FROM member_feedback_ledger WHERE voter_user_id=:user AND target_principal_session_id=:principal', params).fetchone()['count']
+                    if count >= MEMBER_FEEDBACK_PAIR_GAME_LIMIT:
+                        raise DomainError(429, '暂时无法提交评价，请稍后再试。')
+                    conn.execute('INSERT INTO member_feedback_ledger(room_id,voter_user_id,target_principal_session_id,created_at) VALUES(:room,:user,:principal,:now)', {**params, 'now': iso_time()})
                 conn.execute('INSERT INTO member_feedback(room_id,voter_user_id,target_member_id,value,created_at,updated_at) VALUES(:room,:user,:target,:value,:now,:now) '
                              'ON CONFLICT(room_id,voter_user_id,target_member_id) DO UPDATE SET value=excluded.value,updated_at=excluded.updated_at',
-                             {'room': room_id, 'user': account['id'], 'target': target_member_id, 'value': value, 'now': iso_time()})
+                             {**params, 'value': value, 'now': iso_time()})
             return {'value': value}
 
     def report_member(self, token, csrf, room_id, target_member_id, reason, details=''):

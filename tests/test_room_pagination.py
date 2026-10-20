@@ -76,7 +76,7 @@ def test_sqlite_thousand_rooms(tmp_path):
 
 
 
-def test_room_pagination_http_validation(tmp_path, monkeypatch):
+def test_room_pagination_http_validation(tmp_path, monkeypatch, http_database):
     # Preserve the v0.8 API contract as an explicit compatibility path.
     monkeypatch.setenv('ONSTAGE_LEGACY_GUESTS', '1')
     from fastapi.testclient import TestClient

@@ -8,6 +8,17 @@ CREATE TABLE IF NOT EXISTS member_feedback (
  target_member_id TEXT NOT NULL REFERENCES room_members(id), value INTEGER NOT NULL CHECK(value IN(-1,1)),
  created_at TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY(room_id,voter_user_id,target_member_id)
 );
+-- Permanent anti-abuse occupancy, independent of active/withdrawn feedback.
+CREATE TABLE IF NOT EXISTS member_feedback_ledger (
+ room_id TEXT NOT NULL REFERENCES rooms(id), voter_user_id TEXT NOT NULL REFERENCES users(id),
+ target_principal_session_id TEXT NOT NULL REFERENCES sessions(id), created_at TEXT NOT NULL,
+ PRIMARY KEY(room_id,voter_user_id,target_principal_session_id)
+);
+CREATE INDEX IF NOT EXISTS member_feedback_ledger_pair ON member_feedback_ledger(voter_user_id,target_principal_session_id);
+INSERT INTO member_feedback_ledger(room_id,voter_user_id,target_principal_session_id,created_at)
+ SELECT f.room_id,f.voter_user_id,m.session_id,f.created_at FROM member_feedback f
+ JOIN room_members m ON m.id=f.target_member_id
+ WHERE NOT EXISTS (SELECT 1 FROM member_feedback_ledger l WHERE l.room_id=f.room_id AND l.voter_user_id=f.voter_user_id AND l.target_principal_session_id=m.session_id);
 CREATE TABLE IF NOT EXISTS room_share_permissions (
  room_id TEXT NOT NULL REFERENCES rooms(id), member_id TEXT NOT NULL REFERENCES room_members(id),
  allowed INTEGER NOT NULL CHECK(allowed IN(0,1)), updated_at TEXT NOT NULL, PRIMARY KEY(room_id,member_id)

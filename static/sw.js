@@ -99,6 +99,7 @@ self.addEventListener("message", (event) => {
   if (!port || !event.source?.url || new URL(event.source.url).origin !== self.location.origin) return;
   const run = async () => {
     switch (event.data?.type) {
+      case "PUSH_PROTOCOL": return { version: 1 };
       case "ARTWORK_ACTIVATE":
         await self.skipWaiting();
         return { activated: true };
@@ -120,4 +121,40 @@ self.addEventListener("message", (event) => {
     }
   };
   event.waitUntil(run().then((result) => port.postMessage({ ok: true, result }), (error) => port.postMessage({ ok: false, error: String(error.message || "artwork_error") })));
+});
+
+// Push payloads contain identifiers only. Never render message content or trust a supplied URL.
+function pushRoom(value) {
+  return value && value.type === 'room_message' && typeof value.room_id === 'string' &&
+    /^[a-f0-9]{32}$/.test(value.room_id) ? value.room_id : null;
+}
+self.addEventListener('push', (event) => {
+  let payload;
+  try { payload = event.data?.json(); } catch { /* Still display a generic visible notification. */ }
+  const room = pushRoom(payload);
+  event.waitUntil(self.registration.showNotification('Onstage', {
+    body: '你关注的房间有新消息',
+    icon: '/static/onstage-mark.svg',
+    tag: room ? 'onstage-room-' + room : 'onstage-message',
+    data: { room_id: room },
+  }));
+});
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const room = event.notification.data?.room_id;
+  const path = typeof room === 'string' && /^[a-f0-9]{32}$/.test(room) ? '/room/' + room : '/';
+  const target = new URL(path, self.location.origin).href;
+  event.waitUntil((async () => {
+    const windows = await self.clients.matchAll({type: 'window', includeUncontrolled: true});
+    const existing = windows.find(client => {
+      try { return client.frameType !== 'nested' && new URL(client.url).origin === self.location.origin; } catch { return false; }
+    });
+    if (existing) {
+      try {
+        const navigated = await existing.navigate(target);
+        if (navigated) { await navigated.focus(); return; }
+      } catch { /* A closing tab must not swallow the notification click. */ }
+    }
+    await self.clients.openWindow(target);
+  })());
 });

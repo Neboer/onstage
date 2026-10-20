@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-import sqlite3
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -15,14 +14,13 @@ from app.store import create_store
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--data-dir', type=Path)
     parser.add_argument('--operator', required=True, help='Private operator audit label')
     parser.add_argument('action', choices=['grant-admin', 'revoke-admin'])
     parser.add_argument('username')
     args = parser.parse_args()
-    settings = Settings.from_values(data_dir=args.data_dir, public_origin='http://localhost')
-    if not settings.database_url and (args.data_dir is None or not (args.data_dir / 'onstage.sqlite3').is_file()):
-        parser.error('Select an existing database via --data-dir or DATABASE_URL; no database is created.')
+    settings = Settings.from_values(public_origin='http://localhost')
+    if not settings.database_url:
+        parser.error('DATABASE_URL is required; only PostgreSQL is supported. No database is created.')
     store = create_store(settings)
     try:
         store.ready()
@@ -30,7 +28,7 @@ def main():
     except DomainError as error:
         print(json.dumps({'error': error.detail, 'status': error.status_code}, ensure_ascii=False), file=sys.stderr)
         return 1
-    except (sqlite3.Error, SQLAlchemyError):
+    except SQLAlchemyError:
         print('Database operation failed; run the controlled migration if needed.', file=sys.stderr)
         return 1
     finally:

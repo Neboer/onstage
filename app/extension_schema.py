@@ -5,7 +5,7 @@ from alembic import command
 from alembic.config import Config
 from sqlalchemy import create_engine
 
-REVISION = "20261020_01"
+REVISION = "20261020_02"
 
 
 def migrate_extensions(connection):

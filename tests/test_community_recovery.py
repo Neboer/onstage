@@ -40,7 +40,7 @@ def test_pg_precommunity_backup_precedes_explicit_migration(pg_factory):
     before = snapshot(old)
     assert before['format'] == 'onstage-postgres-private-v1'
     old.migrate()
-    assert old.ready()['community_revision'] == '20261020_01'
+    assert old.ready()['community_revision'] == '20261020_02'
     restore(target, before)
     with target.engine.connect() as connection:
         compare(connection, before)

@@ -183,6 +183,7 @@ class AccountMixin:
             self._account(conn, session)
             conn.execute('UPDATE auth_sessions SET revoked_at=:now WHERE id=:id',
                          {'now': iso_time(), 'id': session['auth_session_id']})
+            conn.execute('DELETE FROM push_subscriptions WHERE auth_session_id=:id', {'id': session['auth_session_id']})
             return {'ok': True}
 
     def logout(self, token, csrf):
@@ -193,6 +194,7 @@ class AccountMixin:
             if 'auth_session_id' in session:
                 conn.execute('UPDATE auth_sessions SET revoked_at=:now WHERE id=:id',
                              {'now': iso_time(), 'id': session['auth_session_id']})
+                conn.execute('DELETE FROM push_subscriptions WHERE auth_session_id=:id', {'id': session['auth_session_id']})
             else:
                 conn.execute('UPDATE sessions SET revoked_at=:now WHERE id=:id',
                              {'now': iso_time(), 'id': session['id']})
@@ -278,6 +280,7 @@ class AccountMixin:
             if banned:
                 conn.execute('UPDATE auth_sessions SET revoked_at=:now WHERE user_id=:id AND revoked_at IS NULL',
                              {'now': iso_time(), 'id': user_id})
+                conn.execute('DELETE FROM push_subscriptions WHERE user_id=:id', {'id': user_id})
             self._account_audit(conn, actor['id'], user_id, 'ban' if banned else 'unban', note.strip())
             return {'id': user_id, 'banned': banned, 'principal_session_id': user['principal_session_id']}
 

@@ -1187,14 +1187,15 @@ class LegacyStore:
 from .accounts import AccountMixin
 from .room_features import RoomFeaturesMixin
 from .community import CommunityMixin
+from .push import NotificationMixin
 
 
-class Store(AccountMixin, RoomFeaturesMixin, CommunityMixin, LegacyStore):
+class Store(NotificationMixin, AccountMixin, RoomFeaturesMixin, CommunityMixin, LegacyStore):
     """Shared transactional domain with additive account/community modules."""
 
 
 def create_store(settings: Settings) -> Store:
-    if settings.database_url:
-        from .postgres import PostgresStore
-        return PostgresStore(settings)
-    return Store(settings)
+    if not settings.database_url:
+        raise RuntimeError("DATABASE_URL is required; the application supports PostgreSQL only. Existing SQLite files are not opened or migrated.")
+    from .postgres import PostgresStore
+    return PostgresStore(settings)

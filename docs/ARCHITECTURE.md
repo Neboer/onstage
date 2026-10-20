@@ -1,3 +1,5 @@
+> 2026-10-20 更新：当前应用/CLI仅PostgreSQL，SQLite数据入口已废弃且旧文件保持原样。PWA增加按房间显式授权Web Push，持久队列随消息事务提交、按订阅合并；单个有界发送worker与Hub通知独立。协议、VAPID Secret、恢复与平台边界见API_CONTRACT与SELF_HOSTED。赞踩用跨局稳定身份账本限额，防刷阈值不经普通API暴露。
+
 # 0.9 账户与社区实现边界
 
 新用户端/管理端位于 apps/web 与 apps/admin，React/TypeScript/Vite独立输出 build/web、build/admin。packages/api-client负责Cookie/CSRF/运行时地址；packages/media复用经过验证的素材哈希与原图回退。新壳通过同源 /play/index.html 复用原聊天状态机；这是渐进迁移的过渡架构，尚未把聊天完整改为React。原ACK/sync同逻辑对账、身份范围、成员/频道/client_message_id、草稿和游标均保留。

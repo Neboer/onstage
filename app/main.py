@@ -5,7 +5,6 @@ import logging
 import mimetypes
 import os
 import re
-import sqlite3
 import secrets
 import time
 from collections import defaultdict, deque
@@ -30,6 +29,7 @@ from .store import create_store
 from .cors import OriginPolicy
 from .community_api import mount_community
 from .telemetry import Telemetry
+from .push import PushConfig, PushWorker, mount_push
 
 
 logger = logging.getLogger("uvicorn.error.onstage")
@@ -281,6 +281,7 @@ def create_app(
         settings = replace(settings, session_ttl_seconds=min(settings.session_ttl_seconds, 900))
     store = create_store(settings)
     hub = Hub()
+    push_config = PushConfig.from_env()
     origins = OriginPolicy(settings)
     cookie_name = COOKIE_NAME if legacy_guests else ("__Host-onstage_session" if settings.secure_cookie else "onstage_account_dev")
 
@@ -288,12 +289,7 @@ def create_app(
         started = time.perf_counter()
         try:
             return await anyio.to_thread.run_sync(partial(operation, *args, **kwargs))
-        except sqlite3.OperationalError as exc:
-            logger.error("数据库操作失败：%s", type(exc).__name__)
-            if "locked" in str(exc).lower() or "busy" in str(exc).lower():
-                raise DomainError(503, "数据库暂忙，请稍后使用相同消息 ID 重试。") from exc
-            raise DomainError(503, "数据库暂不可用，操作未被确认。") from exc
-        except (sqlite3.IntegrityError, SQLIntegrityError) as exc:
+        except SQLIntegrityError as exc:
             logger.error("数据库约束拒绝了操作：%s", type(exc).__name__)
             raise DomainError(409, "当前状态与操作冲突，请重新同步房间。") from exc
         except SQLAlchemyError as exc:
@@ -311,6 +307,7 @@ def create_app(
     @asynccontextmanager
     async def lifespan(application: FastAPI):
         maintenance = None
+        push_task = None
         try:
             # PostgreSQL initialize checks the explicit migration; it never DDLs.
             await run_db(store.initialize)
@@ -331,8 +328,13 @@ def create_app(
                         logger.error("background_maintenance_failed")
                     await asyncio.sleep(20)
             maintenance = asyncio.create_task(maintain(), name="onstage-maintenance")
+            if push_config.enabled:
+                push_task = asyncio.create_task(PushWorker(store, push_config).run(), name="onstage-web-push")
             yield
         finally:
+            if push_task:
+                push_task.cancel()
+                await asyncio.gather(push_task, return_exceptions=True)
             if maintenance:
                 maintenance.cancel()
                 await asyncio.gather(maintenance, return_exceptions=True)
@@ -347,6 +349,7 @@ def create_app(
     application.add_middleware(TextCompression)
     application.state.store = store
     application.state.hub = hub
+    application.state.push_config = push_config
     application.state.telemetry = Telemetry(store, hub)
     application.state.db_path = None if settings.database_url else store.db_path
 
@@ -391,7 +394,7 @@ def create_app(
                 request.state.anonymous_public = bool(origin and not credentialed)
                 cors_headers = origins.headers(origin, request.url.path, method)
                 if request.method == "OPTIONS":
-                    if method not in {"GET", "POST", "HEAD"}:
+                    if method not in {"GET", "POST", "DELETE", "HEAD"}:
                         raise DomainError(403, "请求方法不被允许。")
                     requested = {value.strip().lower() for value in request.headers.get("access-control-request-headers", "").split(",") if value.strip()}
                     if not requested.issubset({"content-type", "x-csrf-token", "accept"}):
@@ -734,6 +737,7 @@ def create_app(
                 await hub.notify(room_id)
 
     mount_community(application, store, settings, run_db, credentials, hub, cookie_name)
+    mount_push(application, store, run_db, credentials, push_config)
     return application
 
 

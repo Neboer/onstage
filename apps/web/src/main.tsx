@@ -4,6 +4,7 @@ import { ApiClient, RecordData, pageItems } from '../../../packages/api-client/i
 import './style.css';
 import {Artwork,loadPublicMedia} from '../../../packages/media/index';
 import {artworkCache,ArtworkStatus} from '../../../packages/media/pwa';
+import {clearBrowserPush,enableBrowserPush,pushState,setRoomPush,PushState} from '../../../packages/media/notifications';
 const api = new ApiClient();
 const errorText = (e: unknown) => e instanceof Error ? e.message : '操作未完成，请重试';
 const id = () => crypto.randomUUID();
@@ -59,6 +60,8 @@ function App() {
         return; const beat = () => api.request('/api/auth/heartbeat', 'POST', {}).catch(() => { }); beat(); const timer = setInterval(beat, 30000); return () => clearInterval(timer); }, [user?.id]);
     const changed = async () => { setModal(''); await refreshMe(); };
     return <><header className="header"><a href="/" className="brand" onClick={e => { e.preventDefault(); go('/'); }}><Artwork src="/static/onstage-mark.svg" alt=""/>上皮 ONSTAGE</a><nav><button onClick={() => go('/')}>房间</button><button onClick={() => go('/scenes')}>场景</button><button onClick={() => go('/about')}>关于我们</button></nav><button onClick={()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('onstage.theme',theme)}catch{}}}>切换深浅主题</button><button onClick={()=>{setModal('artwork');void artworkCache()?.refreshStatus()}}>美术缓存设置</button><div className="account">{user ? <><span>我的账户：{user.username} </span><button onClick={() => setModal('preferences')}>角色偏好</button> <button onClick={async () => { try {
+        // Server logout revokes its push bindings even when a browser service is unavailable.
+        try { await clearBrowserPush(api); } catch { /* Do not prevent logout. */ }
         await api.request('/api/auth/logout', 'POST', {});
         setMe({});
         await refreshMe();
@@ -67,7 +70,7 @@ function App() {
     catch (e) {
         setError(errorText(e));
     } }}>退出</button></> : <><button onClick={() => setModal('login')}>登录</button> <button className="primary" onClick={() => setModal('register')}>注册</button></>}</div></header><main className="layout"><div aria-live="polite">{error && <p className="error">{error} <button onClick={() => { setError(''); refreshMe(); }}>重试</button></p>}</div>{!ready ? <p role="status">正在连接…</p> : route.startsWith('/s/') ? <Share slug={route.slice(3)} catalog={catalog}/> : route.startsWith('/room/') ? <Room roomId={route.slice(6)} catalog={catalog} user={user} requireLogin={requireLogin}/> : route === '/scenes' ? <Scenes onCreate={s => requireLogin(() => setModal(`create:${s.id}`))}/> : route === '/about' ? <><section className="panel"><h1>关于上皮 ONSTAGE</h1><p>与真实的同伴，以喜欢的少女乐队角色自由对戏。</p><p>项目由 SpringfiledBucks 发起，源码和贡献记录见 <a href="https://github.com/SpringfiledBucks/onstage" target="_blank" rel="noreferrer">GitHub 项目</a>。角色、美术与贴纸的来源及权利说明见仓库 NOTICE 和内容来源文档。</p><p>本站并非原作官方服务。</p><button onClick={() => requireLogin(() => setModal('feedback'))}>向开发者反馈</button></section></> : <Lobby catalog={catalog} user={user} go={go} create={() => requireLogin(() => go('/scenes'))}/>}</main><footer className="layout">真人同场 · 自由接戏 · 美术缓存可减少重复下载，实时对戏仍需联网。</footer>{modal && <Modal title={modal === 'login' ? '登录' : modal === 'register' ? '注册' : modal === 'preferences' ? '喜欢扮演哪些角色？' : modal === 'feedback' ? '向开发者反馈' : modal==='artwork'?'美术缓存与显示设置':'创建房间'} onClose={() => setModal('')}>{modal === 'login' || modal === 'register' ? <Auth register={modal === 'register'} done={async () => { await changed(); if (modal === 'register')
-        setModal('preferences'); }}/> : modal === 'preferences' ? <Preferences catalog={catalog} current={Array.isArray(me.preferences) ? me.preferences : me.preferences?.character_ids || me.favorite_character_ids || []} done={changed}/> : modal === 'feedback' ? <Feedback done={() => setModal('')}/> : modal==='artwork'?<ArtworkSettings status={artwork} reduceMotion={reduceMotion} setReduceMotion={setReduceMotion}/>: <Create scenarioId={modal.slice(7)} done={room => { setModal(''); go(`/room/${room.id}`); }}/>}</Modal>}</>;
+        setModal('preferences'); }}/> : modal === 'preferences' ? <Preferences catalog={catalog} current={Array.isArray(me.preferences) ? me.preferences : me.preferences?.character_ids || me.favorite_character_ids || []} done={changed}/> : modal === 'feedback' ? <Feedback done={() => setModal('')}/> : modal==='artwork'?<><ArtworkSettings status={artwork} reduceMotion={reduceMotion} setReduceMotion={setReduceMotion}/><NotificationSettings user={user} roomId={route.startsWith('/room/')?route.slice(6):undefined}/></>: <Create scenarioId={modal.slice(7)} done={room => { setModal(''); go(`/room/${room.id}`); }}/>}</Modal>}</>;
 }
 function ArtworkSettings({status,reduceMotion,setReduceMotion}:{status:ArtworkStatus;reduceMotion:boolean;setReduceMotion:(v:boolean)=>void}){
  const cache=artworkCache();
@@ -75,10 +78,18 @@ function ArtworkSettings({status,reduceMotion,setReduceMotion}:{status:ArtworkSt
  const perform=async(action:()=>Promise<unknown>|undefined)=>{setActionError('');try{await action()}catch(e){setActionError(errorText(e))}};
  return <><p>只保存公开美术，不保存账户、聊天或举报。不会自动下载全部素材；多人对戏仍需联网。</p><p role="status" aria-live="polite">{status.message||'美术缓存初始化中。'} {status.busy?`已处理 ${status.completed||0} / ${status.total||0} 张${status.failed?`，失败 ${status.failed} 张`:''}`:`已缓存 ${status.cached||0} 张，${((status.cachedBytes||0)/1000000).toFixed(2)} MB。`}</p>{(status.error||actionError)&&<p className="error" role="alert">{status.error||actionError}</p>}<div className="toolbar">{status.updateAvailable&&<button disabled={status.busy} onClick={()=>perform(()=>cache?.activateUpdate?.())}>更新美术缓存服务（保留草稿）</button>}<button disabled={!status.supported||!status.registered||status.busy} onClick={()=>perform(()=>cache?.downloadArtwork())}>手动缓存全部美术</button><button disabled={!status.busy} onClick={()=>perform(()=>cache?.cancelDownload())}>取消缓存</button><button disabled={!status.supported||!status.registered||status.busy} onClick={()=>perform(()=>cache?.clearArtwork())}>清除美术缓存</button><button onClick={()=>perform(()=>cache?.refreshStatus())}>刷新状态</button></div><label className="check"><input type="checkbox" checked={reduceMotion} onChange={e=>setReduceMotion(e.target.checked)}/>减少动态效果（同时尊重系统设置）</label></>
 }
+function NotificationSettings({user,roomId}:{user:any;roomId?:string}){
+ const [state,setState]=useState<PushState>(),[error,setError]=useState(''),[busy,setBusy]=useState(false);
+ const refresh=()=>pushState(api,String(user.id)).then(setState);
+ useEffect(()=>{let active=true;if(user)pushState(api,String(user.id)).then(s=>{if(active)setState(s)}).catch(e=>{if(active)setError(errorText(e))});return()=>{active=false}},[user?.id]);
+ const perform=async(action:()=>Promise<unknown>)=>{setBusy(true);setError('');try{await action();await refresh()}catch(e){setError(errorText(e))}finally{setBusy(false)}};
+ return <section aria-label="消息通知"><h3>消息通知</h3><p>只提醒有新消息，不含正文、角色或账户信息。需要 HTTPS、浏览器推送服务和系统通知权限；部分手机需先将本站添加到主屏幕。页面关闭后能否接收还取决于浏览器与网络。</p>{!user?<p>登录后可为此浏览器和房间开启通知。</p>:<>{error&&<p role="alert" className="error">{error}</p>}{state&&<><p role="status">{!state.supported?'此浏览器不支持后台消息通知。':!state.configured?'服务器尚未配置消息通知。':state.subscribed?'此浏览器消息通知已开启。':state.permission==='denied'?'浏览器已拒绝通知，请前往浏览器设置修改。':'此浏览器消息通知未开启。'}</p><button disabled={busy||!state.supported||(!state.configured&&!state.subscribed)} onClick={()=>perform(()=>state.subscribed?clearBrowserPush(api):enableBrowserPush(api,String(user.id)))}>{state.subscribed?'关闭此浏览器消息通知':'开启此浏览器消息通知'}</button>{roomId&&/^[a-f0-9]{32}$/.test(roomId)&&<label className="check"><input type="checkbox" disabled={busy||!state.configured||!state.subscribed} checked={state.roomIds.includes(roomId)} onChange={e=>perform(()=>setRoomPush(api,roomId,e.target.checked))}/>接收当前房间的新消息通知</label>}</>}</>}</section>
+}
 function Auth({ register, done }: {
     register: boolean;
     done: () => void;
 }) { const [error, setError] = useState(''), [busy, setBusy] = useState(false); return <form onSubmit={async (e) => { e.preventDefault(); const f = new FormData(e.currentTarget); setBusy(true); setError(''); try {
+    await clearBrowserPush(api);
     await api.request(`/api/auth/${register ? 'register' : 'login'}`, 'POST', { username: f.get('username'), password: f.get('password'), ...(!register ? { remember: f.has('remember') } : {}) });
     done();
 }

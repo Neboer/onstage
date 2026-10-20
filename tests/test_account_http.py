@@ -12,16 +12,14 @@ ADMIN = "https://admin.neboer.site"
 OTHER = "https://untrusted.neboer.site"
 
 
-@pytest.fixture(params=["sqlite", "postgres"])
+@pytest.fixture
 def web(request, tmp_path, monkeypatch):
     monkeypatch.setenv("ONSTAGE_FRONTEND_ORIGINS", WEB)
     monkeypatch.setenv("ONSTAGE_ADMIN_ORIGINS", ADMIN)
     monkeypatch.setenv("ONSTAGE_METRICS_TOKEN", "isolated-metrics-test")
     monkeypatch.delenv("ONSTAGE_LEGACY_GUESTS", raising=False)
     from app.main import create_app
-    url = None
-    if request.param == "postgres":
-        url = request.getfixturevalue("pg_factory")().settings.database_url
+    url = request.getfixturevalue("pg_factory")().settings.database_url
     app = create_app(data_dir=tmp_path, database_url=url, public_origin="https://api.neboer.site", secure_cookie=True)
     with TestClient(app, base_url="https://api.neboer.site") as client:
         yield client, app.state.store

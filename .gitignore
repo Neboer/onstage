@@ -12,6 +12,8 @@ reports/private/
 *.sqlite3-wal
 *.sqlite3-shm
 *.log
+*.pem
+*.key
 
 dist/
 dist-*/
