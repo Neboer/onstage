@@ -23,6 +23,9 @@ class LiveServer:
         self.origin = f"http://127.0.0.1:{self.port}"
         self.env = {**os.environ, "ONSTAGE_DATA_DIR": str(self.data_dir),
                     "ONSTAGE_PUBLIC_ORIGIN": self.origin, "ONSTAGE_SECURE_COOKIE": "0",
+                    # Existing v0.8 HTTP contracts explicitly exercise legacy guest mode.
+                    # Account-mode API/privacy is exercised separately in test_account_http.py.
+                    "ONSTAGE_LEGACY_GUESTS": "1",
                     "ONSTAGE_VERSION": "integration-test"}
         self.process = None
         self.log = None

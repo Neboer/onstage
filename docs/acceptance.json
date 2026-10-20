@@ -1,8 +1,8 @@
 {
   "project": "Onstage",
-  "version": "0.8.0",
-  "updated_at_utc": "2026-10-18T13:49:31.100431+00:00",
-  "overall_status": "PARTIAL: 0.8 development, local verification and public push VERIFIED; hosted CI BLOCKED before execution by GitHub account billing lock; target deployment/device/network acceptance separate",
+  "version": "0.9.0",
+  "updated_at_utc": "2026-10-20T08:12:55.126610+00:00",
+  "overall_status": "PARTIAL: 0.9 account/community and separate frontends locally VERIFIED; GitHub push/hosted CI pending; production deployment/device/network acceptance separate",
   "delivery_scope": "Development, regression verification and public GitHub push. Deployment by collaborator; native client deferred.",
   "source": {
     "archive": "onstage-v0.6.0-codex-source.zip",
@@ -14,6 +14,82 @@
     "original_archive_preserved": true
   },
   "current_evidence": [
+    {
+      "object": "0.9 accounts/community, split user/admin frontend, PostgreSQL recovery and bounded PWA cache repair",
+      "status": "VERIFIED for local scope",
+      "report": "reports/community-20261020.json",
+      "results": {
+        "python": {
+          "status": "VERIFIED",
+          "result": "237 passed, 2 skipped, 1 warning",
+          "command": "python -m pytest -q with ONSTAGE_TEST_DATABASE_URL for isolated real PostgreSQL",
+          "environment": "Windows Python 3.12.12; native loopback PostgreSQL 17.11, isolated test schemas",
+          "skips": "Windows symlink creation privilege unavailable; Linux CI protection checks remain",
+          "warning": "Starlette httpx TestClient deprecation"
+        },
+        "frontend": {
+          "status": "VERIFIED",
+          "commands": [
+            "npm run check:frontends",
+            "npm run test:frontends",
+            "npm run build:frontends"
+          ],
+          "result": "TypeScript passed; 7 DOM tests passed; user and admin production builds passed"
+        },
+        "protocol_compatibility": {
+          "status": "VERIFIED",
+          "commands": [
+            "node tests/frontend_delivery_check.cjs",
+            "node tests/frontend_navigation_check.cjs",
+            "node tests/pwa_cache_check.cjs"
+          ],
+          "result": "Exact pending identity/draft/order regressions and real SW handlers passed; bounded cache repair and manual activation passed"
+        },
+        "d1_legacy": {
+          "status": "VERIFIED",
+          "result": "Actual isolated Miniflare D1: write-freeze, 1107-room pagination and 18 integration groups passed",
+          "scope": "Maintained 0.8-compatible adapter; no new account/community implementation claimed"
+        },
+        "offline_legacy": {
+          "status": "VERIFIED",
+          "report": "reports/preview-adapter-0.9-20261020.json",
+          "result": "21 isolated adapter/DOM steps passed; not account/community implementation"
+        },
+        "browser": {
+          "status": "VERIFIED",
+          "environment": "Actual IAB browser, synthetic loopback separate frontend/API/admin and real PostgreSQL",
+          "result": [
+            "Registration and preferences, room and original chat iframe, real Enter send and peer WebSocket rendering",
+            "Stage author consent, multi-message selection, rendered public share",
+            "Administrator login, registered user count/online filter/participation and audit list",
+            "185 public art assets / 16.31 MB cached after bounded recovery; manual worker upgrade preserved page"
+          ],
+          "screenshot": "reports/community-cache-20261020.png",
+          "scope": "Not independent human participants, physical phone, hosted target, venue network or OS-installed PWA"
+        },
+        "account_http_ws": {
+          "status": "VERIFIED",
+          "command": "python deploy/ci/account_smoke.py",
+          "environment": "Native loopback FastAPI and real PostgreSQL; not a container"
+        },
+        "recovery": {
+          "status": "VERIFIED",
+          "result": "Real PostgreSQL isolated migration idempotency, v1 compatibility and v2 complete populated backup/restore; browser/API restart retained synthetic data"
+        },
+        "monitoring_definitions": {
+          "status": "VERIFIED",
+          "result": "JSON/YAML parse and telemetry tests passed; actual Prometheus scrape/Grafana import not performed"
+        }
+      },
+      "limitations": [
+        "Hosted CI/container execution and registry publication/digests until actual GitHub run succeeds",
+        "Production migration, unique write-entry cutover, collaborator cluster GitOps/rollout and target URL",
+        "Three independent people, physical phone, mainland/venue bandwidth and latency, OS-installed PWA",
+        "Live Prometheus scrape and Grafana import; thousand active rooms capacity (pagination scale only)",
+        "Full React replacement of mature chat: current same-frontend-origin /play iframe is intentional transitional reuse",
+        "Frontend base image tags are not digest-pinned yet; release freeze needs actual build provenance/digests"
+      ]
+    },
     {
       "object": "0.8 lossless artwork, cache/PWA, incremental feed, room pagination and navigation/settings",
       "status": "VERIFIED",
@@ -50,8 +126,8 @@
   "github": {
     "repository": "https://github.com/SpringfiledBucks/onstage",
     "visibility": "public",
-    "push_status": "VERIFIED",
-    "actions_status": "BLOCKED before job execution",
+    "push_status": "pending 0.9 branch push",
+    "actions_status": "pending fresh 0.9 PR run; historical runs preserved",
     "collaborators": {
       "Neboer": {
         "profile": "https://github.com/Neboer",
@@ -63,7 +139,7 @@
         "repository_owner_type": "User",
         "maximum_available_non_owner_role": true,
         "ownership_transferred": false,
-        "confirmed_at_utc": "2026-10-18T13:49:31.100431+00:00",
+        "confirmed_at_utc": "2026-10-20T08:12:55.126610+00:00",
         "confirmation": "No pending invitation; GitHub permission endpoint returns write"
       }
     },
@@ -76,12 +152,12 @@
     "billing_settings_changed": false,
     "authentication": "GitHub CLI and Codex connector both verified as SpringfiledBucks; CLI OAuth workflow scope refreshed successfully by user",
     "previous_implementation_commit": "ea47d9dd9a3630062f7fdfc02dad5c835d8414e9",
-    "current_version": "0.8.0; see commit containing this ledger",
-    "current_implementation_commit": "0f6ac0e75445fcd5baf14d06952244738374e509"
+    "current_version": "0.9.0 candidate; see commit containing ledger",
+    "current_implementation_commit": null
   },
   "container": {
     "configuration": "implemented",
-    "runtime_status": "NOT VERIFIED: GitHub runner never started; local computer has no Docker",
+    "runtime_status": "NOT VERIFIED: no local Docker; fresh 0.9 hosted CI pending",
     "platform": "linux/amd64",
     "replicas": 1,
     "uvicorn_workers": 1,
@@ -111,7 +187,7 @@
     "Browser color management comparison across all artwork/devices",
     "0.8 hosted CI/container/digest: runner never started because of account billing lock"
   ],
-  "development_and_public_push_status": "VERIFIED",
+  "development_and_public_push_status": "PARTIAL: local 0.9 implementation verified; branch push pending",
   "historical_v071_evidence": {
     "version": "0.7.1",
     "current_at_that_time_only": true,
@@ -202,5 +278,13 @@
         "initial_failure": "HTTP check found WebP served as application/octet-stream on Windows; explicit MIME registration fixed it; no assertion lowered."
       }
     ]
-  }
+  },
+  "not_verified_09": [
+    "Hosted CI/container execution and registry publication/digests until actual GitHub run succeeds",
+    "Production migration, unique write-entry cutover, collaborator cluster GitOps/rollout and target URL",
+    "Three independent people, physical phone, mainland/venue bandwidth and latency, OS-installed PWA",
+    "Live Prometheus scrape and Grafana import; thousand active rooms capacity (pagination scale only)",
+    "Full React replacement of mature chat: current same-frontend-origin /play iframe is intentional transitional reuse",
+    "Frontend base image tags are not digest-pinned yet; release freeze needs actual build provenance/digests"
+  ]
 }

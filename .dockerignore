@@ -8,6 +8,17 @@
 !static/**
 !tools/
 !tools/**
+!package.json
+!package-lock.json
+!apps/
+!apps/**
+!packages/
+!packages/**
+!scripts/
+!scripts/build-frontends.mjs
+!deploy/
+!deploy/frontend/
+!deploy/frontend/**
 **/__pycache__/
 **/*.pyc
 **/*.sqlite3*

@@ -48,7 +48,12 @@ jobs:
       - name: PostgreSQL concurrency, permissions, migration and restore
         env:
           ONSTAGE_TEST_DATABASE_URL: postgresql+psycopg://onstage:isolated-ci-only@127.0.0.1:5432/onstage
-        run: python -m pytest tests/test_postgres.py -q
+        run: python -m pytest tests/test_postgres.py tests/test_accounts.py tests/test_room_features.py tests/test_community.py tests/test_account_http.py tests/test_account_regressions.py tests/test_community_recovery.py -q
+      - name: Independent user and admin frontend checks
+        run: |
+          npm run check:frontends
+          npm run test:frontends
+          npm run build:frontends
       - name: Shared frontend syntax
         run: |
           node --check static/app.js
@@ -79,7 +84,7 @@ jobs:
           set -euo pipefail
           mkdir -p reports
           start_app() {
-            docker run -d --name onstage-ci --network host --read-only --tmpfs /tmp:rw,noexec,nosuid,size=16m --cap-drop ALL --security-opt no-new-privileges -e DATABASE_URL=postgresql+psycopg://onstage:isolated-ci-only@127.0.0.1:5432/onstage -e ONSTAGE_PUBLIC_ORIGIN=http://127.0.0.1:8765 -e ONSTAGE_SECURE_COOKIE=0 -e ONSTAGE_VERSION=${{ github.sha }} onstage:ci
+            docker run -d --name onstage-ci --network host --read-only --tmpfs /tmp:rw,noexec,nosuid,size=16m --cap-drop ALL --security-opt no-new-privileges -e DATABASE_URL=postgresql+psycopg://onstage:isolated-ci-only@127.0.0.1:5432/onstage -e ONSTAGE_PUBLIC_ORIGIN=http://127.0.0.1:8765 -e ONSTAGE_SECURE_COOKIE=0 -e ONSTAGE_LEGACY_GUESTS="${1:-1}" -e ONSTAGE_VERSION=${{ github.sha }} onstage:ci
             for attempt in $(seq 1 60); do
               if curl --fail --silent http://127.0.0.1:8765/readyz >/dev/null; then return; fi
               sleep 1
@@ -98,7 +103,21 @@ jobs:
           docker rm -f onstage-ci
           start_app
           python deploy/ci/container_persistence.py verify "$RUNNER_TEMP/onstage-persistence.json"
+          docker rm -f onstage-ci
+          start_app 0
+          python deploy/ci/account_smoke.py
           docker image inspect onstage:ci --format '{{json .Config.User}}' | tee reports/image-user.json
+      - name: Build and start independent frontend images
+        run: |
+          set -euo pipefail
+          for target in web admin; do
+            docker build -f Dockerfile.frontend --target "$target" -t "onstage-$target:ci" .
+            docker run -d --name "onstage-$target-ci" -p 127.0.0.1:8780:8080 -e ONSTAGE_API_ORIGIN=http://127.0.0.1:8765 -e ONSTAGE_WS_ORIGIN=ws://127.0.0.1:8765 "onstage-$target:ci"
+            for attempt in $(seq 1 30); do if curl --fail --silent http://127.0.0.1:8780/healthz >/dev/null; then break; fi; sleep 1; done
+            curl --fail --silent http://127.0.0.1:8780/ | grep -q '<div id="root"'
+            curl --fail --silent http://127.0.0.1:8780/config.js | grep -q 'http://127.0.0.1:8765'
+            docker rm -f "onstage-$target-ci"
+          done
       - name: Upload sanitized synthetic reports
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
@@ -110,7 +129,7 @@ jobs:
           if-no-files-found: ignore
       - name: Clean isolated runtime
         if: always()
-        run: docker rm -f onstage-ci || true
+        run: docker rm -f onstage-ci onstage-web-ci onstage-admin-ci || true
   publish:
     # Only reviewed main code or a release that points into main may publish.
     if: (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || github.event_name == 'release'
@@ -148,9 +167,20 @@ jobs:
           docker buildx build --platform linux/amd64 --provenance=mode=min --sbom=true --push "${tags[@]}" --build-arg SOURCE_REVISION="$SOURCE_SHA" --build-arg SOURCE_REPOSITORY="$SOURCE_URL" --metadata-file "$RUNNER_TEMP/image-metadata.json" .
           digest=$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"]+"/image-metadata.json"))["containerimage.digest"])')
           printf 'Image: `%s@%s`\n\nCommit: `%s`\n\nPlatform: `linux/amd64`\n' "$image" "$digest" "$SOURCE_SHA" | tee "$RUNNER_TEMP/image-release.txt" >> "$GITHUB_STEP_SUMMARY"
+          for target in web admin; do
+            frontend_image="$image-$target"
+            frontend_tags=(--tag "$frontend_image:sha-$SOURCE_SHA")
+            if [[ -n "$RELEASE_TAG" ]]; then frontend_tags+=(--tag "$frontend_image:$RELEASE_TAG"); fi
+            docker buildx build --platform linux/amd64 -f Dockerfile.frontend --target "$target" --provenance=mode=min --sbom=true --push "${frontend_tags[@]}" --build-arg SOURCE_REVISION="$SOURCE_SHA" --build-arg SOURCE_REPOSITORY="$SOURCE_URL" --metadata-file "$RUNNER_TEMP/$target-metadata.json" .
+            export ONSTAGE_FRONTEND_TARGET="$target"
+            frontend_digest=$(python -c 'import json,os; print(json.load(open(os.environ["RUNNER_TEMP"]+"/"+os.environ["ONSTAGE_FRONTEND_TARGET"]+"-metadata.json"))["containerimage.digest"])')
+            printf '\nImage: `%s@%s`\n' "$frontend_image" "$frontend_digest" | tee -a "$RUNNER_TEMP/image-release.txt" >> "$GITHUB_STEP_SUMMARY"
+          done
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: image-release-${{ github.sha }}
           path: |
             ${{ runner.temp }}/image-release.txt
             ${{ runner.temp }}/image-metadata.json
+            ${{ runner.temp }}/web-metadata.json
+            ${{ runner.temp }}/admin-metadata.json

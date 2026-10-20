@@ -29,5 +29,7 @@ public/
 next-env.d.ts
 *.tsbuildinfo
 coverage/
+/build/web/
+/build/admin/
 .dev.vars
 .dev.vars.*

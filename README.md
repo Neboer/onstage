@@ -1,5 +1,28 @@
 # Onstage · 少女乐队对戏
 
+## 0.9 账户与社区候选
+
+本分支实现用户名/密码账户、可信前端与独立管理前端、千级房间分页/排序、私密邀请或密码入场、角色偏好和招募、场景切换、全演员离线10分钟自动结束、匿名账户唯一评分、私密成员赞踩/举报、作者授权的记录分享、开发反馈与监控。**访客仅保留公开目录、场景、关于和主动分享的低风险读取；入房及写操作需要登录。** 登录名仅本人和管理员可见，房间内使用独立化名。下文0.8数据是历史验收，不代表这些新功能已上线。
+
+用户端与管理端为独立 React/TypeScript/Vite 静态构建；实时聊天暂复用成熟聊天渲染器，保持发送对账、草稿、贴纸和历史兼容。后端继续 FastAPI 模块化单体与独立 PostgreSQL，不同时进行语言重写。SQLAlchemy短事务保留，新增功能使用 Alembic 显式追加迁移；生产启动不改库。SQLite保留兼容开发，Sites/D1/离线适配维持0.8合同，不冒充支持新账户功能。
+
+```sh
+npm ci --ignore-scripts
+npm run check:frontends
+npm run test:frontends
+npm run build:frontends
+# build/web、build/admin 分别部署；通过各自 config.js 配置 API/WS Origin。
+python tools/database.py migrate
+```
+
+隔离 Compose 可运行 `app web admin`，用户端 `http://localhost:8080`、管理端 `http://localhost:8081`、API `http://localhost:8765`，均仅供本机开发。实际外部部署、白名单、Cookie、数据库备份和回退见 [SELF_HOSTED](docs/SELF_HOSTED.md)。首次管理员在注册后由获准维护者通过 `python tools/accounts.py --help` 所示命令授予，不自动创建管理账户。未发布新镜像digest前不要把源码候选当作已部署版本。
+
+公开部署必须配置 `ONSTAGE_FRONTEND_ORIGINS` 和 `ONSTAGE_ADMIN_ORIGINS` 的准确 HTTPS Origin。`*.neboer.site` 只对公开读接口开放且不消费其Cookie；账户读写和WS仅白名单。生产使用 `__Host-onstage_session`，本机HTTP使用另一个Cookie名；旧Cookie不自动迁移，也不按昵称认领历史。
+
+0.9当前证据与限制以 [acceptance](docs/acceptance.json) 为准。Python功能与接口稳定后再依据性能实测评估其他后端语言；1000个累计房间本身不构成重写或拆服务的依据。
+
+## 0.8 历史基线
+
 免注册昵称入场的 MyGO!!!!! / Ave Mujica 真人文字对戏空间。十个角色、自由场景、文字和贴纸、舞台/后台、旁观、房主管理、举报与历史恢复；没有 AI 代演或假在线。
 
 当前开发版本 **0.8.0**。公开协作仓库：[SpringfiledBucks/onstage](https://github.com/SpringfiledBucks/onstage)。自托管使用 FastAPI、独立 PostgreSQL、WebSocket 提醒及 HTTP 游标补齐。SQLite 保留本地开发与旧库兼容，Sites/D1 适配继续维护。首个支持部署为 **1 应用副本、1 Uvicorn worker**；目标集群部署由合作方负责，本仓库不宣称已经上线。

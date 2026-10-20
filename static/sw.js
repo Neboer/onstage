@@ -19,7 +19,7 @@ function artworkURL(value) {
 function cacheRequest(url) { return new Request(url.href, { credentials: "omit" }); }
 async function putArtwork(url, response, epoch) {
   if (!response.ok || response.redirected || !["basic", "default"].includes(response.type) ||
-      response.headers.get("Content-Type")?.split(";")[0].trim() !== "image/webp") throw new Error("invalid_artwork_response");
+      response.headers.get("Content-Type")?.split(";")[0].trim() !== "image/webp") throw new Error("invalid_artwork_response:" + response.status + ":" + response.type + ":" + (response.headers.get("Content-Type") || "missing"));
   const declared = Number(response.headers.get("Content-Length"));
   if (declared > MAX_FILE_BYTES) throw new Error("artwork_too_large");
   const bytes = await response.arrayBuffer();
@@ -62,10 +62,18 @@ async function fetchArtwork(url, signal, explicit = false) {
   if (explicit) downloads.add(abort);
   const timer = setTimeout(cancel, 15000);
   try {
-    const response = await fetch(url.href, { credentials: "omit", signal: abort.signal, redirect: "error" });
+    let response = await fetch(url.href, { credentials: "omit", signal: abort.signal, redirect: "error" });
     // A cache/quota failure must not prevent normal artwork from displaying.
     const copy = response.clone();
-    try { await putArtwork(url, copy, epoch); } catch (error) { if (explicit) throw error; }
+    try { await putArtwork(url, copy, epoch); } catch (error) {
+      // A prior host may have cached a wrong MIME/body under an immutable URL.
+      // One explicit retry bypasses only the HTTP cache; quota failures do not
+      // trigger extra transfers, and a bad origin response still fails closed.
+      if (explicit && (response.ok || response.status === 404) && (error.message.startsWith("invalid_artwork_response:") || error.message === "artwork_hash_mismatch")) {
+        response = await fetch(url.href, { credentials: "omit", signal: abort.signal, redirect: "error", cache: "reload" });
+        await putArtwork(url, response.clone(), epoch);
+      } else if (explicit) throw error;
+    }
     return response;
   } finally {
     clearTimeout(timer); downloads.delete(abort); signal?.removeEventListener("abort", cancel);
@@ -91,6 +99,9 @@ self.addEventListener("message", (event) => {
   if (!port || !event.source?.url || new URL(event.source.url).origin !== self.location.origin) return;
   const run = async () => {
     switch (event.data?.type) {
+      case "ARTWORK_ACTIVATE":
+        await self.skipWaiting();
+        return { activated: true };
       case "ARTWORK_STATUS": return status();
       case "ARTWORK_CACHE": {
         const url = artworkURL(event.data.url);

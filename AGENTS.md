@@ -1,3 +1,5 @@
+> 2026-10-20 当前覆盖：0.9 候选为模块化 FastAPI/PostgreSQL + 分离 React 用户端/管理端；访客仅低风险公开读取，旧 Sites/离线保留0.8兼容。批准决定与实际验收见 README、API_CONTRACT、reports/community-20261020.json 和 acceptance。当前交付为开发验证并推送供协作评审，生产部署由协作者执行；原始历史说明保留。
+
 > 2026-10-18 接手更新：0.7.0 目标为 FastAPI + 独立 PostgreSQL + 共享前端；用户最新范围为完成开发、验证并推送公开 GitHub，部署和后续协作者邀请由用户另行安排。以下 0.6 Sites 安排保留为历史；当前命令与状态以 README、SELF_HOSTED 和 acceptance 为准。
 
 # 工程协作约定

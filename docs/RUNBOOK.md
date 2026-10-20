@@ -1,3 +1,15 @@
+# 0.9 运维优先说明
+
+本版本新增账户、私密房、作者授权分享与管理权限，配置和迁移按SELF_HOSTED的0.9部分执行。用户与管理前端独立部署，8765为API；ONSTAGE_FRONTEND_ORIGINS/ONSTAGE_ADMIN_ORIGINS只填准确可信Origin。*.neboer.site仅公开读，不是登录白名单。
+
+新版本账号与登录会话分离；首次管理员由维护命令授予。ban撤销所有登录，解封不恢复旧token。不要在聊天/工单/日志输出密码、Cookie、快照或真实数据库连接串。ONSTAGE_METRICS_TOKEN单独注入Prometheus Secret。
+
+工具database.py使用同一DATABASE_URL，backup兼容完整旧schema4与新v2，restore仅空目标并验证所有新表；生产PG独立执行Alembic迁移，启动只检查。已有SQLite首次扩展自动先留一致性备份，旧包/原图/旧ID不删除。正式切换和回滚需完整库恢复计划，不能仅替换代码。
+
+在线是90秒租约与有效账户会话，不是连接数。服务重启重置全离线观察期；单副本更新须Recreate。自动结束事件、场景切换、权限与消息都必须实际验证，不能用health代签。
+
+---
+
 # Onstage 0.8 运行与恢复
 
 ## 美术、PWA与分页更新

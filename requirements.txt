@@ -17,3 +17,11 @@ websockets==17.2
 
 SQLAlchemy==2.0.48
 psycopg[binary]==3.3.3
+argon2-cffi==25.1.0
+alembic==1.16.5
+prometheus-client==0.22.1
+argon2-cffi-bindings==26.1.0
+cffi==2.1.1
+pycparser==3.11
+Mako==1.4.3
+MarkupSafe==3.0.4

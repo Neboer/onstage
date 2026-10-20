@@ -23,10 +23,15 @@ from sqlalchemy import inspect, text
 from app.postgres import PostgresStore
 from app.security import Settings, iso_time
 
-TABLES = ('schema_meta', 'sessions', 'characters', 'rooms', 'room_members',
+LEGACY_TABLES = ('schema_meta', 'sessions', 'characters', 'rooms', 'room_members',
           'role_requests', 'messages', 'room_bans', 'rate_events', 'reports', 'moderation_actions')
-BUSINESS = tuple(name for name in TABLES if name not in ('schema_meta', 'characters'))
-FORMAT = 'onstage-postgres-private-v1'
+EXTENSION_TABLES = ('users', 'auth_sessions', 'account_audit', 'room_options', 'room_access_grants',
+                    'room_invites', 'room_scene_actions', 'room_presence_leases', 'room_list_snapshots',
+                    'room_ratings', 'member_feedback', 'room_share_permissions', 'conversation_shares',
+                    'share_messages', 'member_reports', 'developer_feedback', 'alembic_version')
+TABLES = LEGACY_TABLES + EXTENSION_TABLES
+BUSINESS = tuple(name for name in TABLES if name not in ('schema_meta', 'characters', 'alembic_version'))
+FORMAT = 'onstage-postgres-private-v2'
 MAX_BYTES = 64 * 1024 * 1024
 
 
@@ -38,13 +43,23 @@ def snapshot(store):
     with store.engine.connect().execution_options(isolation_level='REPEATABLE READ') as connection:
         with connection.begin():
             connection.execute(text('SET TRANSACTION READ ONLY'))
+            existing = set(inspect(connection).get_table_names())
+            extension = set(EXTENSION_TABLES) & existing
+            if extension and extension != set(EXTENSION_TABLES):
+                raise ValueError('Incomplete community schema; use a verified native pg_dump backup before repair.')
+            if not set(LEGACY_TABLES).issubset(existing):
+                raise ValueError('Source is not a complete Onstage schema-4 database.')
+            version = connection.execute(text("SELECT value FROM schema_meta WHERE key='schema_version'")).scalar()
+            if version != '4':
+                raise ValueError('Unsupported source schema; source preserved.')
+            names = TABLES if extension else LEGACY_TABLES
             tables = {}
-            for name in TABLES:
+            for name in names:
                 rows = connection.execute(text(f'SELECT * FROM {name} LIMIT 100001')).mappings().all()
                 if len(rows) > 100000:
                     raise ValueError('Snapshot row limit exceeded; use pg_dump for larger databases.')
                 tables[name] = [dict(row) for row in rows]
-    return {'format': FORMAT, 'schema_version': 4, 'exported_at': iso_time(),
+    return {'format': FORMAT if extension else 'onstage-postgres-private-v1', 'schema_version': 4, 'exported_at': iso_time(),
             'contains_private_session_credentials': True, 'tables': tables,
             'row_counts': {name: len(rows) for name, rows in tables.items()}}
 
@@ -54,11 +69,13 @@ def read_snapshot(path):
         raise ValueError('Snapshot is too large; use native PostgreSQL backup tooling.')
     payload = json.loads(path.read_text(encoding='utf8'))
     tables = payload.get('tables', {})
-    if (payload.get('format') not in (FORMAT, 'onstage-confidential-state-v1')
+    legacy = payload.get('format') in ('onstage-postgres-private-v1', 'onstage-confidential-state-v1')
+    valid_sets = (set(LEGACY_TABLES), set(LEGACY_TABLES) - {'rate_events'}) if legacy else (set(TABLES),)
+    if (payload.get('format') not in (FORMAT, 'onstage-postgres-private-v1', 'onstage-confidential-state-v1')
             or payload.get('schema_version') != 4
             or payload.get('contains_private_session_credentials') is not True
             or not isinstance(tables, dict)
-            or set(tables) not in (set(TABLES), set(TABLES) - {'rate_events'})):
+            or set(tables) not in valid_sets):
         raise ValueError('Unsupported or incomplete private snapshot.')
     for name, rows in tables.items():
         if (not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows)
@@ -79,8 +96,13 @@ def sqlite_snapshot(path):
         version = connection.execute("SELECT value FROM schema_meta WHERE key='schema_version'").fetchone()
         if not version or version[0] != '4':
             raise ValueError('SQLite source must already be schema 4; no implicit migration performed.')
-        tables = {name: [dict(row) for row in connection.execute(f'SELECT * FROM {name}')] for name in TABLES}
-    return {'format': FORMAT, 'schema_version': 4, 'contains_private_session_credentials': True,
+        existing = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        extension = set(EXTENSION_TABLES) & existing
+        if extension and extension != set(EXTENSION_TABLES):
+            raise ValueError('SQLite community schema is incomplete; source preserved.')
+        names = TABLES if extension else LEGACY_TABLES
+        tables = {name: [dict(row) for row in connection.execute(f'SELECT * FROM {name}')] for name in names}
+    return {'format': FORMAT if extension else 'onstage-postgres-private-v1', 'schema_version': 4, 'contains_private_session_credentials': True,
             'tables': tables, 'row_counts': {name: len(rows) for name, rows in tables.items()}}
 
 
@@ -114,8 +136,8 @@ def restore(store, payload):
             for row in rows:
                 if set(row) != columns:
                     raise ValueError(f'Snapshot columns differ from schema: {name}.')
-                if name in ('schema_meta', 'characters'):
-                    key = 'key' if name == 'schema_meta' else 'id'
+                if name in ('schema_meta', 'characters', 'alembic_version'):
+                    key = 'key' if name == 'schema_meta' else 'version_num' if name == 'alembic_version' else 'id'
                     existing = connection.execute(text(f'SELECT * FROM {name} WHERE {key}=:key'), {'key': row[key]}).mappings().first()
                     if existing:
                         if dict(existing) != row:
@@ -169,18 +191,18 @@ def main():
         if args.command == 'migrate':
             store.migrate()
             result = store.ready()
+        elif args.command == 'backup':
+            # Also accepts the intact pre-community schema, before any migration.
+            result = backup(store, args.path)
         else:
             store.ready()
-            if args.command == 'backup':
-                result = backup(store, args.path)
+            payload = sqlite_snapshot(args.path) if args.command == 'import-sqlite' else read_snapshot(args.path)
+            if args.command == 'verify':
+                with store.engine.connect().execution_options(isolation_level='REPEATABLE READ') as connection:
+                    with connection.begin():
+                        result = {'verified_row_counts': compare(connection, payload)}
             else:
-                payload = sqlite_snapshot(args.path) if args.command == 'import-sqlite' else read_snapshot(args.path)
-                if args.command == 'verify':
-                    with store.engine.connect().execution_options(isolation_level='REPEATABLE READ') as connection:
-                        with connection.begin():
-                            result = {'verified_row_counts': compare(connection, payload)}
-                else:
-                    result = {'restored_row_counts': restore(store, payload)}
+                result = {'restored_row_counts': restore(store, payload)}
         print(json.dumps(result, ensure_ascii=False))
         return 0
     except Exception as error:

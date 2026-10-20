@@ -1,3 +1,32 @@
+# 0.9 分离部署合同（覆盖下方0.8同源默认）
+
+API继续一个FastAPI副本/一个Uvicorn worker、独立PostgreSQL、8765端口。用户端和管理端分别是Dockerfile.frontend的web/admin target，静态HTTP端口8080，各有 /healthz。候选镜像构建/启动必须由CI实跑确认；本机没有Docker，本轮不安装系统软件。
+
+用户端ONSTAGE_API_ORIGIN配置API的准确Origin，ONSTAGE_WS_ORIGIN配置WS Origin；容器启动生成公开config.js，不写任何秘密。分别部署两个前端域名并配置SPA回退；/play、/static、/assets应真实文件404，不回退HTML。/sw.js为原公开美术SW，根scope；仅成功的哈希媒体响应immutable，404不缓存，避免发布替换时把缺图永久缓存。发现旧HTTP错误MIME/404时，显式缓存有且只有一次绕过HTTP缓存的恢复；待更新的SW由用户在设置手动接管，不重载聊天和草稿。HTML/config/API不缓存。前端镜像只运行nginx，不运行Next或Node服务。Node/NGINX基础标签在候选阶段未锁digest；正式冻结还需记录实际构建来源与最终镜像digest。
+
+后端ONSTAGE_PUBLIC_ORIGIN是API Origin，ONSTAGE_FRONTEND_ORIGINS为逗号分隔准确可信用户前端，ONSTAGE_ADMIN_ORIGINS为独立管理端。公开GET允许有效HTTPS *.neboer.site，其Cookie忽略且不返回credentialed CORS；账户API/WS不允许泛域。生产ONSTAGE_SECURE_COOKIE=1且所有入口HTTPS，同站子域使用SameSite Strict、API host-only __Host-onstage_session；HTTP开发用不同Cookie名。不要为了跨子域设置Domain=.neboer.site。额外反向代理需保留Origin、Upgrade与Cookie，不能统一添加宽松CORS。
+
+```sh
+# 独立环境/Secret已经指向目标，先备份、隔离恢复验证，再迁移正式库。
+python tools/database.py backup /restricted/pre-community.json
+python tools/database.py migrate
+# 首位管理员先自行注册，维护者对准确用户名授权并留审计。
+python tools/accounts.py --operator APPROVED_OPERATOR grant-admin EXACT_USERNAME
+# 前端镜像分别构建，部署时注入上述公开Origin。
+docker build -f Dockerfile.frontend --target web -t onstage-web:RELEASE .
+docker build -f Dockerfile.frontend --target admin -t onstage-admin:RELEASE .
+```
+
+迁移使用Alembic revision20261020_01，不允许直接降级删除账户数据。新快照v2涵盖账户/授权/评分/分享等全部表；也能在迁移前备份完整旧PG schema4。先冻结旧写入口、最终导出、隔离恢复逐字段核验，再切唯一主站；旧Cookie不自动继承，不按昵称合并。旧镜像回退不能代替数据库回退；恢复前先保存新写入并明确恢复点与丢失窗口。
+
+Compose只用于隔离开发：启动db→run migrate→up app web admin。用户端localhost:8080，管理端localhost:8081，API localhost:8765；不是外部联机部署。不修改现有代理、路由或其他服务。
+
+CI在PR运行新前端TS/DOM/build、SQLite兼容、真实隔离PG合同、迁移与恢复、API和两个前端镜像构建/启动；受控main发布才推ghcr.io/OWNER/onstage、onstage-web、onstage-admin的commit/版本标签并输出digest。PR不获得生产凭据。合作者按已有GitOps机制选择digest并触发rollout；本仓库不声称已配置集群自动跟踪。仍使用Recreate处理API更新，无新旧应用并行写入窗口。
+
+监控见deploy/monitoring：API /metrics需要独立Bearer Secret，20秒后台采样；Prometheus目标端口8765。Grafana JSON/YAML验证与实际导入/抓取是不同验收，后者须在对方环境执行。
+
+---
+
 # 自托管镜像与合作方部署
 
 0.8新增：镜像直接包含原图与校验后的派生资源，不依赖运行时编码器。代理需放行根`/sw.js`与`/static/manifest.webmanifest`，保持JS/JSON正确MIME及SW根scope；HTTPS下支持安装和公开美术缓存。仅`/static/assets/optimized/<sha256>.webp`长期immutable，HTML/JS/清单重新校验，API保持no-store，勿在全局代理统一覆盖这些头。应用已压缩文本，不重复压缩图片；代理若统一压缩需避免重复处理。PWA不改变Cookie/Origin、HTTP补齐、WS Upgrade、单副本或独立PG要求。
