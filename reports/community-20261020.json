@@ -1,7 +1,7 @@
 {
   "project": "Onstage",
   "version": "0.9.0",
-  "updated_at_utc": "2026-10-20T08:12:55.126610+00:00",
+  "updated_at_utc": "2026-10-20T08:14:41.399731+00:00",
   "status": "PARTIAL",
   "scope": "Account/community implementation and separate user/admin frontends; local verification and GitHub review branch. Production deployment belongs to collaborator.",
   "baseline_commit": "8487458bf4d695f6dc4fdfa53b9b19e21f9967a8",
@@ -86,7 +86,7 @@
     "action": "Updated new Vite builder to 8.3.4. Legacy Next/Sites/ws advisories remain unresolved; no force upgrade that breaks historical adapters."
   },
   "not_verified": [
-    "Hosted CI/container execution and registry publication/digests until actual GitHub run succeeds",
+    "Hosted CI and container execution BLOCKED before any step by GitHub account billing lock; actual run recorded. No registry image or digest.",
     "Production migration, unique write-entry cutover, collaborator cluster GitOps/rollout and target URL",
     "Three independent people, physical phone, mainland/venue bandwidth and latency, OS-installed PWA",
     "Live Prometheus scrape and Grafana import; thousand active rooms capacity (pagination scale only)",
@@ -100,9 +100,17 @@
     "collaborator": {
       "Neboer": "accepted write; maximum personal-repository collaborator role; live rechecked"
     },
-    "push_status": "pending",
-    "actions_status": "pending fresh PR run",
-    "image_digest": null
+    "push_status": "VERIFIED",
+    "actions_status": "BLOCKED before execution",
+    "image_digest": null,
+    "implementation_commit": "335bf059a41efc8c4b88deba42b7f30f2c1854ca",
+    "remote_ref": "refs/heads/feature/accounts-community",
+    "pull_request": "https://github.com/SpringfiledBucks/onstage/pull/1",
+    "pull_request_draft": true,
+    "actions_run": "https://github.com/SpringfiledBucks/onstage/actions/runs/39391879308",
+    "actions_reason": "The job was not started because your account is locked due to a billing issue.",
+    "validation_steps_executed": 0,
+    "image_published": false
   },
   "production_data_or_deployment_modified": false
 }

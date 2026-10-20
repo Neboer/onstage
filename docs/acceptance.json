@@ -1,8 +1,8 @@
 {
   "project": "Onstage",
   "version": "0.9.0",
-  "updated_at_utc": "2026-10-20T08:12:55.126610+00:00",
-  "overall_status": "PARTIAL: 0.9 account/community and separate frontends locally VERIFIED; GitHub push/hosted CI pending; production deployment/device/network acceptance separate",
+  "updated_at_utc": "2026-10-20T08:14:41.399731+00:00",
+  "overall_status": "PARTIAL: 0.9 development, local verification and public review-branch push VERIFIED; hosted CI BLOCKED before execution by GitHub billing lock; target deployment/device/network acceptance separate",
   "delivery_scope": "Development, regression verification and public GitHub push. Deployment by collaborator; native client deferred.",
   "source": {
     "archive": "onstage-v0.6.0-codex-source.zip",
@@ -82,13 +82,25 @@
         }
       },
       "limitations": [
-        "Hosted CI/container execution and registry publication/digests until actual GitHub run succeeds",
+        "Hosted CI and container execution BLOCKED before any step by GitHub account billing lock; actual run recorded. No registry image or digest.",
         "Production migration, unique write-entry cutover, collaborator cluster GitOps/rollout and target URL",
         "Three independent people, physical phone, mainland/venue bandwidth and latency, OS-installed PWA",
         "Live Prometheus scrape and Grafana import; thousand active rooms capacity (pagination scale only)",
         "Full React replacement of mature chat: current same-frontend-origin /play iframe is intentional transitional reuse",
         "Frontend base image tags are not digest-pinned yet; release freeze needs actual build provenance/digests"
       ]
+    },
+    {
+      "object": "0.9 public GitHub review-branch delivery",
+      "status": "VERIFIED",
+      "implementation_commit": "335bf059a41efc8c4b88deba42b7f30f2c1854ca",
+      "remote_ref": "refs/heads/feature/accounts-community",
+      "pull_request": "https://github.com/SpringfiledBucks/onstage/pull/1",
+      "pull_request_draft": true,
+      "actions_run": "https://github.com/SpringfiledBucks/onstage/actions/runs/39391879308",
+      "actions_status": "BLOCKED before execution",
+      "reason": "The job was not started because your account is locked due to a billing issue.",
+      "confirmed_at_utc": "2026-10-20T08:14:41.399731+00:00"
     },
     {
       "object": "0.8 lossless artwork, cache/PWA, incremental feed, room pagination and navigation/settings",
@@ -126,8 +138,8 @@
   "github": {
     "repository": "https://github.com/SpringfiledBucks/onstage",
     "visibility": "public",
-    "push_status": "pending 0.9 branch push",
-    "actions_status": "pending fresh 0.9 PR run; historical runs preserved",
+    "push_status": "VERIFIED",
+    "actions_status": "BLOCKED before job execution",
     "collaborators": {
       "Neboer": {
         "profile": "https://github.com/Neboer",
@@ -146,18 +158,21 @@
     "actions_runs": [
       "https://github.com/SpringfiledBucks/onstage/actions/runs/39116754546",
       "https://github.com/SpringfiledBucks/onstage/actions/runs/39116782810",
-      "https://github.com/SpringfiledBucks/onstage/actions/runs/39133008366"
+      "https://github.com/SpringfiledBucks/onstage/actions/runs/39133008366",
+      "https://github.com/SpringfiledBucks/onstage/actions/runs/39391879308"
     ],
     "actions_blocker": "The job was not started because your account is locked due to a billing issue.",
     "billing_settings_changed": false,
     "authentication": "GitHub CLI and Codex connector both verified as SpringfiledBucks; CLI OAuth workflow scope refreshed successfully by user",
     "previous_implementation_commit": "ea47d9dd9a3630062f7fdfc02dad5c835d8414e9",
     "current_version": "0.9.0 candidate; see commit containing ledger",
-    "current_implementation_commit": null
+    "current_implementation_commit": "335bf059a41efc8c4b88deba42b7f30f2c1854ca",
+    "remote_ref": "refs/heads/feature/accounts-community",
+    "pull_request": "https://github.com/SpringfiledBucks/onstage/pull/1"
   },
   "container": {
     "configuration": "implemented",
-    "runtime_status": "NOT VERIFIED: no local Docker; fresh 0.9 hosted CI pending",
+    "runtime_status": "NOT VERIFIED: actual 0.9 GitHub job never started due to billing lock; local computer has no Docker",
     "platform": "linux/amd64",
     "replicas": 1,
     "uvicorn_workers": 1,
@@ -187,7 +202,7 @@
     "Browser color management comparison across all artwork/devices",
     "0.8 hosted CI/container/digest: runner never started because of account billing lock"
   ],
-  "development_and_public_push_status": "PARTIAL: local 0.9 implementation verified; branch push pending",
+  "development_and_public_push_status": "VERIFIED for 0.9 local development/regressions and remote feature branch; draft PR review/main merge remain separate",
   "historical_v071_evidence": {
     "version": "0.7.1",
     "current_at_that_time_only": true,
@@ -280,7 +295,7 @@
     ]
   },
   "not_verified_09": [
-    "Hosted CI/container execution and registry publication/digests until actual GitHub run succeeds",
+    "Hosted CI and container execution BLOCKED before any step by GitHub account billing lock; actual run recorded. No registry image or digest.",
     "Production migration, unique write-entry cutover, collaborator cluster GitOps/rollout and target URL",
     "Three independent people, physical phone, mainland/venue bandwidth and latency, OS-installed PWA",
     "Live Prometheus scrape and Grafana import; thousand active rooms capacity (pagination scale only)",
