@@ -1,5 +1,7 @@
 > 本轮补充：PostgreSQL-only；PWA增加按浏览器/房间主动开启的后台消息通知，维护者需配置VAPID Secret并验证真实设备通道。赞踩同局唯一、跨局防刷限额不向普通用户显示。详见docs/SELF_HOSTED.md及docs/API_CONTRACT.md。
 
+部署接手请先读 [给 Neboer 的部署升级说明](docs/NEBOER_DEPLOY_UPGRADE_20261020.md)：包括新PG/既有PG迁移、VAPID Secret、PWA启用、真手机验收、实际CI阻塞与回退边界。
+
 # Onstage · 少女乐队对戏
 
 ## 0.9 账户与社区候选
