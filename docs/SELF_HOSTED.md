@@ -37,7 +37,7 @@ docker build -f Dockerfile.frontend --target admin -t onstage-admin:RELEASE .
 
 Compose只用于隔离开发：启动db→run migrate→up app web admin。用户端localhost:8080，管理端localhost:8081，API localhost:8765；不是外部联机部署。不修改现有代理、路由或其他服务。
 
-CI在PR运行新前端TS/DOM/build、历史领域回归、真实隔离PG服务合同、迁移与恢复、API和两个前端镜像构建/启动；受控main发布才推ghcr.io/OWNER/onstage、onstage-web、onstage-admin的commit/版本标签并输出digest。PR不获得生产凭据。合作者按已有GitOps机制选择digest并触发rollout；本仓库不声称已配置集群自动跟踪。仍使用Recreate处理API更新，无新旧应用并行写入窗口。
+CI在PR运行新前端TS/DOM/build、历史领域回归、真实隔离PG服务合同、迁移与恢复、API和两个前端镜像构建/启动；main推送或手动发布、版本发布在验证通过后推当前仓库的ghcr.io/<owner>/<repo>、<repo>-web、<repo>-admin，输出commit/版本标签及digest；当前main提交自动标latest。PR不获得发布权限。合作者按已有GitOps机制选择digest并触发rollout；本仓库不声称已配置集群自动跟踪。仍使用Recreate处理API更新，无新旧应用并行写入窗口。
 
 监控见deploy/monitoring：API /metrics需要独立Bearer Secret，20秒后台采样；Prometheus目标端口8765。Grafana JSON/YAML验证与实际导入/抓取是不同验收，后者须在对方环境执行。
 
@@ -98,7 +98,7 @@ python tools/database.py migrate
 
 `.github/workflows/self-hosted.yml` 在 PR/main/manual/release 上运行 Python 回归、隔离真实 PostgreSQL 集成、幂等迁移、前端确认乱序测试、实际镜像构建和容器 HTTP/WebSocket/DOM 验证。用同一持久 PG 进行容器重启及删除重建后的消息/身份恢复。DOM 和合成独立会话不代替真实浏览器、手机或至少三位真人。CI PG 只含合成数据、临时密码，不获取生产凭据。官方 Actions 绑定完整 commit SHA；仓库应对 main 开启 PR review 和本工作流 required checks，不可绕过审查直接修改发布工作流。
 
-首次 push main 自动执行验证和实际镜像构建／运行，不自动发布镜像。仅上述验证成功后、从 main 手动触发 workflow 或指向 main 祖先的已发布版本可推 GHCR，权限为 `contents: read` 和发布 job 的 `packages: write`。PR 只有读权限，不使用 `pull_request_target`。手动发布推 `sha-<40位commit>`；规范 release `vX.Y.Z` 再推版本标签；不发布漂移的 `latest`。主线合入本身需要仓库保护，workflow 文件不能替代权限策略。发布 job 重新构建同一已验证 commit，输出不可变 digest、OCI revision、最小 provenance 和 SBOM，Actions Summary/`image-release-*` artifact 留存证据。基础镜像 digest 和 Python依赖已固定，后续安全更新须新 PR 验证。未实际成功运行时只可报告配置完成。
+push main 自动执行验证和实际镜像构建／运行；验证成功后自动推 GHCR，main 手动触发及指向 main 祖先的已发布版本也可发布。权限为 `contents: read` 和发布 job 的 `packages: write`；PR 只有读权限，不使用 `pull_request_target`。三个镜像均推 `sha-<40位commit>`，规范 release `vX.Y.Z` 再推版本标签；发布源码等于当前 main 顶端时自动标 `latest`，旧提交的 release 不回退 latest。发布 job 串行执行，避免并发覆盖。主线合入本身需要仓库保护，workflow 文件不能替代权限策略。发布 job 重新构建同一已验证 commit，输出不可变 digest、OCI revision、最小 provenance 和 SBOM，Actions Summary/`image-release-*` artifact 留存证据。生产部署固定 digest，不以可变 latest 代替回退记录。未实际成功运行时只可报告配置完成。
 
 本仓库没有擅自给合作方集群增加 CD 权限，也不会从 Actions 直接改集群。由合作方指定维护者在其已有 GitOps 仓库提交准确 digest，复用其已配置的 rollout；若要求自动跟踪，必须另外明确现有 Argo/Flux 镜像策略、写回目标、权限、审批与负责人，再用一次真实 digest 更新证明跟踪和 rollout。`imagePullPolicy`、Deployment 或仅安装 Argo/Flux 均不会自动完成镜像监视。演示前将 GitOps 固定为审核通过的 release/digest，并暂停自动版本写回到演示结束；后续无关提交不得切换演示版本。
 

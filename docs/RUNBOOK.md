@@ -88,6 +88,6 @@ restore在事务内拒绝覆盖已有业务数据，逐字段检查ID、外键�
 
 ## CI与协作
 
-PR/main执行回归、隔离PG与容器检查。main手动发布或版本发布验证通过后推GHCR，记录commit/tag/digest/run。GitOps由合作方现有机制接入，Deployment或imagePullPolicy不会监视更新；现场演示固定release/digest。没有集群授权时不宣称CD上线。
+PR/main执行回归、隔离PG与容器检查。main推送、main手动发布或版本发布验证通过后推当前仓库的GHCR API/web/admin镜像，记录commit/tag/digest/run。当前main提交自动标latest；历史release不回退latest，生产和回退仍固定digest。GitOps由合作方现有机制接入，Deployment或imagePullPolicy不会监视更新；现场演示固定release/digest。没有集群授权时不宣称CD上线。
 
 日程为北京时间2026-10-19 12:00冻结、18:00演示。实际手机/三人/大陆和现场检查见DEMO，状态以acceptance为准。

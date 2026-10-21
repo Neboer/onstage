@@ -137,13 +137,16 @@ jobs:
         run: docker rm -f onstage-ci onstage-web-ci onstage-admin-ci || true
   publish:
     # Only reviewed main code or a release that points into main may publish.
-    if: (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || github.event_name == 'release'
+    if: ((github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main') || github.event_name == 'release'
     needs: validate
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
       contents: read
       packages: write
+    concurrency:
+      group: ghcr-publication-${{ github.repository }}
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -164,6 +167,12 @@ jobs:
           printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
           trap 'docker logout ghcr.io' EXIT
           tags=(--tag "$image:sha-$SOURCE_SHA")
+          # Historical releases retain version tags without rolling latest backwards.
+          publish_latest=0
+          if [[ "$SOURCE_SHA" == "$(git rev-parse origin/main)" ]]; then
+            publish_latest=1
+            tags+=(--tag "$image:latest")
+          fi
           if [[ -n "$RELEASE_TAG" ]]; then
             [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$ ]]
             tags+=(--tag "$image:$RELEASE_TAG")
@@ -175,6 +184,7 @@ jobs:
           for target in web admin; do
             frontend_image="$image-$target"
             frontend_tags=(--tag "$frontend_image:sha-$SOURCE_SHA")
+            if [[ "$publish_latest" == 1 ]]; then frontend_tags+=(--tag "$frontend_image:latest"); fi
             if [[ -n "$RELEASE_TAG" ]]; then frontend_tags+=(--tag "$frontend_image:$RELEASE_TAG"); fi
             docker buildx build --platform linux/amd64 -f Dockerfile.frontend --target "$target" --provenance=mode=min --sbom=true --push "${frontend_tags[@]}" --build-arg SOURCE_REVISION="$SOURCE_SHA" --build-arg SOURCE_REPOSITORY="$SOURCE_URL" --metadata-file "$RUNNER_TEMP/$target-metadata.json" .
             export ONSTAGE_FRONTEND_TARGET="$target"

@@ -21,6 +21,8 @@ python tools/database.py migrate
 
 隔离 Compose 可运行 `app web admin`，用户端 `http://localhost:8080`、管理端 `http://localhost:8081`、API `http://localhost:8765`，均仅供本机开发。实际外部部署、白名单、Cookie、数据库备份和回退见 [SELF_HOSTED](docs/SELF_HOSTED.md)。首次管理员在注册后由获准维护者通过 `python tools/accounts.py --help` 所示命令授予，不自动创建管理账户。未发布新镜像digest前不要把源码候选当作已部署版本。
 
+main 推送在 Actions 验证通过后自动发布 `ghcr.io/neboer/onstage:latest`、`ghcr.io/neboer/onstage-web:latest`、`ghcr.io/neboer/onstage-admin:latest`，同时保留 `sha-<commit>` 标签及发布 digest。PR 只验证不发布；实际部署与回退固定 digest，发布镜像不代表已部署。
+
 公开部署必须配置 `ONSTAGE_FRONTEND_ORIGINS` 和 `ONSTAGE_ADMIN_ORIGINS` 的准确 HTTPS Origin。`*.neboer.site` 只对公开读接口开放且不消费其Cookie；账户读写和WS仅白名单。生产使用 `__Host-onstage_session`，本机HTTP使用另一个Cookie名；旧Cookie不自动迁移，也不按昵称认领历史。
 
 0.9当前证据与限制以 [acceptance](docs/acceptance.json) 为准。Python功能与接口稳定后再依据性能实测评估其他后端语言；1000个累计房间本身不构成重写或拆服务的依据。
