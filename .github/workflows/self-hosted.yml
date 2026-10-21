@@ -109,10 +109,16 @@ jobs:
       - name: Build and start independent frontend images
         run: |
           set -euo pipefail
+          trap 'for target in web admin; do if docker container inspect "onstage-$target-ci" >/dev/null 2>&1; then docker logs "onstage-$target-ci"; fi; done' EXIT
           for target in web admin; do
             docker build -f Dockerfile.frontend --target "$target" -t "onstage-$target:ci" .
             docker run -d --name "onstage-$target-ci" -p 127.0.0.1:8780:8080 -e ONSTAGE_API_ORIGIN=http://127.0.0.1:8765 -e ONSTAGE_WS_ORIGIN=ws://127.0.0.1:8765 "onstage-$target:ci"
-            for attempt in $(seq 1 30); do if curl --fail --silent http://127.0.0.1:8780/healthz >/dev/null; then break; fi; sleep 1; done
+            ready=0
+            for attempt in $(seq 1 30); do
+              if curl --fail --silent http://127.0.0.1:8780/healthz >/dev/null; then ready=1; break; fi
+              sleep 1
+            done
+            if [[ "$ready" != 1 ]]; then echo "$target frontend did not become healthy" >&2; exit 1; fi
             curl --fail --silent http://127.0.0.1:8780/ | grep -q '<div id="root"'
             curl --fail --silent http://127.0.0.1:8780/config.js | grep -q 'http://127.0.0.1:8765'
             docker rm -f "onstage-$target-ci"
